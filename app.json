@@ -4,12 +4,11 @@
     "slug": "map",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/play_store_512.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,13 +19,17 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#fff"
+      },
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "cover",
+        "splashscreenBackground": "#ffffff"
       },
       "package": "android.com"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/play_store_512.png"
     },
     "plugins": [
       [

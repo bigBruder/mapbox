@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 
 const useLocation = () => {
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState<number[] | null>(null);
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -12,8 +12,10 @@ const useLocation = () => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let location = await Location.getCurrentPositionAsync({
+        // accuracy: Location.Accuracy.High,
+      });
+      setLocation([location?.coords['longitude'], location?.coords['latitude']]);
     };
 
     fetchLocation();

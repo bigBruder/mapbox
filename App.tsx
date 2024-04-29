@@ -1,11 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Platform, TextInput, TouchableOpacity, Image, Alert, NativeModules, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Platform, TextInput, TouchableOpacity, Image, Alert, NativeModules, SafeAreaView, Share, ImageBackground } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { mockMarkers } from './utils/mockMarkers';
 import { Marker } from './components/marker/Marker';
 import { mockTags } from './utils/mockTags';
 import { Tag } from './components/tag/Tag';
 import useLocation from './hooks/useLocation';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ProfileIcon, SearchIcon, ShareIcon, CalendarIcon, PlusIcon, LocationIcon } from './assets/icons';
+import { getPoints } from './api/client';
+
+import * as SplashScreen from 'expo-splash-screen';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 
 const { StatusBarManager } = NativeModules;
@@ -13,22 +21,80 @@ const { StatusBarManager } = NativeModules;
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
 export default function App() {
-  const location = useLocation();
+  const myLocation = useLocation();
+  const [pointsOfInterest, setPointsOfInterest] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const map = useRef(null);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (!loading) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [loading]);
+
+  
+
+  useEffect(() => {
+    if (!map.current?.flyTo) return;
+    map.current.flyTo({ center: myLocation });
+  }, [myLocation]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const points = await getPoints();
+        console.log('points => ', points);
+        setPointsOfInterest(points);
+      } catch (error) {
+        console.error('Error fetching points:', error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={styles.page}>
+ {/* It need to avoid bug of mapbox related with displaying of images */}
+{
+          pointsOfInterest && pointsOfInterest.map((point, id) => (
+            <ImageBackground source={{uri: point['iconUrl']}} style={{width: 50, height: 50, display: 'none'}} key={id}>
+              <View style={
+                {
+                  width: 50,
+                  height: 50,
+                }
+              
+              }>
+                
+              </View>
+            </ImageBackground>
+
+          ))
+        } 
+          
     <View style={styles.container}>
       <View style={styles.container}>
         <Mapbox.MapView style={styles.map} 
           scaleBarEnabled={false}
+          ref={map}
+          rotateEnabled={false}
         >
         {
-          location?.longtitude && location?.latitude && (
+          myLocation && (
             <Mapbox.PointAnnotation
               key="pointAnnotation"
               id="pointAnnotation"
-              coordinate={[location?.longitude || 36.7783, location?.latitude || 119.4179]}>
-              <View style={styles.annotationContainer}>
+              coordinate={myLocation}
+              >
+              <View>
                 <Text style={styles.annotationText}>📍</Text>
               </View>
               <Mapbox.Callout title="This is a point annotation" />
@@ -38,33 +104,50 @@ export default function App() {
         {mockMarkers.map(marker => (
           <Marker key={marker.id} marker={marker} />
         ))}
-          {
-            location?.longtitude && location?.latitude && (
-              <Mapbox.Camera
-                zoomLevel={9}
-                // centerCoordinate={[-73.989308, 40.741895]}
-                centerCoordinate={[location?.longitude || 36.7783, location?.latitude || 119.4179]}
-              />
-            )
-          }
+        {
+          <Mapbox.Camera
+            maxZoomLevel={30}
+            zoomLevel={5}
+            followZoomLevel={15}
+            animationDuration={1500}
+            centerCoordinate={myLocation}
+          />
+        }
+        {
+          pointsOfInterest && pointsOfInterest.map((point, id) => (
+            <Mapbox.PointAnnotation
+              key={(point['longitude'] + point['latitude'] + id).toString()}
+              id={(point['longitude'] + point['latitude'] + id).toString()}
+              coordinate={[point['longitude'], point['latitude']]}>
+                 {/* It need to avoid bug of mapbox related with displaying of images */}
+                <Text style={{lineHeight: 25, textAlignVertical: 'top', fontSize: 30, height: 30
+                }}>
+                  <Image source={{uri: point['iconUrl']}} style={{width: 30, height: 30}} resizeMode='cover' />
+                </Text>
+
+              <Mapbox.Callout title={point['name']} />
+            </Mapbox.PointAnnotation>
+          ))
+        }
+          
         </Mapbox.MapView>
         <View style={styles.topContainer}>
           <View style={styles.upperContainer}>
             <TouchableOpacity style={styles.searchButton}>
-              <Image source={require('./assets/icons/icon_profile.png')}/>
+              <ProfileIcon />
             </TouchableOpacity>
             <View style={styles.searchContainer}>
-              <Image source={require('./assets/icons/search.png')} />
+              <SearchIcon />
               <TextInput placeholder="Search" style={styles.search}/>
             </View>
             <TouchableOpacity style={styles.searchButton}>
-              <Image source={require('./assets/icons/icon_share.png')} />
+              <ShareIcon />
             </TouchableOpacity>
           </View>
           <View style={styles.tagsContainer}>
             <>
             <View style={styles.calendarContainer}>
-              <Image source={require('./assets/icons/calendar.png')} style={styles.calendarIcon}/>
+              <CalendarIcon style={styles.calendarIcon} />
               <Text>Next Month</Text>
             </View>
           {
@@ -78,69 +161,16 @@ export default function App() {
         </View>
         <View style={styles.bottomContainer}>
           <TouchableOpacity style={styles.searchButton}>
-            <Image source={require('./assets/icons/icon_profile.png')} />
+            <LocationIcon />
           </TouchableOpacity>
           <Text style={styles.pointText}>Some point</Text>
           <TouchableOpacity style={styles.addButton} onPress={() => {
           }}>
-            <Image source={require('./assets/icons/plus.png')} />
+            <PlusIcon />
           </TouchableOpacity>
         </View>
       </View>
       <StatusBar style="auto" />
-
-      {/* {
-        addingMarker && (
-          <View style={styles.window}>
-            <View style={styles.addMarkerContainer}>
-              <TextInput placeholder="Longtitude" style={styles.addInput} value={newMarker?.longtitude} onChange={
-                (e) => {
-                  setNewMarker({
-                    ...newMarker,
-                    longtitude: e.target.value
-                  })
-                }
-              }/>
-              <TextInput placeholder="Latitude" style={styles.addInput}
-                value={newMarker?.latitude}
-                onChange={
-                  (e) => {
-                    setNewMarker({
-                      ...newMarker,
-                      latitude: e.target.value
-                    })
-                  }
-                }/>
-              <View>
-              <TouchableOpacity onPress={() => {
-                setAddingMarker(false);
-              }}>
-                <Text>Close</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                if (newMarker?.longtitude && newMarker?.latitude) {
-                  setMarkers([
-                    ...markers,
-                    {
-                      id: `marker-${markers.length + 1}`,
-                      coordinate: [parseFloat(newMarker?.longtitude), parseFloat(newMarker?.latitude)],
-                      title: emojiArray[Math.floor(Math.random() * emojiArray.length)]
-                    }
-                  ]);
-                  setAddingMarker(false);
-                } else {
-                  Alert.alert('Please enter longtitude and latitude');
-                setAddingMarker(false);
-              }
-              }}>
-                <Text>Add</Text>
-              </TouchableOpacity>
-              </View>
-             
-            </View>
-          </View>
-        )
-      } */}
     </View>
     </SafeAreaView>
   );
