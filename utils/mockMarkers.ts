@@ -17,3 +17,11 @@ export const mockMarkers = [
     { id: 'marker-13', coordinate: [6.9807, 45.4408], title: '⛷' },
     { id: 'marker-14', coordinate: [-0.5792, 44.8374], title: '🍷'}
 ];
+
+export const buttonsSelectData = [
+  { label: "Now" },
+  { label: "Today" },
+  { label: "Next Week" },
+  { label: "Next Month" },
+  { label: "Custom" },
+];

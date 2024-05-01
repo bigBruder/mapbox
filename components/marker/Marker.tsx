@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
       backgroundColor: 'white',
       borderRadius: 10,
       borderWidth: 1,
-      borderColor: '#D9DBEB',
+      borderColor: 'blue',
       borderStyle: 'solid',
     },
     annotationText: {

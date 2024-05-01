@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-function parseCSV(csvText) {
+function parseCSV(csvText: string) {
     const rows = csvText.split(/\r?\n/); 
     const data = [];
     for (let i = 4; i < rows.length; i++) {
@@ -18,7 +18,7 @@ function parseCSV(csvText) {
   }
 
 export const getPoints = async () => {
-    const {data} = await axios.get(process.env.EXPO_PUBLIC_SHEET_POINTS_LINK);
+    const {data} = await axios.get(process.env.EXPO_PUBLIC_SHEET_POINTS_LINK || "");
     console.log('parseCSV(data) =>', parseCSV(data));
     return parseCSV(data);
 };

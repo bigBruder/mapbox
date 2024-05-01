@@ -15,12 +15,15 @@
     "expo-location": "~16.5.5",
     "expo-splash-screen": "^0.26.4",
     "expo-status-bar": "~1.11.1",
+    "mapbox-gl": "^2.15.0",
     "react": "18.2.0",
     "react-native": "0.73.6",
-    "react-native-svg": "^15.2.0"
+    "react-native-svg": "^15.2.0",
+    "react-native-ui-datepicker": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/mapbox-gl": "^3.1.0",
     "@types/react": "~18.2.45",
     "typescript": "^5.1.3"
   },

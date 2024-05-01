@@ -1,1 +1,1 @@
-export const mockTags = ['#beer', '#music', '#food'];
+export const mockTags = ['#beer', '#music', '#food', '#dance','#drink'];
