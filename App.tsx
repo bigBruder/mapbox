@@ -33,14 +33,12 @@ import {
 import { getPoints } from "./api/client";
 import { IPoints } from "./types/Points";
 import { DateSelectionModal } from "./components/DateSelectionModal/DateSelectionModal";
-// import * as SplashScreen from 'expo-splash-screen';
-
-// Keep the splash screen visible while we fetch resources
-// SplashScreen.preventAutoHideAsync();
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Bottomsheet from "./utils/BottomSheet";
 
 const { StatusBarManager } = NativeModules;
 
-// Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
+Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
 export default function App() {
   const myLocation = useLocation();
@@ -48,26 +46,15 @@ export default function App() {
     null
   );
   const [loading, setLoading] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState<IPoints | null>(null);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
   const map = useRef<Mapbox.MapView | null>(null);
 
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (!loading) {
-  //     // This tells the splash screen to hide immediately! If we call this after
-  //     // `setAppIsReady`, then we may see a blank screen while the app is
-  //     // loading its initial state and rendering its first pixels. So instead,
-  //     // we hide the splash screen once we know the root view has already
-  //     // performed layout.
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [loading]);
-
   useEffect(() => {
     if (!map.current?.flyTo) return;
-
     map.current.flyTo({ center: myLocation });
   }, [myLocation]);
 
@@ -89,137 +76,162 @@ export default function App() {
     setSelectedDate(date);
   };
 
+  console.log("selectedMarker", selectedMarker);
+
   return (
     <SafeAreaView style={styles.page}>
-      {/* It need to avoid bug of mapbox related with displaying of images */}
-      {pointsOfInterest &&
-        pointsOfInterest.map((point, id) => (
-          <ImageBackground
-            source={{ uri: point["iconUrl"] }}
-            style={{ width: 50, height: 50, display: "none" }}
-            key={id}
-          >
-            <View
-              style={{
-                width: 50,
-                height: 50,
-              }}
-            ></View>
-          </ImageBackground>
-        ))}
+      <GestureHandlerRootView style={styles.container}>
+        {/* It need to avoid bug of mapbox related with displaying of images */}
+        {pointsOfInterest &&
+          pointsOfInterest.map((point, id) => (
+            <ImageBackground
+              source={{ uri: point["iconUrl"] }}
+              style={{ width: 50, height: 50, display: "none" }}
+              key={id}
+            >
+              <View
+                style={{
+                  width: 50,
+                  height: 50,
+                }}
+              ></View>
+            </ImageBackground>
+          ))}
 
-      <View style={styles.container}>
         <View style={styles.container}>
-          <Mapbox.MapView
-            style={styles.map}
-            scaleBarEnabled={false}
-            ref={map}
-            rotateEnabled={false}
-          >
-            {myLocation && (
-              <Mapbox.PointAnnotation
-                key="pointAnnotation"
-                id="pointAnnotation"
-                coordinate={myLocation}
-              >
-                <View>
-                  <Text style={styles.annotationText}>📍</Text>
-                </View>
-                <Mapbox.Callout title="This is a point annotation" />
-              </Mapbox.PointAnnotation>
-            )}
-            {mockMarkers.map((marker) => (
-              <Marker key={marker.id} marker={marker} />
-            ))}
-
-            {
-              <Mapbox.Camera
-                maxZoomLevel={30}
-                zoomLevel={5}
-                followZoomLevel={15}
-                animationDuration={1500}
-                centerCoordinate={myLocation || undefined}
-              />
-            }
-            {pointsOfInterest &&
-              pointsOfInterest.map((point, id) => (
+          <View style={styles.container}>
+            <Mapbox.MapView
+              style={styles.map}
+              scaleBarEnabled={false}
+              ref={map}
+              rotateEnabled={false}
+            >
+              {myLocation && (
                 <Mapbox.PointAnnotation
-                  key={(point["longitude"] + point["latitude"] + id).toString()}
-                  id={(point["longitude"] + point["latitude"] + id).toString()}
-                  coordinate={[point["longitude"], point["latitude"]]}
+                  key="pointAnnotation"
+                  id="pointAnnotation"
+                  coordinate={myLocation}
                 >
-                  {/* It need to avoid bug of mapbox related with displaying of images */}
-
-                  <View style={styles.annotationContainer}>
-                    <Text
-                      style={{
-                        lineHeight: 25,
-                        textAlignVertical: "top",
-                        fontSize: 30,
-                        height: 30,
-                      }}
-                    >
-                      <Image
-                        source={{ uri: point["iconUrl"] }}
-                        style={{ width: 30, height: 30 }}
-                        resizeMode="cover"
-                      />
-                    </Text>
+                  <View>
+                    <Text style={styles.annotationText}>📍</Text>
                   </View>
-
-                  <Mapbox.Callout title={point["name"]} />
+                  <Mapbox.Callout title="This is a point annotation" />
                 </Mapbox.PointAnnotation>
+              )}
+              {mockMarkers.map((marker) => (
+                <Marker key={marker.id} marker={marker} />
               ))}
-          </Mapbox.MapView>
-          <View style={styles.topContainer}>
-            <View style={styles.upperContainer}>
-              <TouchableOpacity style={styles.searchButton}>
-                <ProfileIcon />
-              </TouchableOpacity>
-              <View style={styles.searchContainer}>
-                <SearchIcon />
-                <TextInput placeholder="Search" style={styles.search} />
-              </View>
-              <TouchableOpacity style={styles.searchButton}>
-                <ShareIcon />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.tagsContainer}>
-              <Modal visible={showModal} animationType="slide">
-                <DateSelectionModal
-                  onSelect={handleDateSelect}
-                  onCloseModal={setShowModal}
-                  selectedDate={selectedDate}
-                />
-              </Modal>
 
-              <>
-                <TouchableOpacity
-                  style={styles.calendarContainer}
-                  onPress={() => setShowModal(true)}
-                >
-                  <CalendarIcon style={styles.calendarIcon} />
-                  <Text>{selectedDate}</Text>
+              {
+                <Mapbox.Camera
+                  maxZoomLevel={30}
+                  zoomLevel={5}
+                  followZoomLevel={15}
+                  animationDuration={1500}
+                  centerCoordinate={myLocation || undefined}
+                />
+              }
+              {pointsOfInterest &&
+                pointsOfInterest.map((point, id) => (
+                  <Mapbox.PointAnnotation
+                    key={(
+                      point["longitude"] +
+                      point["latitude"] +
+                      id
+                    ).toString()}
+                    id={(
+                      point["longitude"] +
+                      point["latitude"] +
+                      id
+                    ).toString()}
+                    coordinate={[point["longitude"], point["latitude"]]}
+                    onSelected={() => {
+                      if (selectedMarker === point) {
+                        setSelectedMarker(null);
+                      } else {
+                        setSelectedMarker(point);
+                      }
+                    }}
+                  >
+                    {/* It need to avoid bug of mapbox related with displaying of images */}
+
+                    <View style={styles.annotationContainer}>
+                      <Text
+                        style={{
+                          lineHeight: 25,
+                          textAlignVertical: "top",
+                          fontSize: 30,
+                          height: 30,
+                        }}
+                      >
+                        <Image
+                          source={{ uri: point["iconUrl"] }}
+                          style={{ width: 30, height: 30 }}
+                          resizeMode="cover"
+                        />
+                      </Text>
+                    </View>
+
+                    <Mapbox.Callout title={point["name"]} />
+                  </Mapbox.PointAnnotation>
+                ))}
+            </Mapbox.MapView>
+            <View style={styles.topContainer}>
+              <View style={styles.upperContainer}>
+                <TouchableOpacity style={styles.searchButton}>
+                  <ProfileIcon />
                 </TouchableOpacity>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {mockTags &&
-                    mockTags.map((tag, id) => <Tag key={id} tag={tag} />)}
-                </ScrollView>
-              </>
+                <View style={styles.searchContainer}>
+                  <SearchIcon />
+                  <TextInput placeholder="Search" style={styles.search} />
+                </View>
+                <TouchableOpacity style={styles.searchButton}>
+                  <ShareIcon />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.tagsContainer}>
+                <Modal visible={showModal} animationType="slide">
+                  <DateSelectionModal
+                    onSelect={handleDateSelect}
+                    onCloseModal={setShowModal}
+                    selectedDate={selectedDate}
+                  />
+                </Modal>
+
+                <>
+                  <TouchableOpacity
+                    style={styles.calendarContainer}
+                    onPress={() => setShowModal(true)}
+                  >
+                    <CalendarIcon style={styles.calendarIcon} />
+                    <Text>{selectedDate}</Text>
+                  </TouchableOpacity>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {mockTags &&
+                      mockTags.map((tag, id) => <Tag key={id} tag={tag} />)}
+                  </ScrollView>
+                </>
+              </View>
+            </View>
+            <View style={styles.bottomContainer}>
+              <TouchableOpacity style={styles.searchButton}>
+                <LocationIcon />
+              </TouchableOpacity>
+              <Text style={styles.pointText}>Somse points</Text>
+              <TouchableOpacity style={styles.addButton} onPress={() => {}}>
+                <PlusIcon />
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.bottomContainer}>
-            <TouchableOpacity style={styles.searchButton}>
-              <LocationIcon />
-            </TouchableOpacity>
-            <Text style={styles.pointText}>Somse points</Text>
-            <TouchableOpacity style={styles.addButton} onPress={() => {}}>
-              <PlusIcon />
-            </TouchableOpacity>
-          </View>
+          <StatusBar style="auto" />
         </View>
-        <StatusBar style="auto" />
-      </View>
+        {selectedMarker && (
+          <Bottomsheet
+            selectedMarker={selectedMarker}
+            onClose={() => setSelectedMarker(null)}
+          />
+        )}
+      </GestureHandlerRootView>
     </SafeAreaView>
   );
 }
@@ -286,8 +298,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     borderWidth: 0,
-    borderColor: 'white',
-    borderStyle: 'solid',
+    borderColor: "white",
+    borderStyle: "solid",
   },
   annotationText: {
     fontSize: 24,
@@ -378,5 +390,14 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     objectFit: "contain",
+  },
+  modal: {
+    backgroundColor: "red",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
