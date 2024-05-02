@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { Text, TouchableOpacity, View, StyleSheet, Modal } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Modal,
+  SafeAreaView,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DateTimePicker, { DateType } from "react-native-ui-datepicker";
 import { buttonsSelectData } from "../../utils/mockMarkers";
 import { formatDate } from "../../utils/helpersFunctions";
+import { StatusBar } from "expo-status-bar";
 
 interface Props {
   onSelect: (date: string) => void;
@@ -25,7 +33,7 @@ export const DateSelectionModal: React.FC<Props> = ({
   const preparedEndDate = formatDate(endDate).split(",")[1];
 
   return (
-    <View>
+    <SafeAreaView>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => onCloseModal(false)}>
           <AntDesign name="left" size={24} color="black" />
@@ -119,7 +127,7 @@ export const DateSelectionModal: React.FC<Props> = ({
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 

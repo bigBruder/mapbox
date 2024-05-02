@@ -223,7 +223,7 @@ export default function App() {
               </TouchableOpacity>
             </View>
           </View>
-          <StatusBar style="auto" />
+          <StatusBar />
         </View>
         {selectedMarker && (
           <Bottomsheet
@@ -232,6 +232,10 @@ export default function App() {
           />
         )}
       </GestureHandlerRootView>
+      <StatusBar
+        translucent
+        backgroundColor={showModal ? "white" : "transparent"}
+      />
     </SafeAreaView>
   );
 }
