@@ -15,7 +15,8 @@ export const getDeviceUniqueId = async () => {
       "secure_deviceid",
       JSON.stringify(uuid.replaceAll(/\+/g, "").replaceAll(/"/g, ""))
     );
+    return uuid;
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };

@@ -1,20 +1,32 @@
-import axios from 'axios';
-import { parseCSV } from '../utils/parseCsv';
+import axios from "axios";
+import { parseCSV } from "../utils/parseCsv";
+
 const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
 
-
 export const getPoints = async () => {
-    const {data} = await axios.get(process.env.EXPO_PUBLIC_SHEET_POINTS_LINK || "");
-    return parseCSV(data);
+  const { data } = await axios.get(
+    process.env.EXPO_PUBLIC_SHEET_POINTS_LINK || ""
+  );
+  return parseCSV(data);
 };
 
-
 export const getAccessToken = async () => {
-    const {data} = await axios.post(BASE_URL_CONNECT, {
-        grant_type: "client_credentials",
-        client_id: process.env.EXPO_PUBLIC_CLIENT_ID,
-        client_secret: process.env.EXPO_PUBLIC_CLIENT_SECRET,
-        scope: "api"
-    });
-    return data;
-}
+  try {
+    const params = new URLSearchParams();
+    params.append("device_id", "000999");
+    params.append("grant_type", "device_id");
+    const { data } = await axios.post(
+      "https://app-vibeidsrv-dev.azurewebsites.net/connect/token",
+      params,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${process.env.EXPO_PUBLIC_API_ACCESS_TOKEN}`,
+        },
+      }
+    );
+    return data.access_token;
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+  }
+};
