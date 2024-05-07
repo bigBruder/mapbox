@@ -3,11 +3,13 @@ import Mapbox from "@rnmapbox/maps";
 import { Map } from "./components/Map/Map";
 import { MapContextProvider } from "./providers/MapContext";
 import { getAccessToken } from "./api/client";
+import { getDeviceUniqueId } from "./providers/DeviceUniqueId";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
 export default function App() {
   getAccessToken();
+  getDeviceUniqueId();
   return (
     <MapContextProvider>
       <Map />
