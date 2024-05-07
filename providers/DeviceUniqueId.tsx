@@ -23,6 +23,13 @@ export const getDeviceUniqueId = async () => {
     // return uuid;
     if (Platform.OS === "ios") {
       uniqueId = await Application.getIosIdForVendorAsync();
+
+      if (!uniqueId) {
+        setTimeout(async () => {
+          // from docs: This method may sometimes return `nil`, in which case wait and call the method again later.
+          uniqueId = await Application.getIosIdForVendorAsync();
+        }, 5000);
+      }
     }
 
     if (Platform.OS === "android") {
@@ -30,7 +37,8 @@ export const getDeviceUniqueId = async () => {
     }
 
     console.log("Device ID:   ", uniqueId);
-    return uniqueId;
+
+    await SecureStore.setItemAsync("mapbox_secure_deviceid", uniqueId);
   } catch (err) {
     console.error(err);
   }

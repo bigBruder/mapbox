@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
-import Mapbox from "@rnmapbox/maps";
+import Mapbox, { BackgroundLayer } from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -32,6 +32,7 @@ import { Tag } from "../tag/Tag";
 import useLocation from "../../hooks/useLocation";
 import { mockMarkers } from "../../utils/mockMarkers";
 import MapContext from "../../providers/MapContext";
+import { HeatmapLayer } from "@rnmapbox/maps";
 const { StatusBarManager } = NativeModules;
 
 export const Map = () => {
@@ -68,6 +69,30 @@ export const Map = () => {
     );
   }
 
+  const heatmapData = [
+    {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            intensity: 11,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [64, 45],
+          },
+        },
+      ],
+      // styles: {
+      //   heatmapRadius: 100,
+      //   heatmapWeight: 1,
+      //   heatmapIntensity: 11,
+      //   heatmapOpacity: 0.3,
+      // },
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -96,6 +121,47 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
             >
+              {/* <Mapbox.HeatmapLayer
+                id="my-heatmap-layer"
+                sourceID="my-heatmap-source"
+                sourceLayerID=""
+                layerIndex={0}
+                filter={[]}
+                minZoomLevel={0}
+                maxZoomLevel={24}
+                style={{
+                  heatmapRadius: 30,
+                  heatmapWeight: 1,
+                  heatmapIntensity: 11,
+                  heatmapOpacity: 0.3,
+                }}
+              /> */}
+              {heatmapData.map((data, index) => (
+                <Mapbox.HeatmapLayer
+                  key={index + "heatmap-layer"}
+                  id={`heatmap-layer-${index}`}
+                  sourceID="my-heatmap-source"
+                  sourceLayerID=""
+                  layerIndex={0}
+                  filter={[]}
+                  minZoomLevel={0}
+                  maxZoomLevel={24}
+                  style={{
+                    heatmapRadius: data.features[0].properties.intensity * 5,
+                    heatmapWeight: 1,
+                    heatmapIntensity: data.features[0].properties.intensity,
+                    heatmapOpacity: 0.3,
+                  }}
+                />
+              ))}
+              {heatmapData.map((data, index) => (
+                <Mapbox.ShapeSource
+                  id="my-heatmap-source"
+                  shape={data}
+                  key={data.toString() + index}
+                />
+              ))}
+
               {myLocation && (
                 <Mapbox.PointAnnotation
                   key="pointAnnotation"
