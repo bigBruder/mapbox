@@ -5,7 +5,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   ScrollView,
   Modal,
   NativeModules,
@@ -27,18 +26,15 @@ import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
 import { mockTags } from "../../utils/mockTags";
 import Bottomsheet from "../../utils/BottomSheet";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Marker } from "../marker/Marker";
 import { Tag } from "../tag/Tag";
 import useLocation from "../../hooks/useLocation";
-import { mockMarkers } from "../../utils/mockMarkers";
 import MapContext from "../../providers/MapContext";
-import { HeatmapLayer } from "@rnmapbox/maps";
 const { StatusBarManager } = NativeModules;
 
 export const Map = () => {
   const myLocation = useLocation();
 
-  const { pointsOfInterest, selectedMarker, setSelectedMarker, loading } =
+  const { pointsOfInterest, selectedMarker, setSelectedMarker, loading, pins } =
     useContext(MapContext);
 
   const [showModal, setShowModal] = useState(false);
@@ -69,6 +65,8 @@ export const Map = () => {
     );
   }
 
+  // console.log("map PINS +++>", pins);
+
   const heatmapData = [
     {
       type: "FeatureCollection",
@@ -80,7 +78,57 @@ export const Map = () => {
           },
           geometry: {
             type: "Point",
-            coordinates: [64, 45],
+            coordinates: [-75.0396486, 40.06324964],
+          },
+        },
+        {
+          type: "Feature",
+          properties: {
+            intensity: 6,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [-75.02378225, 40.04546552],
+          },
+        },
+        {
+          type: "Feature",
+          properties: {
+            intensity: 6,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [-75.05326856, 40.04438827],
+          },
+        },
+        {
+          type: "Feature",
+          properties: {
+            intensity: 5,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [-75.02601785, 40.0821139],
+          },
+        },
+        {
+          type: "Feature",
+          properties: {
+            intensity: 3,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [-75.09864227, 40.06107939],
+          },
+        },
+        {
+          type: "Feature",
+          properties: {
+            intensity: 1,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [-75.06914588, 40.06216826],
           },
         },
       ],
@@ -94,10 +142,10 @@ export const Map = () => {
   ];
 
   return (
-    <SafeAreaView style={styles.page}>
+    <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
         {/* It need to avoid bug of mapbox related with displaying of images */}
-        {pointsOfInterest &&
+        {/* {pointsOfInterest &&
           pointsOfInterest.map((point, id) => (
             <ImageBackground
               source={{ uri: point["iconUrl"] }}
@@ -111,7 +159,7 @@ export const Map = () => {
                 }}
               ></View>
             </ImageBackground>
-          ))}
+          ))} */}
 
         <View style={styles.container}>
           <View style={styles.container}>
@@ -139,7 +187,8 @@ export const Map = () => {
               {heatmapData.map((data, index) => (
                 <Mapbox.HeatmapLayer
                   key={index + "heatmap-layer"}
-                  id={`heatmap-layer-${index}`}
+                  // id={`heatmap-layer-${index}`}
+                  id="my-heatmap-source"
                   sourceID="my-heatmap-source"
                   sourceLayerID=""
                   layerIndex={0}
@@ -149,8 +198,8 @@ export const Map = () => {
                   style={{
                     heatmapRadius: data.features[0].properties.intensity * 5,
                     heatmapWeight: 1,
-                    heatmapIntensity: data.features[0].properties.intensity,
-                    heatmapOpacity: 0.3,
+                    // heatmapIntensity: data.features[0].properties.intensity,
+                    heatmapOpacity: 0.5,
                   }}
                 />
               ))}
@@ -161,6 +210,18 @@ export const Map = () => {
                   key={data.toString() + index}
                 />
               ))}
+              {pins &&
+                pins.map((pin, index) => (
+                  <Mapbox.PointAnnotation
+                    key={pin.longitude + pin.latitude + index.toString()}
+                    id={index.toString()}
+                    coordinate={[pin.longitude, pin.latitude]}
+                  >
+                    <View>
+                      <Text style={styles.annotationText}>📌</Text>
+                    </View>
+                  </Mapbox.PointAnnotation>
+                ))}
 
               {myLocation && (
                 <Mapbox.PointAnnotation
@@ -174,9 +235,9 @@ export const Map = () => {
                   <Mapbox.Callout title="This is a point annotation" />
                 </Mapbox.PointAnnotation>
               )}
-              {mockMarkers.map((marker) => (
+              {/* {mockMarkers.map((marker) => (
                 <Marker key={marker.id} marker={marker} />
-              ))}
+              ))} */}
 
               {
                 <Mapbox.Camera
@@ -187,7 +248,7 @@ export const Map = () => {
                   centerCoordinate={myLocation || undefined}
                 />
               }
-              {pointsOfInterest &&
+              {/* {pointsOfInterest &&
                 pointsOfInterest.map((point, id) => (
                   <Mapbox.PointAnnotation
                     key={(
@@ -209,7 +270,6 @@ export const Map = () => {
                       }
                     }}
                   >
-                    {/* It need to avoid bug of mapbox related with displaying of images */}
 
                     <View style={styles.annotationContainer}>
                       <Text
@@ -230,7 +290,7 @@ export const Map = () => {
 
                     <Mapbox.Callout title={point["name"]} />
                   </Mapbox.PointAnnotation>
-                ))}
+                ))} */}
             </Mapbox.MapView>
             <View style={styles.topContainer}>
               <View style={styles.upperContainer}>
@@ -279,7 +339,7 @@ export const Map = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <StatusBar />
+          {/* <StatusBar /> */}
         </View>
         {selectedMarker && (
           <Bottomsheet
@@ -289,10 +349,11 @@ export const Map = () => {
         )}
       </GestureHandlerRootView>
       <StatusBar
-        translucent
+        // translucent
         backgroundColor={showModal ? "white" : "transparent"}
+        // style="dark"
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

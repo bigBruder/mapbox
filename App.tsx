@@ -2,21 +2,26 @@ import { StyleSheet, NativeModules } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 import { Map } from "./components/Map/Map";
 import { MapContextProvider } from "./providers/MapContext";
-import { getAccessToken } from "./api/client";
+import { getAccessToken, searchPosts } from "./api/client";
 import { getDeviceUniqueId } from "./providers/DeviceUniqueId";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
 export default function App() {
-  // useEffect(() => {
-  //   console.log("App started");
-  //   getDeviceUniqueId().then(async () => {
-  //     getAccessToken();
-  //   });
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      const access_token = await SecureStore.getItemAsync(
+        "mapbox_secure_access_token"
+      );
+      // console.log("access => ", access_token);
+      if (access_token) return;
+      getDeviceUniqueId().then(async () => {
+        getAccessToken();
+      });
+    })();
+  }, []);
 
   return (
     <MapContextProvider>

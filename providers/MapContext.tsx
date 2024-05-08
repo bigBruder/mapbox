@@ -1,8 +1,10 @@
 import { createContext, useEffect, useState } from "react";
 import { IPoints } from "../types/Points";
-import { getPoints } from "../api/client";
+import { getPoints, searchHeats, searchPosts } from "../api/client";
+import useLocation from "../hooks/useLocation";
 
 const initialValue = {
+  pins: [],
   pointsOfInterest: [],
   setPointsOfInterest: (points: IPoints[] | null) => {},
   loading: false,
@@ -22,6 +24,7 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const myLocation = useLocation();
   const [map, setMap] = useState(null);
   const [pointsOfInterest, setPointsOfInterest] = useState<IPoints[]>([]);
 
@@ -30,6 +33,8 @@ export const MapContextProvider = ({
 
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
+
+  const [pins, setPins] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +50,23 @@ export const MapContextProvider = ({
     })();
   }, []);
 
+  useEffect(() => {
+    if (myLocation === null) return;
+    try {
+      (async () => {
+        const response = await searchPosts({
+          latitude: myLocation[0],
+          longitude: myLocation[1],
+        });
+        setPins(response.value.vibes.map((vibe) => vibe.venue.geo));
+      })();
+    } catch (error) {
+      console.error("Error fetching pins by search:", error);
+    }
+  }, [myLocation]);
+
   const value = {
+    pins,
     pointsOfInterest: pointsOfInterest,
     setPointsOfInterest,
     loading,
