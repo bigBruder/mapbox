@@ -10,7 +10,7 @@ type initialValueType = {
   setPointsOfInterest: (points: IPoints[] | null) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
-  selectedMarker: IPoints | null;
+  selectedMarker: VibesItem | null;
   setSelectedMarker: (marker: IPoints | null) => void;
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
@@ -49,6 +49,8 @@ export const MapContextProvider = ({
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
+  const [tags, setTags] = useState<string[]>([]);
+
   const [pins, setPins] = useState<VibesItem[]>([]);
 
   useEffect(() => {
@@ -72,7 +74,10 @@ export const MapContextProvider = ({
         const response: Response = await searchPosts({
           latitude: myLocation[0],
           longitude: myLocation[1],
+          "TopTags.Enable": "true",
         });
+        setTags(response.value["tags"]);
+        // console.log("response.value.tags", response.value.tags);
         setPins(response.value.vibes);
       })();
     } catch (error) {
@@ -81,6 +86,7 @@ export const MapContextProvider = ({
   }, [myLocation]);
 
   const value = {
+    tags,
     pins,
     pointsOfInterest: pointsOfInterest,
     setPointsOfInterest,

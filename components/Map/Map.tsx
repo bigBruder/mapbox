@@ -10,6 +10,7 @@ import {
   NativeModules,
   SafeAreaView,
   Image,
+  ImageBackground,
 } from "react-native";
 import Mapbox, { BackgroundLayer } from "@rnmapbox/maps";
 
@@ -35,8 +36,14 @@ const { StatusBarManager } = NativeModules;
 export const Map = () => {
   const myLocation = useLocation();
 
-  const { pointsOfInterest, selectedMarker, setSelectedMarker, loading, pins } =
-    useContext(MapContext);
+  const {
+    pointsOfInterest,
+    selectedMarker,
+    setSelectedMarker,
+    loading,
+    pins,
+    tags,
+  } = useContext(MapContext);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
@@ -142,6 +149,8 @@ export const Map = () => {
     },
   ];
 
+  console.log("tags ==== > ", tags);
+
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -169,6 +178,7 @@ export const Map = () => {
               scaleBarEnabled={false}
               ref={map}
               rotateEnabled={false}
+              styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
             >
               {/* <Mapbox.HeatmapLayer
                 id="my-heatmap-layer"
@@ -223,15 +233,40 @@ export const Map = () => {
                   >
                     <TouchableOpacity
                       onPress={() => {
-                        setSelectedMarker(pin);
+                        if (selectedMarker === pin) {
+                          setSelectedMarker(null);
+                        } else {
+                          setSelectedMarker(pin);
+                        }
                       }}
                     >
-                      <Image
-                        source={{
-                          uri: getIconUrl(pin.icon.split(":")[1]),
-                        }}
-                        style={{ width: 30, height: 30 }}
-                      />
+                      {pin.id === selectedMarker?.id ? (
+                        <ImageBackground
+                          source={require("../../assets/active_pin_background.png")}
+                          style={{
+                            width: 50,
+                            height: 50,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                          resizeMethod="resize"
+                        >
+                          <Image
+                            source={{
+                              uri: getIconUrl(pin.icon.split(":")[1]),
+                            }}
+                            style={{ width: 30, height: 30 }}
+                          />
+                        </ImageBackground>
+                      ) : (
+                        <Image
+                          source={{
+                            uri: getIconUrl(pin.icon.split(":")[1]),
+                          }}
+                          style={{ width: 30, height: 30 }}
+                        />
+                      )}
                       {/* <Text>{pin.image}</Text> */}
                       {/* <Text style={styles.annotationText}>📌</Text> */}
                     </TouchableOpacity>
@@ -338,8 +373,9 @@ export const Map = () => {
                     <Text>{selectedDate}</Text>
                   </TouchableOpacity>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {mockTags &&
-                      mockTags.map((tag, id) => <Tag key={id} tag={tag} />)}
+                    {/* {tags && tags.map((tag, id) => <Tag key={id} tag={tag} />)} */}
+                    {/* {mockTags &&
+                      mockTags.map((tag, id) => <Tag key={id} tag={tag} />)} */}
                   </ScrollView>
                 </>
               </View>

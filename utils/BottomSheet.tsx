@@ -112,7 +112,7 @@ const ModalDataMarker: FC<sIPoints> = ({ selectedMarker }) => {
     null
   );
   const [loading, setLoading] = useState(true);
-  const [isShortDescription, setIsShortDescription] = useState(true);
+  const [isShortDescription, setIsShortDescription] = useState(false);
 
   useEffect(() => {
     (async () => {
