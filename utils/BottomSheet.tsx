@@ -10,15 +10,26 @@ import { IPoints } from "../types/Points";
 import LikeIcon from "../assets/icons/like";
 import { ShareIcon } from "../assets/icons";
 import MoreIcon from "../assets/icons/more";
+import { Value, VibesItem } from "../types/searchResponse";
+import { getIconUrl } from "./getIconUrl";
+import { getVibeDetails } from "../api/client";
+import {
+  PorstDetailsValue,
+  PostDetailsResponse,
+} from "../types/postDetailsResponse";
+import { formatDate } from "./formatDate";
+import { formatTagsInText } from "./formatTagsInText";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MAX_TRANSLATE_Y = SCREEN_HEIGHT / 1.5;
 const MIN_TRANSLATE_Y = SCREEN_HEIGHT / 5;
 
 interface BottomsheetProps {
-  selectedMarker: IPoints;
+  selectedMarker: VibesItem;
   onClose: () => void;
 }
+
+const IS_UPPER_THRESHOLD = -100;
 
 export default function Bottomsheet({
   selectedMarker,
@@ -80,6 +91,7 @@ export default function Bottomsheet({
 
 const styles = StyleSheet.create({
   bottomsheet_container: {
+    flex: 1,
     width: "100%",
     height: SCREEN_HEIGHT,
     backgroundColor: "white",
@@ -92,61 +104,78 @@ const styles = StyleSheet.create({
 });
 
 type sIPoints = {
-  selectedMarker: IPoints;
+  selectedMarker: VibesItem;
 };
 
-const ModalDataMarker: FC<sIPoints> = ({
-  selectedMarker,
-}: {
-  selectedMarker: IPoints;
-}) => {
+const ModalDataMarker: FC<sIPoints> = ({ selectedMarker }) => {
+  const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [isShortDescription, setIsShortDescription] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const details: PostDetailsResponse = await getVibeDetails(
+          selectedMarker.id
+        );
+        setVibeDetails(details.value);
+      } catch (error) {
+        console.error("Error fetching vibe details:", error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [selectedMarker.id]);
+
+  if (loading) return <Text>Loading...</Text>;
   return (
     <View style={styleContent.sheetContainer}>
       <View style={styleContent.line} />
 
       <View style={styleContent.topBox}>
         <Image
-          source={{ uri: selectedMarker.iconUrl }}
+          source={{ uri: getIconUrl(selectedMarker.icon.split(":")[1]) }}
           style={{ width: 50, height: 50 }}
         />
-        <Text>
-          <Text style={{ fontWeight: "bold" }}>Name:</Text>{" "}
-          {selectedMarker.name}
+        <View>
+          <Text>{vibeDetails?.author["userName"]}</Text>
+          <Text>{vibeDetails?.venue.name}</Text>
+        </View>
+      </View>
+      <View style={styleContent.dateContainer}>
+        <Text style={{ color: "#005DF2" }}>
+          {formatDate(vibeDetails?.expiresAt)}
         </Text>
       </View>
       <View>
         <Text>
-          <Text style={{ fontWeight: "bold" }}>Type:</Text>{" "}
-          {selectedMarker.type}
+          {formatTagsInText(
+            isShortDescription
+              ? vibeDetails?.message.slice(0, 100) + "..."
+              : vibeDetails?.message
+          )}
         </Text>
-        <Text>
-          <Text style={{ fontWeight: "bold" }}>Place Name:</Text>{" "}
-          {selectedMarker.placeName}
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: "bold" }}>Address:</Text>{" "}
-          {selectedMarker.address}
-        </Text>
-      </View>
-      <View>
-        <Text>{selectedMarker.description}</Text>
       </View>
       <View style={styleContent.bottomContainer}>
         <View style={styleContent.bottomLeftContainer}>
           <View style={styleContent.actionContainer}>
             <LikeIcon />
-            <Text>123</Text>
+            <Text>{vibeDetails?.likes}</Text>
           </View>
           <View
             style={{ ...styleContent.actionContainer, ...styleContent.space }}
           >
             <ShareIcon />
-            <Text>123</Text>
+            <Text>{vibeDetails?.shares}</Text>
           </View>
         </View>
         <MoreIcon />
       </View>
     </View>
+    // <></>
   );
 };
 
@@ -154,6 +183,7 @@ const styleContent = StyleSheet.create({
   sheetContainer: {
     padding: 10,
     display: "flex",
+    flex: 1,
     flexDirection: "column",
     gap: 10,
   },
@@ -187,8 +217,16 @@ const styleContent = StyleSheet.create({
   },
   actionContainer: {
     display: "flex",
+    alignItems: "center",
   },
   space: {
     marginLeft: 56,
+  },
+  dateContainer: {
+    backgroundColor: "#0559E326",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    alignSelf: "flex-start",
   },
 });

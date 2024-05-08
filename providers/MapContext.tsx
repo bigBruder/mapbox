@@ -2,8 +2,23 @@ import { createContext, useEffect, useState } from "react";
 import { IPoints } from "../types/Points";
 import { getPoints, searchHeats, searchPosts } from "../api/client";
 import useLocation from "../hooks/useLocation";
+import { Response, VibesItem } from "../types/searchResponse";
 
-const initialValue = {
+type initialValueType = {
+  pins: VibesItem[];
+  pointsOfInterest: IPoints[];
+  setPointsOfInterest: (points: IPoints[] | null) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+  selectedMarker: IPoints | null;
+  setSelectedMarker: (marker: IPoints | null) => void;
+  showModal: boolean;
+  setShowModal: (showModal: boolean) => void;
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
+};
+
+const initialValue: initialValueType = {
   pins: [],
   pointsOfInterest: [],
   setPointsOfInterest: (points: IPoints[] | null) => {},
@@ -34,7 +49,7 @@ export const MapContextProvider = ({
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
-  const [pins, setPins] = useState([]);
+  const [pins, setPins] = useState<VibesItem[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -54,11 +69,11 @@ export const MapContextProvider = ({
     if (myLocation === null) return;
     try {
       (async () => {
-        const response = await searchPosts({
+        const response: Response = await searchPosts({
           latitude: myLocation[0],
           longitude: myLocation[1],
         });
-        setPins(response.value.vibes.map((vibe) => vibe.venue.geo));
+        setPins(response.value.vibes);
       })();
     } catch (error) {
       console.error("Error fetching pins by search:", error);

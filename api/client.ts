@@ -1,6 +1,7 @@
 import axios from "axios";
 import { parseCSV } from "../utils/parseCsv";
 import * as SecureStore from "expo-secure-store";
+import { PostDetailsResponse } from "../types/postDetailsResponse";
 
 const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
@@ -42,11 +43,6 @@ export const getAccessToken = async () => {
 };
 
 export const searchPosts = async (props) => {
-  // const params = new URLSearchParams();
-  // // params.append("before", "2024-04-30Z");
-  // // params.append("after", "2024-04-17Z");
-  // params.append("location.latitude", props.latitude);
-  // params.append("location.longitude", props.longitude);
   try {
     const access_token = await SecureStore.getItemAsync(
       "mapbox_secure_access_token"
@@ -54,14 +50,6 @@ export const searchPosts = async (props) => {
     if (!access_token) throw new Error("Access token not found");
 
     const url = "https://app-vibeapi-dev.azurewebsites.net/vibes/search";
-    // const params = {
-    //   before: "2024-04-30Z",
-    //   after: "2024-04-17Z",
-    //   "location.latitude": 40.0471767,
-    //   "location.longitude": -75.0303379,
-    //   radius: 3000,
-    // };
-    // const params = params;
 
     const headers = {
       Authorization: `Bearer ${access_token}`,
@@ -69,6 +57,29 @@ export const searchPosts = async (props) => {
 
     const { data } = await axios.get(breakpoints.POST_SEARCH, {
       props,
+      headers,
+    });
+    return data;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return null; // Return null or throw error as per your requirement
+  }
+};
+
+export const getVibeDetails = async (id) => {
+  try {
+    const access_token = await SecureStore.getItemAsync(
+      "mapbox_secure_access_token"
+    );
+    if (!access_token) throw new Error("Access token not found");
+
+    const url = `https://app-vibeapi-dev.azurewebsites.net/vibes/${id}`;
+
+    const headers = {
+      Authorization: `Bearer ${access_token}`,
+    };
+
+    const { data } = await axios.get(url, {
       headers,
     });
     return data;

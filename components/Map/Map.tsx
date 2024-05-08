@@ -29,6 +29,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
 import useLocation from "../../hooks/useLocation";
 import MapContext from "../../providers/MapContext";
+import { getIconUrl } from "../../utils/getIconUrl";
 const { StatusBarManager } = NativeModules;
 
 export const Map = () => {
@@ -212,15 +213,29 @@ export const Map = () => {
               ))}
               {pins &&
                 pins.map((pin, index) => (
-                  <Mapbox.PointAnnotation
+                  <Mapbox.MarkerView
                     key={pin.longitude + pin.latitude + index.toString()}
                     id={index.toString()}
-                    coordinate={[pin.longitude, pin.latitude]}
+                    coordinate={[
+                      pin.venue.geo.longitude,
+                      pin.venue.geo.latitude,
+                    ]}
                   >
-                    <View>
-                      <Text style={styles.annotationText}>📌</Text>
-                    </View>
-                  </Mapbox.PointAnnotation>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setSelectedMarker(pin);
+                      }}
+                    >
+                      <Image
+                        source={{
+                          uri: getIconUrl(pin.icon.split(":")[1]),
+                        }}
+                        style={{ width: 30, height: 30 }}
+                      />
+                      {/* <Text>{pin.image}</Text> */}
+                      {/* <Text style={styles.annotationText}>📌</Text> */}
+                    </TouchableOpacity>
+                  </Mapbox.MarkerView>
                 ))}
 
               {myLocation && (
