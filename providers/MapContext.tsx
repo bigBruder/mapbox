@@ -1,11 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { IPoints } from "../types/Points";
-import {
-  getPinsForBound,
-  getPoints,
-  searchHeats,
-  searchPosts,
-} from "../api/client";
+import { getPinsForBound } from "../api/client";
 import useLocation from "../hooks/useLocation";
 import { Response, VibesItem } from "../types/searchResponse";
 
@@ -24,6 +19,9 @@ type initialValueType = {
   pinsForBound: VibesItem[];
   selectedTags: string[];
   setSelectedTags: (tags: string[]) => void;
+  tags: string[];
+  setTags: (tags: string[]) => void;
+  cameraBound: 
 };
 
 const initialValue: initialValueType = {
@@ -51,10 +49,9 @@ export const MapContextProvider = ({
   children: React.ReactNode;
 }) => {
   const myLocation = useLocation();
-  // const [pointsOfInterest, setPointsOfInterest] = useState<IPoints[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [selectedMarker, setSelectedMarker] = useState<IPoints | null>(null);
+  const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
@@ -155,8 +152,6 @@ export const MapContextProvider = ({
     heatMap,
     tags,
     pins,
-    // pointsOfInterest: pointsOfInterest,
-    // setPointsOfInterest,
     loading,
     setLoading,
     selectedMarker,
