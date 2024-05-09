@@ -359,6 +359,7 @@ export const Map = () => {
                         .map((tag, id) => (
                           <TouchableOpacity
                             onPress={() => handleSelectTag(tag)}
+                            key={tag}
                           >
                             <Tag key={id} tag={tag} />
                           </TouchableOpacity>

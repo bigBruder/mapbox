@@ -21,7 +21,6 @@ type initialValueType = {
   setSelectedTags: (tags: string[]) => void;
   tags: string[];
   setTags: (tags: string[]) => void;
-  cameraBound: 
 };
 
 const initialValue: initialValueType = {

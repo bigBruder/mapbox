@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 interface TagProps {
   tag: string;
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 export const Tag: FC<TagProps> = ({ tag, isActive = false }) => {
