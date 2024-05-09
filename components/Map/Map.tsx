@@ -163,7 +163,7 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
-              regionDidChangeDebounceTime={3000}
+              regionDidChangeDebounceTime={2000}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
@@ -221,6 +221,7 @@ export const Map = () => {
                           setSelectedMarker(pin);
                         }
                       }}
+                      style={styles.annotationContainer}
                     >
                       {pin.id === selectedMarker?.id ? (
                         <ImageBackground
