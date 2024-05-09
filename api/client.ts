@@ -111,6 +111,31 @@ export const getVibeDetails = async (id) => {
     return data;
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return null; // Return null or throw error as per your requirement
+    return null;
+  }
+};
+
+export const getPinsForBound = async (queryParams) => {
+  try {
+    const access_token = await SecureStore.getItemAsync(
+      "mapbox_secure_access_token"
+    );
+    if (!access_token) throw new Error("Access token not found");
+
+    const url = "https://app-vibeapi-dev.azurewebsites.net/vibes/search";
+
+    const headers = {
+      Authorization: `Bearer ${access_token}`,
+    };
+
+    const { data } = await axios.get(url, {
+      params: queryParams,
+      headers: headers,
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return null;
   }
 };

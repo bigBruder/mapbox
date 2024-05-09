@@ -38,6 +38,7 @@ export const Map = () => {
   const myLocation = useLocation();
 
   const {
+    pinsForBound,
     pointsOfInterest,
     selectedMarker,
     setSelectedMarker,
@@ -45,6 +46,8 @@ export const Map = () => {
     pins,
     tags,
     heatMap,
+    cameraBound,
+    setCameraBound,
   } = useContext(MapContext);
 
   const [showModal, setShowModal] = useState(false);
@@ -55,12 +58,13 @@ export const Map = () => {
     setSelectedDate(date);
   };
 
-  useEffect(() => {
-    // @ts-ignore
-    if (!map.current?.flyTo) return;
-    // @ts-ignore
-    map.current.flyTo({ center: myLocation });
-  }, [myLocation]);
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   if (!map.current?.flyTo) return;
+  //   // @ts-ignore
+  //   console.log("myLocation", map.current);
+  //   map.current.flyTo({ center: myLocation });
+  // }, [myLocation]);
 
   if (loading) {
     return (
@@ -74,6 +78,21 @@ export const Map = () => {
       </View>
     );
   }
+
+  // useEffect(() => {
+  //   if (map?.current) {
+  //     console.log(
+  //       "map.current ====> ",
+  //       map?.current,
+  //       "    "
+  //       // map.current._turboModule.getVisibleBounds(
+  //       //   map?.current?._nativeRef.current
+  //       // )
+  //     );
+  //   }
+  // }, [map]);
+
+  // console.log("map.current ====> ", map.current);
 
   // console.log("map PINS +++>", pins);
 
@@ -151,7 +170,7 @@ export const Map = () => {
     },
   ];
 
-  console.log("heatmapData", transformDataToHeatmap(heatMap));
+  // console.log("heatmapData", transformDataToHeatmap(heatMap));
 
   return (
     <View style={styles.page}>
@@ -164,6 +183,13 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
+              regionDidChangeDebounceTime={5000}
+              // onRegionDidChange={(e) => {
+              //   console.log("e", e);
+              // }}
+              onMapIdle={(e) => {
+                setCameraBound(e);
+              }}
             >
               {/* <Mapbox.HeatmapLayer
                 id="my-heatmap-layer"
@@ -180,7 +206,7 @@ export const Map = () => {
                   heatmapOpacity: 0.3,
                 }}
               /> */}
-              {transformDataToHeatmap(heatMap).map((data, index) => (
+              {/* {transformDataToHeatmap(heatMap).map((data, index) => (
                 <Mapbox.HeatmapLayer
                   key={data.features.toString() + index.toString()}
                   id={`my-heatmap-source-${index}`}
@@ -205,9 +231,9 @@ export const Map = () => {
                   shape={data}
                   key={data.toString() + index}
                 />
-              ))}
-              {pins &&
-                pins.map((pin, index) => (
+              ))} */}
+              {pinsForBound &&
+                pinsForBound.map((pin, index) => (
                   <Mapbox.MarkerView
                     key={pin.longitude + pin.latitude + index.toString()}
                     id={index.toString()}
