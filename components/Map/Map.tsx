@@ -32,6 +32,7 @@ import MapContext from "../../providers/MapContext";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
+import { heatmapColor } from "../../constants/heatmapColor";
 
 export const Map = () => {
   const myLocation = useLocation();
@@ -190,33 +191,7 @@ export const Map = () => {
                       heatmapIntensity:
                         data?.features[0]?.properties?.intensity / 1000 || 0,
                       heatmapOpacity: 1,
-                      heatmapColor: [
-                        "interpolate",
-                        ["linear"],
-                        ["heatmap-density"],
-                        0,
-                        "rgba(0, 255, 0, 0)", // No heatmap intensity: transparent
-                        0.1,
-                        "rgba(0, 255, 0, 0.3)", // Green with some opacity
-                        0.2,
-                        "rgba(64, 255, 0, 0.4)", // Green with some opacity
-                        0.3,
-                        "rgba(128, 255, 0, 0.4)", // Green with some opacity
-                        0.4,
-                        "rgba(191, 255, 0, 0.4)", // Green with some opacity
-                        0.5,
-                        "rgba(255, 255, 0, 0.5)", // Yellow with some opacity
-                        0.6,
-                        "rgba(255, 191, 0, 0.6)", // Yellow with some opacity
-                        0.7,
-                        "rgba(255, 128, 0, 0.7)", // Orange with some opacity
-                        0.8,
-                        "rgba(255, 64, 0, 0.8)", // Red-Orange with some opacity
-                        0.9,
-                        "rgba(255, 0, 0, 0.9)", // Red with some opacity
-                        1,
-                        "rgba(255, 0, 0, 0.95)", // High intensity: Red with more opacity
-                      ],
+                      heatmapColor: heatmapColor,
                     }}
                   />
                 );
