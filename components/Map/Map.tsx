@@ -60,14 +60,6 @@ export const Map = () => {
     setSelectedDate(date);
   };
 
-  // useEffect(() => {
-  //   // @ts-ignore
-  //   if (!map.current?.flyTo) return;
-  //   // @ts-ignore
-  //   console.log("myLocation", map.current);
-  //   map.current.flyTo({ center: myLocation });
-  // }, [myLocation]);
-
   if (loading) {
     return (
       <View style={styles.page}>
@@ -80,23 +72,6 @@ export const Map = () => {
       </View>
     );
   }
-
-  // useEffect(() => {
-  //   if (map?.current) {
-  //     console.log(
-  //       "map.current ====> ",
-  //       map?.current,
-  //       "    "
-  //       // map.current._turboModule.getVisibleBounds(
-  //       //   map?.current?._nativeRef.current
-  //       // )
-  //     );
-  //   }
-  // }, [map]);
-
-  // console.log("map.current ====> ", map.current);
-
-  // console.log("map PINS +++>", pins);
 
   const heatmapData = [
     {
@@ -218,7 +193,7 @@ export const Map = () => {
                   heatmapOpacity: 0.3,
                 }}
               /> */}
-              {/* {transformDataToHeatmap(heatMap).map((data, index) => (
+              {transformDataToHeatmap(heatMap).map((data, index) => (
                 <Mapbox.HeatmapLayer
                   key={data.features.toString() + index.toString()}
                   id={`my-heatmap-source-${index}`}
@@ -243,7 +218,7 @@ export const Map = () => {
                   shape={data}
                   key={data.toString() + index}
                 />
-              ))} */}
+              ))}
               {pinsForBound &&
                 pinsForBound.map((pin, index) => (
                   <Mapbox.MarkerView

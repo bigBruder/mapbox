@@ -130,13 +130,14 @@ export const MapContextProvider = ({
         PageSize: 20,
         IncludeTotalCount: true,
         "TopTags.Enable": true,
-        Heatmap_Enable: true,
+        "Heatmap.Enable": true,
         Heatmap_Resolution: 7,
       };
       const pinsForBound = await getPinsForBound(queryParams);
       console.log(pinsForBound, "pinsForBound");
       setPinsForBound(pinsForBound.value.vibes);
       setTags(Object.keys(pinsForBound.value.tags));
+      setHeatMap(pinsForBound.value.heatmap);
     })();
   }, [cameraBound?.properties.bounds.ne, cameraBound?.properties.bounds.sw]);
 
