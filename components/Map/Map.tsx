@@ -12,7 +12,7 @@ import {
   Image,
   ImageBackground,
 } from "react-native";
-import Mapbox, { BackgroundLayer } from "@rnmapbox/maps";
+import Mapbox, { BackgroundLayer, HeatmapLayerStyle } from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -32,6 +32,7 @@ import useLocation from "../../hooks/useLocation";
 import MapContext from "../../providers/MapContext";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
+import { ColorProperties } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 const { StatusBarManager } = NativeModules;
 
 export const Map = () => {
@@ -148,6 +149,7 @@ export const Map = () => {
   ];
 
   // console.log("heatmapData", transformDataToHeatmap(heatMap));
+  console.log("currentzoom", cameraBound.properties.zoom);
 
   const handleSelectTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -170,10 +172,7 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
-              regionDidChangeDebounceTime={5000}
-              // onRegionDidChange={(e) => {
-              //   console.log("e", e);
-              // }}
+              regionDidChangeDebounceTime={3000}
               onMapIdle={(e) => {
                 setCameraBound(e);
               }}
@@ -193,25 +192,60 @@ export const Map = () => {
                   heatmapOpacity: 0.3,
                 }}
               /> */}
-              {transformDataToHeatmap(heatMap).map((data, index) => (
-                <Mapbox.HeatmapLayer
-                  key={data.features.toString() + index.toString()}
-                  id={`my-heatmap-source-${index}`}
-                  sourceID={`my-heatmap-source-${index}`}
-                  aboveLayerID="waterway-label"
-                  sourceLayerID=""
-                  layerIndex={5}
-                  filter={[]}
-                  minZoomLevel={0}
-                  maxZoomLevel={20}
-                  style={{
-                    heatmapRadius: 30,
-                    heatmapWeight: 1,
-                    heatmapIntensity: 11,
-                    heatmapOpacity: 0.5,
-                  }}
-                />
-              ))}
+              {transformDataToHeatmap(heatMap).map((data, index) => {
+                console.log(
+                  "intensity",
+                  data?.features[0]?.properties?.intensity / 100
+                );
+                return (
+                  <Mapbox.HeatmapLayer
+                    key={data.features.toString() + index.toString()}
+                    id={`my-heatmap-source-${index}`}
+                    sourceID={`my-heatmap-source-${index}`}
+                    aboveLayerID="waterway-label"
+                    sourceLayerID=""
+                    layerIndex={5}
+                    filter={[]}
+                    minZoomLevel={0.5}
+                    maxZoomLevel={8}
+                    style={{
+                      heatmapRadius:
+                        data?.features[0]?.properties?.intensity / 25 || 30,
+                      heatmapWeight: 1,
+                      heatmapIntensity:
+                        data?.features[0]?.properties?.intensity / 1000 || 0,
+                      heatmapOpacity: 1,
+                      heatmapColor: [
+                        "interpolate",
+                        ["linear"],
+                        ["heatmap-density"],
+                        0,
+                        "rgba(0, 255, 0, 0)", // No heatmap intensity: transparent
+                        0.1,
+                        "rgba(0, 255, 0, 0.3)", // Green with some opacity
+                        0.2,
+                        "rgba(64, 255, 0, 0.4)", // Green with some opacity
+                        0.3,
+                        "rgba(128, 255, 0, 0.4)", // Green with some opacity
+                        0.4,
+                        "rgba(191, 255, 0, 0.4)", // Green with some opacity
+                        0.5,
+                        "rgba(255, 255, 0, 0.5)", // Yellow with some opacity
+                        0.6,
+                        "rgba(255, 191, 0, 0.6)", // Yellow with some opacity
+                        0.7,
+                        "rgba(255, 128, 0, 0.7)", // Orange with some opacity
+                        0.8,
+                        "rgba(255, 64, 0, 0.8)", // Red-Orange with some opacity
+                        0.9,
+                        "rgba(255, 0, 0, 0.9)", // Red with some opacity
+                        1,
+                        "rgba(255, 0, 0, 0.95)", // High intensity: Red with more opacity
+                      ],
+                    }}
+                  />
+                );
+              })}
               {transformDataToHeatmap(heatMap).map((data, index) => (
                 <Mapbox.ShapeSource
                   id={`my-heatmap-source-${index}`}
