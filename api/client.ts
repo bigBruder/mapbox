@@ -42,7 +42,32 @@ export const getAccessToken = async () => {
   }
 };
 
-export const searchPosts = async (props) => {
+// export const searchPosts = async (props) => {
+//   try {
+//     const access_token = await SecureStore.getItemAsync(
+//       "mapbox_secure_access_token"
+//     );
+//     if (!access_token) throw new Error("Access token not found");
+
+//     const url = "https://app-vibeapi-dev.azurewebsites.net/vibes/search";
+
+//     const headers = {
+//       Authorization: `Bearer ${access_token}`,
+//     };
+
+//     // console.log("props", props);
+
+//     const { data } = await axios.get(breakpoints.POST_SEARCH, {
+//       params: props,
+//       headers,
+//     });
+//     return data;
+//   } catch (error) {
+//     console.error("Error fetching posts:", error);
+//     return null; // Return null or throw error as per your requirement
+//   }
+// };
+export const searchPosts = async (queryParams) => {
   try {
     const access_token = await SecureStore.getItemAsync(
       "mapbox_secure_access_token"
@@ -55,10 +80,11 @@ export const searchPosts = async (props) => {
       Authorization: `Bearer ${access_token}`,
     };
 
-    const { data } = await axios.get(breakpoints.POST_SEARCH, {
-      props,
-      headers,
+    const { data } = await axios.get(url, {
+      params: queryParams,
+      headers: headers,
     });
+
     return data;
   } catch (error) {
     console.error("Error fetching posts:", error);

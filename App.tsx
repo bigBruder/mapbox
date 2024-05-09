@@ -15,8 +15,7 @@ export default function App() {
       const access_token = await SecureStore.getItemAsync(
         "mapbox_secure_access_token"
       );
-      // console.log("access => ", access_token);
-      if (access_token) return;
+      // if (access_token) return;
       getDeviceUniqueId().then(async () => {
         getAccessToken();
       });

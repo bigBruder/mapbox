@@ -50,6 +50,7 @@ export const MapContextProvider = ({
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
   const [tags, setTags] = useState<string[]>([]);
+  const [heatMap, setHeatMap] = useState([]);
 
   const [pins, setPins] = useState<VibesItem[]>([]);
 
@@ -71,13 +72,30 @@ export const MapContextProvider = ({
     if (myLocation === null) return;
     try {
       (async () => {
-        const response: Response = await searchPosts({
-          latitude: myLocation[0],
-          longitude: myLocation[1],
-          "TopTags.Enable": "true",
+        // const response: Response = await searchPosts({
+        //   latitude: myLocation[0],
+        //   longitude: myLocation[1],
+        //   // "TopTags.Enable": "true",
+        //   // radius: 1000,
+        //   // "heatmap.enable": "true",
+        //   // orderBy: "Points",
+        //   before: "2024-04-30Z",
+        //   after: "2024-04-17Z",
+        // });
+        const response = await searchPosts({
+          // before: "2024-04-30Z",
+          // after: "2024-04-17Z",
+          "location.latitude": myLocation[1] || 40.0471767,
+          "location.longitude": myLocation[0] || -75.0303379,
+          radius: 3000,
+          "heatmap.enable": true,
+          "topTags.enable": true,
+          pageSize: 20,
+          orderBy: "Points",
         });
-        setTags(response.value["tags"]);
-        // console.log("response.value.tags", response.value.tags);
+        setHeatMap(response.value.heatmap);
+        setTags(Object.keys(response.value.tags));
+
         setPins(response.value.vibes);
       })();
     } catch (error) {
@@ -85,7 +103,10 @@ export const MapContextProvider = ({
     }
   }, [myLocation]);
 
+  console.log("HEATMAP ++++++>", heatMap);
+
   const value = {
+    heatMap,
     tags,
     pins,
     pointsOfInterest: pointsOfInterest,

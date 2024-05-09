@@ -31,6 +31,7 @@ import { Tag } from "../tag/Tag";
 import useLocation from "../../hooks/useLocation";
 import MapContext from "../../providers/MapContext";
 import { getIconUrl } from "../../utils/getIconUrl";
+import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 const { StatusBarManager } = NativeModules;
 
 export const Map = () => {
@@ -43,6 +44,7 @@ export const Map = () => {
     loading,
     pins,
     tags,
+    heatMap,
   } = useContext(MapContext);
 
   const [showModal, setShowModal] = useState(false);
@@ -62,14 +64,14 @@ export const Map = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.page}>
+      <View style={styles.page}>
         <Image
           source={require("../../assets/loading_screen_map.png")}
           style={styles.absoluteFillObject}
           resizeMode="cover"
         />
         <StatusBar translucent backgroundColor="transparent" style="light" />
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -149,28 +151,11 @@ export const Map = () => {
     },
   ];
 
-  console.log("tags ==== > ", tags);
+  console.log("heatmapData", transformDataToHeatmap(heatMap));
 
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
-        {/* It need to avoid bug of mapbox related with displaying of images */}
-        {/* {pointsOfInterest &&
-          pointsOfInterest.map((point, id) => (
-            <ImageBackground
-              source={{ uri: point["iconUrl"] }}
-              style={{ width: 50, height: 50, display: "none" }}
-              key={id}
-            >
-              <View
-                style={{
-                  width: 50,
-                  height: 50,
-                }}
-              ></View>
-            </ImageBackground>
-          ))} */}
-
         <View style={styles.container}>
           <View style={styles.container}>
             <Mapbox.MapView
@@ -195,28 +180,28 @@ export const Map = () => {
                   heatmapOpacity: 0.3,
                 }}
               /> */}
-              {heatmapData.map((data, index) => (
+              {transformDataToHeatmap(heatMap).map((data, index) => (
                 <Mapbox.HeatmapLayer
-                  key={index + "heatmap-layer"}
-                  // id={`heatmap-layer-${index}`}
-                  id="my-heatmap-source"
-                  sourceID="my-heatmap-source"
+                  key={data.features.toString() + index.toString()}
+                  id={`my-heatmap-source-${index}`}
+                  sourceID={`my-heatmap-source-${index}`}
+                  aboveLayerID="waterway-label"
                   sourceLayerID=""
-                  layerIndex={0}
+                  layerIndex={5}
                   filter={[]}
                   minZoomLevel={0}
-                  maxZoomLevel={24}
+                  maxZoomLevel={20}
                   style={{
-                    heatmapRadius: data.features[0].properties.intensity * 5,
+                    heatmapRadius: 30,
                     heatmapWeight: 1,
-                    // heatmapIntensity: data.features[0].properties.intensity,
+                    heatmapIntensity: 11,
                     heatmapOpacity: 0.5,
                   }}
                 />
               ))}
-              {heatmapData.map((data, index) => (
+              {transformDataToHeatmap(heatMap).map((data, index) => (
                 <Mapbox.ShapeSource
-                  id="my-heatmap-source"
+                  id={`my-heatmap-source-${index}`}
                   shape={data}
                   key={data.toString() + index}
                 />
@@ -267,8 +252,6 @@ export const Map = () => {
                           style={{ width: 30, height: 30 }}
                         />
                       )}
-                      {/* <Text>{pin.image}</Text> */}
-                      {/* <Text style={styles.annotationText}>📌</Text> */}
                     </TouchableOpacity>
                   </Mapbox.MarkerView>
                 ))}
@@ -285,10 +268,6 @@ export const Map = () => {
                   <Mapbox.Callout title="This is a point annotation" />
                 </Mapbox.PointAnnotation>
               )}
-              {/* {mockMarkers.map((marker) => (
-                <Marker key={marker.id} marker={marker} />
-              ))} */}
-
               {
                 <Mapbox.Camera
                   maxZoomLevel={30}
@@ -298,49 +277,6 @@ export const Map = () => {
                   centerCoordinate={myLocation || undefined}
                 />
               }
-              {/* {pointsOfInterest &&
-                pointsOfInterest.map((point, id) => (
-                  <Mapbox.PointAnnotation
-                    key={(
-                      point["longitude"] +
-                      point["latitude"] +
-                      id
-                    ).toString()}
-                    id={(
-                      point["longitude"] +
-                      point["latitude"] +
-                      id
-                    ).toString()}
-                    coordinate={[point["longitude"], point["latitude"]]}
-                    onSelected={() => {
-                      if (selectedMarker === point) {
-                        setSelectedMarker(null);
-                      } else {
-                        setSelectedMarker(point);
-                      }
-                    }}
-                  >
-
-                    <View style={styles.annotationContainer}>
-                      <Text
-                        style={{
-                          lineHeight: 25,
-                          textAlignVertical: "top",
-                          fontSize: 30,
-                          height: 30,
-                        }}
-                      >
-                        <Image
-                          source={{ uri: point["iconUrl"] }}
-                          style={{ width: 30, height: 30 }}
-                          resizeMode="cover"
-                        />
-                      </Text>
-                    </View>
-
-                    <Mapbox.Callout title={point["name"]} />
-                  </Mapbox.PointAnnotation>
-                ))} */}
             </Mapbox.MapView>
             <View style={styles.topContainer}>
               <View style={styles.upperContainer}>
@@ -373,7 +309,7 @@ export const Map = () => {
                     <Text>{selectedDate}</Text>
                   </TouchableOpacity>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {/* {tags && tags.map((tag, id) => <Tag key={id} tag={tag} />)} */}
+                    {tags && tags.map((tag, id) => <Tag key={id} tag={tag} />)}
                     {/* {mockTags &&
                       mockTags.map((tag, id) => <Tag key={id} tag={tag} />)} */}
                   </ScrollView>
