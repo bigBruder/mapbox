@@ -22,6 +22,8 @@ type initialValueType = {
   selectedDate: string;
   setSelectedDate: (date: string) => void;
   pinsForBound: VibesItem[];
+  selectedTags: string[];
+  setSelectedTags: (tags: string[]) => void;
 };
 
 const initialValue: initialValueType = {
@@ -37,6 +39,8 @@ const initialValue: initialValueType = {
   selectedDate: "Next Month",
   setSelectedDate: (date: string) => {},
   pinsForBound: [],
+  selectedTags: [],
+  setSelectedTags: (tags: string[]) => {},
 };
 
 const MyContext = createContext(initialValue);
@@ -56,6 +60,7 @@ export const MapContextProvider = ({
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
   const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [heatMap, setHeatMap] = useState([]);
 
   const [pins, setPins] = useState<VibesItem[]>([]);
@@ -128,18 +133,22 @@ export const MapContextProvider = ({
         OrderBy: "Points",
         PageSize: 20,
         IncludeTotalCount: true,
-        TopTags_Enable: true,
+        "TopTags.Enable": true,
         Heatmap_Enable: true,
         Heatmap_Resolution: 7,
       };
       const pinsForBound = await getPinsForBound(queryParams);
+      console.log(pinsForBound, "pinsForBound");
       setPinsForBound(pinsForBound.value.vibes);
+      setTags(Object.keys(pinsForBound.value.tags));
     })();
   }, [cameraBound?.properties.bounds.ne, cameraBound?.properties.bounds.sw]);
 
   // console.log(pinsForBound[0]?.venue.name, "pinsForBound");
 
   const value = {
+    selectedTags,
+    setSelectedTags,
     pinsForBound,
     cameraBound,
     setCameraBound,

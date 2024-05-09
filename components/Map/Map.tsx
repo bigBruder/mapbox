@@ -48,6 +48,8 @@ export const Map = () => {
     heatMap,
     cameraBound,
     setCameraBound,
+    selectedTags,
+    setSelectedTags,
   } = useContext(MapContext);
 
   const [showModal, setShowModal] = useState(false);
@@ -171,6 +173,16 @@ export const Map = () => {
   ];
 
   // console.log("heatmapData", transformDataToHeatmap(heatMap));
+
+  const handleSelectTag = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(
+        selectedTags.filter((selectedTag) => selectedTag !== tag)
+      );
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
 
   return (
     <View style={styles.page}>
@@ -335,9 +347,22 @@ export const Map = () => {
                     <Text>{selectedDate}</Text>
                   </TouchableOpacity>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {tags && tags.map((tag, id) => <Tag key={id} tag={tag} />)}
-                    {/* {mockTags &&
-                      mockTags.map((tag, id) => <Tag key={id} tag={tag} />)} */}
+                    {selectedTags &&
+                      selectedTags.map((tag, id) => (
+                        <TouchableOpacity onPress={() => handleSelectTag(tag)}>
+                          <Tag key={id} tag={tag} isActive={true} />
+                        </TouchableOpacity>
+                      ))}
+                    {tags &&
+                      tags
+                        .filter((tag) => !selectedTags.includes(tag))
+                        .map((tag, id) => (
+                          <TouchableOpacity
+                            onPress={() => handleSelectTag(tag)}
+                          >
+                            <Tag key={id} tag={tag} />
+                          </TouchableOpacity>
+                        ))}
                   </ScrollView>
                 </>
               </View>
@@ -471,36 +496,6 @@ const styles = StyleSheet.create({
   search: {
     flex: 1,
     height: 40,
-  },
-  addMarkerContainer: {
-    position: "absolute",
-    bottom: "40%",
-    width: "60%",
-    backgroundColor: "white",
-    padding: 24,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "column",
-    gap: 10,
-  },
-  window: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  addInput: {
-    width: "100%",
-    height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderRadius: 40,
-    padding: 10,
-    borderWidth: 1,
   },
   tagsContainer: {
     display: "flex",
