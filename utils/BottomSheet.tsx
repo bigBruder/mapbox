@@ -6,17 +6,16 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { IPoints } from "../types/Points";
 import LikeIcon from "../assets/icons/like";
 import { ShareIcon } from "../assets/icons";
 import MoreIcon from "../assets/icons/more";
-import { Value, VibesItem } from "../types/searchResponse";
+import { VibesItem } from "../types/searchResponse";
 import { getIconUrl } from "./getIconUrl";
 import { getVibeDetails } from "../api/client";
 import {
   PorstDetailsValue,
   PostDetailsResponse,
-} from "../types/postDetailsResponse";
+} from "../types/PostDetailsResponse";
 import { formatDate } from "./formatDate";
 import { formatTagsInText } from "./formatTagsInText";
 
@@ -58,7 +57,7 @@ export default function Bottomsheet({
   /**
    * Animated style for the bottom sheet
    */
-  const reanimatedBottomStyle = useAnimatedStyle((e) => {
+  const reanimatedBottomStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: translateY.value }],
     };
@@ -68,7 +67,7 @@ export default function Bottomsheet({
    * Scrolls to a specific destination
    * @param {number} destination - The destination to scroll to
    */
-  const scrollTo = (destination) => {
+  const scrollTo = (destination: number) => {
     "worklet";
     translateY.value = withSpring(destination, { damping: 50 });
   };
@@ -146,18 +145,23 @@ const ModalDataMarker: FC<sIPoints> = ({ selectedMarker }) => {
         </View>
       </View>
       <View style={styleContent.dateContainer}>
-        <Text style={{ color: "#005DF2" }}>
-          {formatDate(vibeDetails?.expiresAt)}
-        </Text>
+        {vibeDetails?.expiresAt && (
+          <Text style={{ color: "#005DF2" }}>
+            {formatDate(vibeDetails?.expiresAt)}
+          </Text>
+        )}
       </View>
       <View>
-        <Text>
-          {formatTagsInText(
+        {vibeDetails?.message && (
+          <Text>
+            {/* {formatTagsInText(
             isShortDescription
               ? vibeDetails?.message.slice(0, 100) + "..."
               : vibeDetails?.message
-          )}
-        </Text>
+          )} */}
+            {vibeDetails.message}
+          </Text>
+        )}
       </View>
       <View style={styleContent.bottomContainer}>
         <View style={styleContent.bottomLeftContainer}>

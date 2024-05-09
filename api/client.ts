@@ -1,7 +1,7 @@
 import axios from "axios";
 import { parseCSV } from "../utils/parseCsv";
 import * as SecureStore from "expo-secure-store";
-import { PostDetailsResponse } from "../types/postDetailsResponse";
+import { PostDetailsResponse } from "../types/PostDetailsResponse";
 
 const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";

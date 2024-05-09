@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  NativeModules,
-  SafeAreaView,
   Image,
   ImageBackground,
 } from "react-native";
-import Mapbox, { BackgroundLayer, HeatmapLayerStyle } from "@rnmapbox/maps";
+import Mapbox, { Camera } from "@rnmapbox/maps";
+
+import { styles } from "./styles";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -24,30 +24,25 @@ import {
   ShareIcon,
 } from "../../assets/icons";
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
-import { mockTags } from "../../utils/mockTags";
 import Bottomsheet from "../../utils/BottomSheet";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
 import useLocation from "../../hooks/useLocation";
 import MapContext from "../../providers/MapContext";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
-import { ColorProperties } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
-const { StatusBarManager } = NativeModules;
+import { CameraBound } from "../../types/CameraBound";
 
 export const Map = () => {
   const myLocation = useLocation();
 
   const {
     pinsForBound,
-    pointsOfInterest,
     selectedMarker,
     setSelectedMarker,
     loading,
-    pins,
     tags,
     heatMap,
-    cameraBound,
     setCameraBound,
     selectedTags,
     setSelectedTags,
@@ -73,86 +68,81 @@ export const Map = () => {
       </View>
     );
   }
-
-  const heatmapData = [
-    {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          properties: {
-            intensity: 11,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [-75.0396486, 40.06324964],
-          },
-        },
-        {
-          type: "Feature",
-          properties: {
-            intensity: 6,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [-75.02378225, 40.04546552],
-          },
-        },
-        {
-          type: "Feature",
-          properties: {
-            intensity: 6,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [-75.05326856, 40.04438827],
-          },
-        },
-        {
-          type: "Feature",
-          properties: {
-            intensity: 5,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [-75.02601785, 40.0821139],
-          },
-        },
-        {
-          type: "Feature",
-          properties: {
-            intensity: 3,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [-75.09864227, 40.06107939],
-          },
-        },
-        {
-          type: "Feature",
-          properties: {
-            intensity: 1,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [-75.06914588, 40.06216826],
-          },
-        },
-      ],
-      // styles: {
-      //   heatmapRadius: 100,
-      //   heatmapWeight: 1,
-      //   heatmapIntensity: 11,
-      //   heatmapOpacity: 0.3,
-      // },
-    },
-  ];
-
-  // console.log("heatmapData", transformDataToHeatmap(heatMap));
-  console.log("currentzoom", cameraBound.properties.zoom);
+  //   {
+  //     type: "FeatureCollection",
+  //     features: [
+  //       {
+  //         type: "Feature",
+  //         properties: {
+  //           intensity: 11,
+  //         },
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [-75.0396486, 40.06324964],
+  //         },
+  //       },
+  //       {
+  //         type: "Feature",
+  //         properties: {
+  //           intensity: 6,
+  //         },
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [-75.02378225, 40.04546552],
+  //         },
+  //       },
+  //       {
+  //         type: "Feature",
+  //         properties: {
+  //           intensity: 6,
+  //         },
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [-75.05326856, 40.04438827],
+  //         },
+  //       },
+  //       {
+  //         type: "Feature",
+  //         properties: {
+  //           intensity: 5,
+  //         },
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [-75.02601785, 40.0821139],
+  //         },
+  //       },
+  //       {
+  //         type: "Feature",
+  //         properties: {
+  //           intensity: 3,
+  //         },
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [-75.09864227, 40.06107939],
+  //         },
+  //       },
+  //       {
+  //         type: "Feature",
+  //         properties: {
+  //           intensity: 1,
+  //         },
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [-75.06914588, 40.06216826],
+  //         },
+  //       },
+  //     ],
+  //     // styles: {
+  //     //   heatmapRadius: 100,
+  //     //   heatmapWeight: 1,
+  //     //   heatmapIntensity: 11,
+  //     //   heatmapOpacity: 0.3,
+  //     // },
+  //   },
+  // ];
 
   const handleSelectTag = (tag: string) => {
-    if (selectedTags.includes(tag)) {
+    if (selectedTags?.includes(tag)) {
       setSelectedTags(
         selectedTags.filter((selectedTag) => selectedTag !== tag)
       );
@@ -174,24 +164,9 @@ export const Map = () => {
               styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
               regionDidChangeDebounceTime={3000}
               onMapIdle={(e) => {
-                setCameraBound(e);
+                setCameraBound(e as CameraBound);
               }}
             >
-              {/* <Mapbox.HeatmapLayer
-                id="my-heatmap-layer"
-                sourceID="my-heatmap-source"
-                sourceLayerID=""
-                layerIndex={0}
-                filter={[]}
-                minZoomLevel={0}
-                maxZoomLevel={24}
-                style={{
-                  heatmapRadius: 30,
-                  heatmapWeight: 1,
-                  heatmapIntensity: 11,
-                  heatmapOpacity: 0.3,
-                }}
-              /> */}
               {transformDataToHeatmap(heatMap).map((data, index) => {
                 console.log(
                   "intensity",
@@ -387,7 +362,6 @@ export const Map = () => {
               </TouchableOpacity>
             </View>
           </View>
-          {/* <StatusBar /> */}
         </View>
         {selectedMarker && (
           <Bottomsheet
@@ -396,151 +370,7 @@ export const Map = () => {
           />
         )}
       </GestureHandlerRootView>
-      <StatusBar
-        // translucent
-        backgroundColor={showModal ? "white" : "transparent"}
-        // style="dark"
-      />
+      <StatusBar backgroundColor={showModal ? "white" : "transparent"} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    height: "100%",
-    width: "100%",
-    position: "relative",
-  },
-  map: {
-    flex: 1,
-  },
-  topContainer: {
-    position: "absolute",
-    width: "100%",
-    top: StatusBarManager.HEIGHT + 10,
-    padding: 10,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "column",
-    gap: 10,
-  },
-  upperContainer: {
-    width: "100%",
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 10,
-  },
-  bottomContainer: {
-    position: "absolute",
-    width: "100%",
-    bottom: 40,
-    padding: 24,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 10,
-  },
-  pointText: {
-    fontSize: 18,
-    lineHeight: 22,
-    textAlign: "left",
-    color: "white",
-    fontFamily: "SF Pro Text",
-    flex: 1,
-  },
-  annotationContainer: {
-    width: 50,
-    height: 50,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 10,
-    borderWidth: 0,
-    borderColor: "white",
-    borderStyle: "solid",
-  },
-  annotationText: {
-    fontSize: 24,
-  },
-  searchButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: "white",
-    borderRadius: 40,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  addButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: "#005DF2",
-    borderRadius: 40,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  searchContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    backgroundColor: "white",
-    height: 40,
-    borderColor: "gray",
-    borderRadius: 40,
-    padding: 10,
-    flex: 1,
-  },
-  search: {
-    flex: 1,
-    height: 40,
-  },
-  tagsContainer: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 10,
-  },
-  calendarContainer: {
-    height: 28,
-    backgroundColor: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    gap: 8,
-    borderRadius: 30,
-    paddingHorizontal: 10,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  calendarIcon: {
-    width: 16,
-    height: 16,
-    objectFit: "contain",
-  },
-  modal: {
-    backgroundColor: "red",
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  absoluteFillObject: {
-    width: "100%",
-    height: "100%",
-  },
-});
