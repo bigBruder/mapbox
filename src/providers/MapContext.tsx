@@ -1,6 +1,6 @@
 import { SetStateAction, createContext, useEffect, useState } from "react";
 import { getPinsForBound } from "../api/client";
-import { VibesItem } from "../types/searchResponse";
+import { Heatmap, VibesItem } from "../types/searchResponse";
 import { CameraBound } from "../types/CameraBound";
 import { MapContextType } from "../types/mapContextType";
 import { queryParams } from "../types/queryParams";
@@ -44,7 +44,11 @@ export const MapContextProvider = ({
 
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [heatMap, setHeatMap] = useState([]);
+  const [heatMap, setHeatMap] = useState<Heatmap>({
+    data: {},
+    resolution: 9,
+    cellRadius: 100,
+  });
 
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
 
