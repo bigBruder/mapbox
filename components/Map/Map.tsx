@@ -45,8 +45,8 @@ export const Map = () => {
     tags,
     heatMap,
     setCameraBound,
-    selectedTags,
-    setSelectedTags,
+    selectedTag,
+    setSelectedTag,
   } = useContext(MapContext);
 
   const [showModal, setShowModal] = useState(false);
@@ -140,16 +140,6 @@ export const Map = () => {
   //     // },
   //   },
   // ];
-
-  const handleSelectTag = (tag: string) => {
-    if (selectedTags?.includes(tag)) {
-      setSelectedTags(
-        selectedTags.filter((selectedTag) => selectedTag !== tag)
-      );
-    } else {
-      setSelectedTags([...selectedTags, tag]);
-    }
-  };
 
   return (
     <View style={styles.page}>
@@ -337,18 +327,21 @@ export const Map = () => {
                     <Text>{selectedDate}</Text>
                   </TouchableOpacity>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {selectedTags &&
-                      selectedTags.map((tag, id) => (
-                        <TouchableOpacity onPress={() => handleSelectTag(tag)}>
-                          <Tag key={id} tag={tag} isActive={true} />
-                        </TouchableOpacity>
-                      ))}
+                    {selectedTag && (
+                      <TouchableOpacity onPress={() => setSelectedTag(null)}>
+                        <Tag tag={selectedTag || ""} isActive={true} />
+                      </TouchableOpacity>
+                    )}
                     {tags &&
                       tags
-                        .filter((tag) => !selectedTags.includes(tag))
+                        .filter((tag) => selectedTag !== tag)
                         .map((tag, id) => (
                           <TouchableOpacity
-                            onPress={() => handleSelectTag(tag)}
+                            onPress={() =>
+                              setSelectedTag((prev) =>
+                                prev === tag ? null : tag
+                              )
+                            }
                             key={tag}
                           >
                             <Tag key={id} tag={tag} />

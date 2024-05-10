@@ -16,7 +16,7 @@ type initialValueType = {
   selectedDate: string;
   setSelectedDate: (date: string) => void;
   pinsForBound: VibesItem[];
-  selectedTags: string[];
+  selectedTag: string | null;
   setSelectedTags: (tags: string[]) => void;
   tags: string[];
   setTags: (tags: string[]) => void;
@@ -33,7 +33,7 @@ const initialValue: initialValueType = {
   selectedDate: "Next Month",
   setSelectedDate: (date: string) => {},
   pinsForBound: [],
-  selectedTags: [],
+  selectedTag: null,
   setSelectedTags: (tags: string[]) => {},
   tags: [],
   setTags: (tags: string[]) => {},
@@ -56,7 +56,7 @@ export const MapContextProvider = ({
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
   const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [heatMap, setHeatMap] = useState([]);
 
   // const [pins, setPins] = useState<VibesItem[]>([]);
@@ -83,27 +83,23 @@ export const MapContextProvider = ({
           "Heatmap.Enable": true,
           "Heatmap.Resolution": 9,
         };
+        if (selectedTag) {
+          queryParams["Tags"] = selectedTag;
+        }
 
         const pinsForBound = await getPinsForBound(queryParams);
-        console.log("resolution to check ====> ", pinsForBound);
         setPinsForBound(pinsForBound.value.vibes);
         setTags(Object.keys(pinsForBound.value.tags));
         setHeatMap(pinsForBound.value.heatmap);
-        // console.log(
-        //   "\n---------------------------heatmap---------------------------\n",
-        //   pinsForBound.value.heatmap,
-        //   "\n",
-        //   "---------------------------heatmap---------------------------\n"
-        // );
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [cameraBound?.properties.bounds.ne]);
+  }, [cameraBound?.properties.bounds.ne, selectedTag]);
 
   const value = {
-    selectedTags,
-    setSelectedTags,
+    selectedTag,
+    setSelectedTag,
     pinsForBound,
     cameraBound,
     setCameraBound,
