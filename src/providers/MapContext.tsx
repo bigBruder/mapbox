@@ -1,29 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import { SetStateAction, createContext, useEffect, useState } from "react";
 import { getPinsForBound } from "../api/client";
-import useLocation from "../hooks/useLocation";
 import { VibesItem } from "../types/searchResponse";
 import { CameraBound } from "../types/CameraBound";
-import { transformDataToHeatmap } from "../utils/transformDataToHeatData";
+import { MapContextType } from "../types/mapContextType";
+import { queryParams } from "../types/queryParams";
 
-type initialValueType = {
-  setCameraBound: (cameraBound: CameraBound | null) => void;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
-  selectedMarker: VibesItem | null;
-  setSelectedMarker: (marker: VibesItem | null) => void;
-  showModal: boolean;
-  setShowModal: (showModal: boolean) => void;
-  selectedDate: string;
-  setSelectedDate: (date: string) => void;
-  pinsForBound: VibesItem[];
-  selectedTag: string | null;
-  setSelectedTags: (tags: string[]) => void;
-  tags: string[];
-  setTags: (tags: string[]) => void;
-};
-
-const initialValue: initialValueType = {
-  // pins: [],
+const initialValue: MapContextType = {
   loading: false,
   setLoading: (loading: boolean) => {},
   selectedMarker: null,
@@ -34,10 +16,17 @@ const initialValue: initialValueType = {
   setSelectedDate: (date: string) => {},
   pinsForBound: [],
   selectedTag: null,
-  setSelectedTags: (tags: string[]) => {},
   tags: [],
   setTags: (tags: string[]) => {},
   setCameraBound: (cameraBound: CameraBound | null) => {},
+  setSelectedTag: function (value: SetStateAction<string | null>): void {
+    throw new Error("Function not implemented.");
+  },
+  heatMap: {
+    data: {},
+    resolution: 0,
+    cellRadius: 0,
+  },
 };
 
 const MyContext = createContext(initialValue);
@@ -47,8 +36,6 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const myLocation = useLocation();
-
   const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
 
@@ -59,7 +46,6 @@ export const MapContextProvider = ({
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [heatMap, setHeatMap] = useState([]);
 
-  // const [pins, setPins] = useState<VibesItem[]>([]);
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
 
   const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
@@ -67,26 +53,26 @@ export const MapContextProvider = ({
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
+    const queryParams: queryParams = {
+      "NE.Latitude": sw[1],
+      "NE.Longitude": sw[0],
+      "SW.Latitude": ne[1],
+      "SW.Longitude": ne[0],
+      After: "2024-04-17Z",
+      Before: "2024-04-30Z",
+      OrderBy: "Points",
+      PageSize: cameraBound.properties.zoom > 12 ? 50 : 20,
+      IncludeTotalCount: true,
+      "TopTags.Enable": true,
+      "Heatmap.Enable": true,
+      "Heatmap.Resolution": 9,
+    };
+    if (selectedTag) {
+      queryParams["Tags"] = selectedTag;
+    }
+
     (async () => {
       try {
-        const queryParams = {
-          "NE.Latitude": sw[1],
-          "NE.Longitude": sw[0],
-          "SW.Latitude": ne[1],
-          "SW.Longitude": ne[0],
-          After: "2024-04-17Z",
-          Before: "2024-04-30Z",
-          OrderBy: "Points",
-          PageSize: cameraBound.properties.zoom > 12 ? 50 : 20,
-          IncludeTotalCount: true,
-          "TopTags.Enable": true,
-          "Heatmap.Enable": true,
-          "Heatmap.Resolution": 9,
-        };
-        if (selectedTag) {
-          queryParams["Tags"] = selectedTag;
-        }
-
         const pinsForBound = await getPinsForBound(queryParams);
         setPinsForBound(pinsForBound.value.vibes);
         setTags(Object.keys(pinsForBound.value.tags));

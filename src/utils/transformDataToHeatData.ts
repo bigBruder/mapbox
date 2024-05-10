@@ -1,6 +1,7 @@
-export function transformDataToHeatmap(data) {
+import { Heatmap } from "../types/searchResponse";
+
+export function transformDataToHeatmap(data: Heatmap) {
   const cellRadius = data["cellRadius"];
-  // console.log("data ====> ", cellRadius);
   const heatmapData = [
     {
       type: "FeatureCollection",

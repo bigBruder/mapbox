@@ -1,0 +1,21 @@
+import { Dispatch } from "react";
+import { CameraBound } from "./CameraBound";
+import { Heatmap, VibesItem } from "./searchResponse";
+
+export type MapContextType = {
+  setCameraBound: (cameraBound: CameraBound | null) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+  selectedMarker: VibesItem | null;
+  setSelectedMarker: (marker: VibesItem | null) => void;
+  showModal: boolean;
+  setShowModal: (showModal: boolean) => void;
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
+  pinsForBound: VibesItem[];
+  selectedTag: string | null;
+  setSelectedTag: Dispatch<React.SetStateAction<string | null>>;
+  tags: string[];
+  setTags: (tags: string[]) => void;
+  heatMap: Heatmap;
+};

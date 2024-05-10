@@ -52,5 +52,5 @@ export interface Value {
 export interface Response {
   value: Value;
   success: boolean;
-  messages: any[]; // You might want to define this further if you know the structure
+  messages: any[];
 }

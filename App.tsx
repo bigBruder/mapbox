@@ -1,8 +1,8 @@
-import { StyleSheet, NativeModules } from "react-native";
+import { StyleSheet } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 import { Map } from "./src/components/Map/Map";
 import { MapContextProvider } from "./src/providers/MapContext";
-import { getAccessToken, searchPosts } from "./src/api/client";
+import { getAccessToken } from "./src/api/client";
 import { getDeviceUniqueId } from "./src/providers/DeviceUniqueId";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
@@ -15,7 +15,6 @@ export default function App() {
       const access_token = await SecureStore.getItemAsync(
         "mapbox_secure_access_token"
       );
-      // if (access_token) return;
       getDeviceUniqueId().then(async () => {
         getAccessToken();
       });

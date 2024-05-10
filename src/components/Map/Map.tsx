@@ -7,7 +7,6 @@ import {
   ScrollView,
   Modal,
   Image,
-  ImageBackground,
 } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 
@@ -24,15 +23,15 @@ import {
 } from "../../assets/icons";
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
 import Bottomsheet from "../../utils/BottomSheet";
-import { useContext, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
 import useLocation from "../../hooks/useLocation";
 import MapContext from "../../providers/MapContext";
-import { getIconUrl } from "../../utils/getIconUrl";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
 import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
+import mapboxStyleUrl from "../../constants/mapStyleUrl";
 
 export const Map = () => {
   const myLocation = useLocation();
@@ -69,77 +68,6 @@ export const Map = () => {
       </View>
     );
   }
-  //     type: "FeatureCollection",
-  //     features: [
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           intensity: 11,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [-75.0396486, 40.06324964],
-  //         },
-  //       },
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           intensity: 6,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [-75.02378225, 40.04546552],
-  //         },
-  //       },
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           intensity: 6,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [-75.05326856, 40.04438827],
-  //         },
-  //       },
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           intensity: 5,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [-75.02601785, 40.0821139],
-  //         },
-  //       },
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           intensity: 3,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [-75.09864227, 40.06107939],
-  //         },
-  //       },
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           intensity: 1,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [-75.06914588, 40.06216826],
-  //         },
-  //       },
-  //     ],
-  //     // styles: {
-  //     //   heatmapRadius: 100,
-  //     //   heatmapWeight: 1,
-  //     //   heatmapIntensity: 11,
-  //     //   heatmapOpacity: 0.3,
-  //     // },
-  //   },
-  // ];
 
   return (
     <View style={styles.page}>
@@ -151,11 +79,10 @@ export const Map = () => {
               scaleBarEnabled={false}
               ref={map}
               rotateEnabled={false}
-              styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
+              styleURL={mapboxStyleUrl}
               regionDidChangeDebounceTime={100}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
-                console.log("camera bound ====> ", e.properties.zoom);
               }}
             >
               {transformDataToHeatmap(heatMap).map((data, index) => {
@@ -168,16 +95,9 @@ export const Map = () => {
                     sourceLayerID=""
                     layerIndex={5}
                     filter={[]}
-                    // minZoomLevel={1}
                     maxZoomLevel={12}
                     style={{
-                      heatmapRadius:
-                        // data?.features[0]?.properties?.intensity / 50 || 30,
-                        data.cellRadius / 1000 || 100,
-                      // heatmapWeight: 1,
-                      // heatmapIntensity:
-                      //   data?.features[0]?.properties?.intensity / 10000 || 0,
-                      // heatmapOpacity: 1,
+                      heatmapRadius: data.cellRadius / 1000 || 100,
                       heatmapColor: heatmapColor,
                     }}
                   />
@@ -229,53 +149,6 @@ export const Map = () => {
                       pin={pin}
                     />
                   </Mapbox.MarkerView>
-                  // <Mapbox.MarkerView
-                  //   key={pin.longitude + pin.latitude + index.toString()}
-                  //   id={index.toString()}
-                  //   coordinate={[
-                  //     pin.venue.geo.longitude,
-                  //     pin.venue.geo.latitude,
-                  //   ]}
-                  // >
-                  //   <TouchableOpacity
-                  //     onPress={() => {
-                  //       if (selectedMarker === pin) {
-                  //         setSelectedMarker(null);
-                  //       } else {
-                  //         setSelectedMarker(pin);
-                  //       }
-                  //     }}
-                  //     style={styles.annotationContainer}
-                  //   >
-                  //     {pin.id === selectedMarker?.id ? (
-                  //       <ImageBackground
-                  //         source={require("../../assets/active_pin_background.png")}
-                  //         style={{
-                  //           width: 30,
-                  //           height: 30,
-                  //           display: "flex",
-                  //           justifyContent: "center",
-                  //           alignItems: "center",
-                  //         }}
-                  //         resizeMethod="resize"
-                  //       >
-                  //         <Image
-                  //           source={{
-                  //             uri: getIconUrl(pin.icon.split(":")[1]),
-                  //           }}
-                  //           style={{ width: 20, height: 20 }}
-                  //         />
-                  //       </ImageBackground>
-                  //     ) : (
-                  //       <Image
-                  //         source={{
-                  //           uri: getIconUrl(pin.icon.split(":")[1]),
-                  //         }}
-                  //         style={{ width: 20, height: 20 }}
-                  //       />
-                  //     )}
-                  //   </TouchableOpacity>
-                  // </Mapbox.MarkerView>
                 ))}
 
               {myLocation && (
