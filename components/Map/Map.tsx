@@ -161,12 +161,14 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
-              regionDidChangeDebounceTime={2000}
+              regionDidChangeDebounceTime={300}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
             >
               {transformDataToHeatmap(heatMap).map((data, index) => {
+                console.log("\n-------heatmapdata   ------ \n", data);
+                console.log("\n-------heatmapdata   ------ \n");
                 return (
                   <Mapbox.HeatmapLayer
                     key={data.features.toString() + index.toString()}
@@ -180,7 +182,8 @@ export const Map = () => {
                     // maxZoomLevel={50}
                     style={{
                       heatmapRadius:
-                        data?.features[0]?.properties?.intensity / 500 || 30,
+                        // data?.features[0]?.properties?.intensity / 50 || 30,
+                        data.cellRadius / 1000 || 100,
                       // heatmapWeight: 1,
                       // heatmapIntensity:
                       //   data?.features[0]?.properties?.intensity / 10000 || 0,
@@ -197,12 +200,22 @@ export const Map = () => {
                   key={data.toString() + index}
                   paint={{
                     "heatmap-radius":
-                      data?.features[0]?.properties?.intensity / 700 || 30,
+                      data?.features[0]?.properties?.intensity / 50 || 30,
                     "heatmap-weight": 1,
                     "heatmap-intensity":
-                      data?.features[0]?.properties?.intensity / 10000 || 0,
+                      data?.features[0]?.properties?.intensity / 50 || 0,
                     "heatmap-opacity": 1,
                     "heatmap-color": heatmapColor,
+                    "circle-radius": {
+                      property: "dbh",
+                      type: "exponential",
+                      stops: [
+                        [{ zoom: 15, value: data.cellRadius }, 5],
+                        [{ zoom: 15, value: data.cellRadius }, 10],
+                        [{ zoom: 22, value: data.cellRadius }, 20],
+                        [{ zoom: 22, value: data.cellRadius }, 50],
+                      ],
+                    },
                   }}
                 />
               ))}

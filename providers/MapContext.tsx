@@ -74,20 +74,27 @@ export const MapContextProvider = ({
           "NE.Longitude": sw[0],
           "SW.Latitude": ne[1],
           "SW.Longitude": ne[0],
-          // After: "2024-04-17Z",
-          // Before: "2024-04-30Z",
+          After: "2024-04-17Z",
+          Before: "2024-04-30Z",
           OrderBy: "Points",
           PageSize: 20,
           IncludeTotalCount: true,
           "TopTags.Enable": true,
           "Heatmap.Enable": true,
-          Heatmap_Resolution: 2,
+          "Heatmap.Resolution": 9,
         };
 
         const pinsForBound = await getPinsForBound(queryParams);
+        console.log("resolution to check ====> ", pinsForBound);
         setPinsForBound(pinsForBound.value.vibes);
         setTags(Object.keys(pinsForBound.value.tags));
         setHeatMap(pinsForBound.value.heatmap);
+        // console.log(
+        //   "\n---------------------------heatmap---------------------------\n",
+        //   pinsForBound.value.heatmap,
+        //   "\n",
+        //   "---------------------------heatmap---------------------------\n"
+        // );
       } catch (e) {
         console.error(e);
       }

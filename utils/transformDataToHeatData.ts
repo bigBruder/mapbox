@@ -5,6 +5,8 @@ export function transformDataToHeatmap(data) {
     {
       type: "FeatureCollection",
       features: [],
+      resolution: data["resolution"],
+      cellRadius: cellRadius,
     },
   ];
 
