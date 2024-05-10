@@ -1,4 +1,6 @@
 export function transformDataToHeatmap(data) {
+  const cellRadius = data["cellRadius"];
+  // console.log("data ====> ", cellRadius);
   const heatmapData = [
     {
       type: "FeatureCollection",
@@ -6,7 +8,7 @@ export function transformDataToHeatmap(data) {
     },
   ];
 
-  const { cellRadius, data: coordinates, resolution } = data;
+  const { data: coordinates, resolution } = data;
 
   for (const coord in coordinates) {
     if (coordinates.hasOwnProperty(coord)) {
@@ -16,6 +18,7 @@ export function transformDataToHeatmap(data) {
         type: "Feature",
         properties: {
           intensity: intensity,
+          cellRadius: cellRadius,
         },
         geometry: {
           type: "Point",

@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
@@ -10,7 +9,7 @@ import {
   Image,
   ImageBackground,
 } from "react-native";
-import Mapbox, { Camera } from "@rnmapbox/maps";
+import Mapbox from "@rnmapbox/maps";
 
 import { styles } from "./styles";
 
@@ -69,7 +68,6 @@ export const Map = () => {
       </View>
     );
   }
-  //   {
   //     type: "FeatureCollection",
   //     features: [
   //       {
@@ -169,28 +167,24 @@ export const Map = () => {
               }}
             >
               {transformDataToHeatmap(heatMap).map((data, index) => {
-                console.log(
-                  "intensity",
-                  data?.features[0]?.properties?.intensity / 100
-                );
                 return (
                   <Mapbox.HeatmapLayer
                     key={data.features.toString() + index.toString()}
                     id={`my-heatmap-source-${index}`}
-                    sourceID={`my-heatmap-source-${index}`}
+                    sourceID={`my-heatmap-source-${index + 1}`}
                     aboveLayerID="waterway-label"
                     sourceLayerID=""
                     layerIndex={5}
                     filter={[]}
-                    minZoomLevel={0.5}
-                    maxZoomLevel={8}
+                    // minZoomLevel={1}
+                    // maxZoomLevel={50}
                     style={{
                       heatmapRadius:
-                        data?.features[0]?.properties?.intensity / 25 || 30,
-                      heatmapWeight: 1,
-                      heatmapIntensity:
-                        data?.features[0]?.properties?.intensity / 1000 || 0,
-                      heatmapOpacity: 1,
+                        data?.features[0]?.properties?.intensity / 500 || 30,
+                      // heatmapWeight: 1,
+                      // heatmapIntensity:
+                      //   data?.features[0]?.properties?.intensity / 10000 || 0,
+                      // heatmapOpacity: 1,
                       heatmapColor: heatmapColor,
                     }}
                   />
@@ -198,9 +192,18 @@ export const Map = () => {
               })}
               {transformDataToHeatmap(heatMap).map((data, index) => (
                 <Mapbox.ShapeSource
-                  id={`my-heatmap-source-${index}`}
+                  id={`my-heatmap-source-${index + 1}`}
                   shape={data}
                   key={data.toString() + index}
+                  paint={{
+                    "heatmap-radius":
+                      data?.features[0]?.properties?.intensity / 700 || 30,
+                    "heatmap-weight": 1,
+                    "heatmap-intensity":
+                      data?.features[0]?.properties?.intensity / 10000 || 0,
+                    "heatmap-opacity": 1,
+                    "heatmap-color": heatmapColor,
+                  }}
                 />
               ))}
               {pinsForBound &&
@@ -332,7 +335,7 @@ export const Map = () => {
               <TouchableOpacity style={styles.searchButton}>
                 <LocationIcon />
               </TouchableOpacity>
-              <Text style={styles.pointText}>Somse points</Text>
+              <Text style={styles.pointText}>Some point</Text>
               <TouchableOpacity style={styles.addButton} onPress={() => {}}>
                 <PlusIcon />
               </TouchableOpacity>
