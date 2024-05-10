@@ -55,8 +55,8 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   annotationContainer: {
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

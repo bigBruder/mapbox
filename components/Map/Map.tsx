@@ -32,6 +32,7 @@ import { getIconUrl } from "../../utils/getIconUrl";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
 import { heatmapColor } from "../../constants/heatmapColor";
+import { Marker } from "../marker/Marker";
 
 export const Map = () => {
   const myLocation = useLocation();
@@ -164,11 +165,10 @@ export const Map = () => {
               regionDidChangeDebounceTime={300}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
+                console.log("camera bound ====> ", e.properties.zoom);
               }}
             >
               {transformDataToHeatmap(heatMap).map((data, index) => {
-                console.log("\n-------heatmapdata   ------ \n", data);
-                console.log("\n-------heatmapdata   ------ \n");
                 return (
                   <Mapbox.HeatmapLayer
                     key={data.features.toString() + index.toString()}
@@ -179,7 +179,7 @@ export const Map = () => {
                     layerIndex={5}
                     filter={[]}
                     // minZoomLevel={1}
-                    // maxZoomLevel={50}
+                    maxZoomLevel={12}
                     style={{
                       heatmapRadius:
                         // data?.features[0]?.properties?.intensity / 50 || 30,
@@ -229,45 +229,59 @@ export const Map = () => {
                       pin.venue.geo.latitude,
                     ]}
                   >
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (selectedMarker === pin) {
-                          setSelectedMarker(null);
-                        } else {
-                          setSelectedMarker(pin);
-                        }
-                      }}
-                      style={styles.annotationContainer}
-                    >
-                      {pin.id === selectedMarker?.id ? (
-                        <ImageBackground
-                          source={require("../../assets/active_pin_background.png")}
-                          style={{
-                            width: 50,
-                            height: 50,
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          resizeMethod="resize"
-                        >
-                          <Image
-                            source={{
-                              uri: getIconUrl(pin.icon.split(":")[1]),
-                            }}
-                            style={{ width: 30, height: 30 }}
-                          />
-                        </ImageBackground>
-                      ) : (
-                        <Image
-                          source={{
-                            uri: getIconUrl(pin.icon.split(":")[1]),
-                          }}
-                          style={{ width: 30, height: 30 }}
-                        />
-                      )}
-                    </TouchableOpacity>
+                    <Marker
+                      key={index}
+                      setSelectedMarker={setSelectedMarker}
+                      pin={pin}
+                    />
                   </Mapbox.MarkerView>
+                  // <Mapbox.MarkerView
+                  //   key={pin.longitude + pin.latitude + index.toString()}
+                  //   id={index.toString()}
+                  //   coordinate={[
+                  //     pin.venue.geo.longitude,
+                  //     pin.venue.geo.latitude,
+                  //   ]}
+                  // >
+                  //   <TouchableOpacity
+                  //     onPress={() => {
+                  //       if (selectedMarker === pin) {
+                  //         setSelectedMarker(null);
+                  //       } else {
+                  //         setSelectedMarker(pin);
+                  //       }
+                  //     }}
+                  //     style={styles.annotationContainer}
+                  //   >
+                  //     {pin.id === selectedMarker?.id ? (
+                  //       <ImageBackground
+                  //         source={require("../../assets/active_pin_background.png")}
+                  //         style={{
+                  //           width: 30,
+                  //           height: 30,
+                  //           display: "flex",
+                  //           justifyContent: "center",
+                  //           alignItems: "center",
+                  //         }}
+                  //         resizeMethod="resize"
+                  //       >
+                  //         <Image
+                  //           source={{
+                  //             uri: getIconUrl(pin.icon.split(":")[1]),
+                  //           }}
+                  //           style={{ width: 20, height: 20 }}
+                  //         />
+                  //       </ImageBackground>
+                  //     ) : (
+                  //       <Image
+                  //         source={{
+                  //           uri: getIconUrl(pin.icon.split(":")[1]),
+                  //         }}
+                  //         style={{ width: 20, height: 20 }}
+                  //       />
+                  //     )}
+                  //   </TouchableOpacity>
+                  // </Mapbox.MarkerView>
                 ))}
 
               {myLocation && (

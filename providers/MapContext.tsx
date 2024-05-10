@@ -77,7 +77,7 @@ export const MapContextProvider = ({
           After: "2024-04-17Z",
           Before: "2024-04-30Z",
           OrderBy: "Points",
-          PageSize: 20,
+          PageSize: cameraBound.properties.zoom > 12 ? 50 : 20,
           IncludeTotalCount: true,
           "TopTags.Enable": true,
           "Heatmap.Enable": true,
