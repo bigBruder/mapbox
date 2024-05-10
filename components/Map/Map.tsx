@@ -212,7 +212,11 @@ export const Map = () => {
               {pinsForBound &&
                 pinsForBound.map((pin, index) => (
                   <Mapbox.MarkerView
-                    key={pin.longitude + pin.latitude + index.toString()}
+                    key={
+                      pin.icon +
+                      pin.venue.geo.latitude +
+                      pin.venue.geo.longitude
+                    }
                     id={index.toString()}
                     coordinate={[
                       pin.venue.geo.longitude,
