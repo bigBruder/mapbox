@@ -152,7 +152,7 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL="mapbox://styles/vibespot/clvfm2nfq010401q14frq08bd"
-              regionDidChangeDebounceTime={300}
+              regionDidChangeDebounceTime={100}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
                 console.log("camera bound ====> ", e.properties.zoom);
