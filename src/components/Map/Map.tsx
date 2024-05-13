@@ -124,7 +124,7 @@ export const Map = () => {
                     sourceLayerID=""
                     layerIndex={5}
                     filter={[]}
-                    maxZoomLevel={12}
+                    maxZoomLevel={14}
                     style={{
                       heatmapRadius: data.cellRadius / 1000 || 100,
                       heatmapColor: heatmapColor,
@@ -160,7 +160,7 @@ export const Map = () => {
               ))}
               {pinsForBound &&
                 pinsForBound.map((pin, index) => (
-                  <Mapbox.MarkerView
+                  <Mapbox.PointAnnotation
                     key={
                       pin.icon +
                       pin.venue.geo.latitude +
@@ -178,7 +178,7 @@ export const Map = () => {
                       setSelectedMarker={setSelectedMarker}
                       pin={pin}
                     />
-                  </Mapbox.MarkerView>
+                  </Mapbox.PointAnnotation>
                 ))}
 
               {myLocation && (
