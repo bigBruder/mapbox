@@ -9,14 +9,13 @@ export const fetchLocation = async () => {
     if (status !== "granted") {
       location = await getLocationByIP();
     } else {
-      location = await Location.getCurrentPositionAsync({
-        // accuracy: Location.Accuracy.High,
-      });
+      location = await Location.getCurrentPositionAsync({});
     }
 
+    if (!location) return null;
     return {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      latitude: location?.coords.latitude,
+      longitude: location?.coords.longitude,
       source: "gps",
     };
   } catch (error) {

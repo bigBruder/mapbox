@@ -25,13 +25,12 @@ import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
 import Bottomsheet from "../../utils/BottomSheet";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
-import MapContext from "../../providers/MapContext";
+import MapContext from "../../providers/mapContext/MapContext";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
 import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
-import { getLocationByIP } from "../../utils/getLocationByIP";
 import * as Location from "expo-location";
 
 export const Map = () => {
@@ -67,18 +66,23 @@ export const Map = () => {
   };
 
   const handleCenterCamera = async () => {
-    const location = await Location.requestForegroundPermissionsAsync();
-    if (location.status !== "granted") {
-      const location = await getLocationByIP();
-      setMyLocation(location);
-    } else {
-      const location = await Location.getCurrentPositionAsync();
-      setMyLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        source: "gps",
-      });
+    const isGpsGranted = await Location.getForegroundPermissionsAsync();
+    if (isGpsGranted.status !== "granted") {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      const location = await Location.getCurrentPositionAsync({});
+      if (location) {
+        setMyLocation({
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+          source: "gps",
+        });
+      }
     }
+    if (!myLocation) return;
+    camera.current?.setCamera({
+      centerCoordinate: [myLocation.longitude, myLocation.latitude],
+    });
   };
 
   if (loading) {

@@ -1,38 +1,10 @@
-import { SetStateAction, createContext, useEffect, useState } from "react";
-import { getPinsForBound } from "../api/client";
-import { Heatmap, VibesItem } from "../types/searchResponse";
-import { CameraBound } from "../types/CameraBound";
-import { MapContextType } from "../types/mapContextType";
-import { queryParams } from "../types/queryParams";
-import { fetchLocation } from "../utils/fetchLocation";
-
-const initialValue: MapContextType = {
-  myLocation: null,
-  setMyLocation: (
-    location: { latitude: number; longitude: number; source: string } | null
-  ) => {},
-  loading: false,
-  setLoading: (loading: boolean) => {},
-  selectedMarker: null,
-  setSelectedMarker: (marker: VibesItem | null) => {},
-  showModal: false,
-  setShowModal: (showModal: boolean) => {},
-  selectedDate: "Next Month",
-  setSelectedDate: (date: string) => {},
-  pinsForBound: [],
-  selectedTag: null,
-  tags: [],
-  setTags: (tags: string[]) => {},
-  setCameraBound: (cameraBound: CameraBound | null) => {},
-  setSelectedTag: function (value: SetStateAction<string | null>): void {
-    throw new Error("Function not implemented.");
-  },
-  heatMap: {
-    data: {},
-    resolution: 0,
-    cellRadius: 0,
-  },
-};
+import { createContext, useEffect, useState } from "react";
+import { getPinsForBound } from "../../api/client";
+import { Heatmap, VibesItem } from "../../types/searchResponse";
+import { CameraBound } from "../../types/CameraBound";
+import { queryParams } from "../../types/queryParams";
+import { fetchLocation } from "../../utils/fetchLocation";
+import initialValue from "./initialValue";
 
 const MyContext = createContext(initialValue);
 
