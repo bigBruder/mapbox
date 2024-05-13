@@ -35,6 +35,8 @@ import * as Location from "expo-location";
 
 export const Map = () => {
   const {
+    selectedDate,
+    setSelectedDate,
     myLocation,
     setMyLocation,
     pinsForBound,
@@ -50,7 +52,16 @@ export const Map = () => {
 
   useEffect(() => {
     if (!myLocation) return;
+
+    camera.current?.flyTo(
+      [myLocation.longitude, myLocation.latitude],
+
+      4000
+    );
     camera.current?.setCamera({
+      zoomLevel: 15,
+      animationDuration: 2000,
+      animationMode: "flyTo",
       centerCoordinate: [myLocation.longitude, myLocation.latitude],
     });
   }, [myLocation]);
@@ -58,10 +69,10 @@ export const Map = () => {
   const camera = useRef<Mapbox.Camera | null>(null);
 
   const [showModal, setShowModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("Next Month");
 
   const map = useRef<Mapbox.MapView | null>(null);
   const handleDateSelect = (date: string) => {
+    console.log("select");
     setSelectedDate(date);
   };
 
@@ -80,7 +91,13 @@ export const Map = () => {
       }
     }
     if (!myLocation) return;
+    // camera.current?.setCamera({
+    //   centerCoordinate: [myLocation.longitude, myLocation.latitude],
+    // });
     camera.current?.setCamera({
+      zoomLevel: 15,
+      animationDuration: 2000,
+      animationMode: "flyTo",
       centerCoordinate: [myLocation.longitude, myLocation.latitude],
     });
   };
@@ -196,11 +213,10 @@ export const Map = () => {
               {/* {myLocation && ( */}
               {myLocation && (
                 <Mapbox.Camera
-                  // maxZoomLevel={30}
-                  zoomLevel={5}
+                  // zoomLevel={15}
                   ref={camera}
-                  followZoomLevel={30}
-                  animationDuration={1500}
+                  // followZoomLevel={2}
+                  animationDuration={4000}
                   // centerCoordinate={
                   //   [myLocation.longitude, myLocation.latitude] || undefined
                   // }

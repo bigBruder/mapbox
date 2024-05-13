@@ -3,7 +3,7 @@ export type queryParams = {
   "NE.Longitude": number;
   "SW.Latitude": number;
   "SW.Longitude": number;
-  After: string;
+  After?: string;
   Before: string;
   OrderBy: string;
   PageSize: number;
@@ -12,4 +12,5 @@ export type queryParams = {
   "Heatmap.Enable"?: boolean;
   "Heatmap.Resolution"?: number;
   Tags?: string;
+  endsAfter?: string;
 };

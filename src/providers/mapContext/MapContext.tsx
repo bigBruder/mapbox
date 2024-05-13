@@ -5,6 +5,7 @@ import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import { fetchLocation } from "../../utils/fetchLocation";
 import initialValue from "./initialValue";
+import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 
 const MyContext = createContext(initialValue);
 
@@ -54,8 +55,7 @@ export const MapContextProvider = ({
       "NE.Longitude": sw[0],
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
-      After: "2024-04-17Z",
-      Before: "2024-04-30Z",
+      Before: TransformToIsoDate(selectedDate).before,
       OrderBy: "Points",
       PageSize: cameraBound.properties.zoom > 15 ? 40 : 20,
       IncludeTotalCount: true,
@@ -66,6 +66,15 @@ export const MapContextProvider = ({
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
+    if (selectedDate === "Now") {
+      queryParams["endsAfter"] = new Date().toISOString();
+    } else {
+      queryParams["After"] = TransformToIsoDate(selectedDate).after;
+    }
+
+    console.log(TransformToIsoDate(selectedDate).before);
+    console.log(TransformToIsoDate(selectedDate).after);
+    console.log("selectedDate", selectedDate);
 
     (async () => {
       try {
@@ -77,9 +86,10 @@ export const MapContextProvider = ({
         console.error(e);
       }
     })();
-  }, [cameraBound?.properties.bounds.ne, selectedTag]);
+  }, [cameraBound?.properties.bounds.ne, selectedTag, selectedDate]);
 
   const value = {
+    selectedDate,
     myLocation,
     setMyLocation,
     selectedTag,
@@ -96,7 +106,6 @@ export const MapContextProvider = ({
     setSelectedMarker,
     showModal,
     setShowModal,
-    selectedDate,
     setSelectedDate,
   };
   return <MyContext.Provider value={value}>{children}</MyContext.Provider>;
