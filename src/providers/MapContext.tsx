@@ -4,8 +4,13 @@ import { Heatmap, VibesItem } from "../types/searchResponse";
 import { CameraBound } from "../types/CameraBound";
 import { MapContextType } from "../types/mapContextType";
 import { queryParams } from "../types/queryParams";
+import { fetchLocation } from "../utils/fetchLocation";
 
 const initialValue: MapContextType = {
+  myLocation: null,
+  setMyLocation: (
+    location: { latitude: number; longitude: number; source: string } | null
+  ) => {},
   loading: false,
   setLoading: (loading: boolean) => {},
   selectedMarker: null,
@@ -36,6 +41,12 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [myLocation, setMyLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    source: string;
+  } | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
 
@@ -49,6 +60,15 @@ export const MapContextProvider = ({
     resolution: 9,
     cellRadius: 100,
   });
+
+  useEffect(() => {
+    (async () => {
+      const location = await fetchLocation();
+      if (location) {
+        setMyLocation(location);
+      }
+    })();
+  }, []);
 
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
 
@@ -88,6 +108,8 @@ export const MapContextProvider = ({
   }, [cameraBound?.properties.bounds.ne, selectedTag]);
 
   const value = {
+    myLocation,
+    setMyLocation,
     selectedTag,
     setSelectedTag,
     pinsForBound,

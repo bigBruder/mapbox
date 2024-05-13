@@ -15,7 +15,7 @@ import { getVibeDetails } from "../api/client";
 import {
   PorstDetailsValue,
   PostDetailsResponse,
-} from "../types/PostDetailsResponse";
+} from "../types/responses/PostDetailsResponse";
 import { formatDate } from "./formatDate";
 import { formatTagsInText } from "./formatTagsInText";
 

@@ -3,6 +3,10 @@ import { CameraBound } from "./CameraBound";
 import { Heatmap, VibesItem } from "./searchResponse";
 
 export type MapContextType = {
+  myLocation: { latitude: number; longitude: number; source: string } | null;
+  setMyLocation: (
+    location: { latitude: number; longitude: number; source: string } | null
+  ) => void;
   setCameraBound: (cameraBound: CameraBound | null) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;

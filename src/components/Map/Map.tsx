@@ -23,20 +23,21 @@ import {
 } from "../../assets/icons";
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
 import Bottomsheet from "../../utils/BottomSheet";
-import { useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
-import useLocation from "../../hooks/useLocation";
 import MapContext from "../../providers/MapContext";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
 import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
+import { getLocationByIP } from "../../utils/getLocationByIP";
+import * as Location from "expo-location";
 
 export const Map = () => {
-  const myLocation = useLocation();
-
   const {
+    myLocation,
+    setMyLocation,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -48,12 +49,36 @@ export const Map = () => {
     setSelectedTag,
   } = useContext(MapContext);
 
+  useEffect(() => {
+    if (!myLocation) return;
+    camera.current?.setCamera({
+      centerCoordinate: [myLocation.longitude, myLocation.latitude],
+    });
+  }, [myLocation]);
+
+  const camera = useRef<Mapbox.Camera | null>(null);
+
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Next Month");
 
   const map = useRef<Mapbox.MapView | null>(null);
   const handleDateSelect = (date: string) => {
     setSelectedDate(date);
+  };
+
+  const handleCenterCamera = async () => {
+    const location = await Location.requestForegroundPermissionsAsync();
+    if (location.status !== "granted") {
+      const location = await getLocationByIP();
+      setMyLocation(location);
+    } else {
+      const location = await Location.getCurrentPositionAsync();
+      setMyLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        source: "gps",
+      });
+    }
   };
 
   if (loading) {
@@ -135,7 +160,8 @@ export const Map = () => {
                     key={
                       pin.icon +
                       pin.venue.geo.latitude +
-                      pin.venue.geo.longitude
+                      pin.venue.geo.longitude +
+                      index
                     }
                     id={index.toString()}
                     coordinate={[
@@ -155,7 +181,7 @@ export const Map = () => {
                 <Mapbox.PointAnnotation
                   key="pointAnnotation"
                   id="pointAnnotation"
-                  coordinate={myLocation}
+                  coordinate={[myLocation.longitude, myLocation.latitude]}
                 >
                   <View>
                     <Text style={styles.annotationText}>📍</Text>
@@ -163,15 +189,20 @@ export const Map = () => {
                   <Mapbox.Callout title="This is a point annotation" />
                 </Mapbox.PointAnnotation>
               )}
-              {
+              {/* {myLocation && ( */}
+              {myLocation && (
                 <Mapbox.Camera
-                  maxZoomLevel={30}
+                  // maxZoomLevel={30}
                   zoomLevel={5}
-                  followZoomLevel={15}
+                  ref={camera}
+                  followZoomLevel={30}
                   animationDuration={1500}
-                  centerCoordinate={myLocation || undefined}
+                  // centerCoordinate={
+                  //   [myLocation.longitude, myLocation.latitude] || undefined
+                  // }
                 />
-              }
+              )}
+              {/* )} */}
             </Mapbox.MapView>
             <View style={styles.topContainer}>
               <View style={styles.upperContainer}>
@@ -229,7 +260,10 @@ export const Map = () => {
               </View>
             </View>
             <View style={styles.bottomContainer}>
-              <TouchableOpacity style={styles.searchButton}>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={() => handleCenterCamera()}
+              >
                 <LocationIcon />
               </TouchableOpacity>
               <Text style={styles.pointText}>Some point</Text>
