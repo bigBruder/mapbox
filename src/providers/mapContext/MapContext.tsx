@@ -87,9 +87,9 @@ export const MapContextProvider = ({
         selectedDate === "Next Month" ||
         selectedDate === "Now" ||
         selectedDate === "Today" ||
-        selectedDate === "Next 7 days" ||
-        selectedDate === "Next 14 days" ||
-        selectedDate === "Next 30 days"
+        selectedDate === "Next 7 Days" ||
+        selectedDate === "Next 14 Days" ||
+        selectedDate === "Next 30 Days"
       ) {
         queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
       } else {

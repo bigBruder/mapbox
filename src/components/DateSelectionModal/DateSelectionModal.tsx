@@ -37,7 +37,12 @@ export const DateSelectionModal: React.FC<Props> = ({
   const preparedEndDate = formatDate(endDate).split(",")[1];
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+      }}
+    >
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => onCloseModal(false)}>
           <AntDesign name="left" size={24} color="black" />
