@@ -25,7 +25,7 @@ export const DateSelectionModal: React.FC<Props> = ({
   onCloseModal,
   selectedDate,
 }) => {
-  const { customDate, setCustomDate } = useContext(MyContext);
+  const { customDate, setCustomDate, setSelectedDate } = useContext(MyContext);
   const [showDatePiker, setShowDatePiker] = useState(false);
 
   const [startDate, setStartDate] = useState<DateType>("");
@@ -94,7 +94,16 @@ export const DateSelectionModal: React.FC<Props> = ({
 
             <Text style={styles.headerText}>Select Date Range</Text>
 
-            <TouchableOpacity onPress={() => onCloseModal(false)}>
+            <TouchableOpacity
+              onPress={() => {
+                setCustomDate({
+                  startDate: new Date(),
+                  endDate: new Date(),
+                });
+                setSelectedDate("Now");
+                onCloseModal(false);
+              }}
+            >
               <Text style={styles.headerCancel}>Clear</Text>
             </TouchableOpacity>
           </View>
@@ -106,15 +115,11 @@ export const DateSelectionModal: React.FC<Props> = ({
               todayContainerStyle={{
                 borderColor: "#fff",
               }}
-              startDate={customDate.startDate}
-              endDate={customDate.endDate}
+              startDate={startDate}
+              endDate={endDate}
               onChange={(params) => {
                 setStartDate(params.startDate);
                 setEndDate(params.endDate);
-                setCustomDate({
-                  startDate: params.startDate,
-                  endDate: params.endDate,
-                });
               }}
             />
 
@@ -132,6 +137,10 @@ export const DateSelectionModal: React.FC<Props> = ({
                 }
 
                 // onSelect(`${preparedStartDate} - ${preparedEndDate}`);
+                setCustomDate({
+                  startDate: startDate,
+                  endDate: endDate,
+                });
                 onSelect(`Custom`);
                 onCloseModal(false);
               }}

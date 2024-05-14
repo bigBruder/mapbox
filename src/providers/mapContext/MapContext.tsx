@@ -79,8 +79,10 @@ export const MapContextProvider = ({
     }
 
     if (selectedDate === "Custom") {
-      queryParams.Before = customDate.endDate.toISOString();
-      queryParams.endsAfter = customDate.startDate.toISOString();
+      if (customDate.startDate && customDate.endDate) {
+        queryParams.Before = customDate.endDate.toISOString();
+        queryParams.endsAfter = customDate.startDate.toISOString();
+      }
     } else {
       queryParams.Before = TransformToIsoDate(selectedDate).before;
       if (
@@ -99,8 +101,8 @@ export const MapContextProvider = ({
     }
 
     console.log(selectedDate);
-    console.log("startDate = ", TransformToIsoDate(selectedDate).after);
-    console.log("endDate = ", TransformToIsoDate(selectedDate).before);
+    console.log("startDate = ", customDate.startDate);
+    console.log("endDate = ", customDate.endDate);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       setPinsForBound(pinsForBound.value.vibes);
