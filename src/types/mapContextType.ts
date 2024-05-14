@@ -22,4 +22,5 @@ export type MapContextType = {
   tags: string[];
   setTags: (tags: string[]) => void;
   heatMap: Heatmap;
+  cameraBound: CameraBound | null;
 };

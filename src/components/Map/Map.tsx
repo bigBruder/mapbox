@@ -173,7 +173,7 @@ export const Map = () => {
               ))}
               {pinsForBound &&
                 pinsForBound.map((pin, index) => (
-                  <Mapbox.PointAnnotation
+                  <Mapbox.MarkerView
                     key={
                       pin.icon +
                       pin.venue.geo.latitude +
@@ -185,17 +185,18 @@ export const Map = () => {
                       pin.venue.geo.longitude,
                       pin.venue.geo.latitude,
                     ]}
+                    allowOverlap={true}
                   >
                     <Marker
                       key={index}
                       setSelectedMarker={setSelectedMarker}
                       pin={pin}
                     />
-                  </Mapbox.PointAnnotation>
+                  </Mapbox.MarkerView>
                 ))}
 
               {myLocation?.longitude && myLocation.latitude && (
-                <Mapbox.PointAnnotation
+                <Mapbox.MarkerView
                   key="pointAnnotation"
                   id="pointAnnotation"
                   coordinate={[myLocation.longitude, myLocation.latitude]}
@@ -203,8 +204,7 @@ export const Map = () => {
                   <View>
                     <Text style={styles.annotationText}>📍</Text>
                   </View>
-                  <Mapbox.Callout title="This is a point annotation" />
-                </Mapbox.PointAnnotation>
+                </Mapbox.MarkerView>
               )}
               {/* {myLocation && ( */}
               {myLocation?.longitude && myLocation.latitude && (

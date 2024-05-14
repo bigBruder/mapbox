@@ -4,6 +4,7 @@ import { MapContextType } from "../../types/mapContextType";
 import { VibesItem } from "../../types/searchResponse";
 
 const initialValue: MapContextType = {
+  cameraBound: null,
   myLocation: null,
   setMyLocation: (
     location: { latitude: number; longitude: number; source: string } | null
