@@ -72,13 +72,12 @@ export const Map = () => {
 
   const map = useRef<Mapbox.MapView | null>(null);
   const handleDateSelect = (date: string) => {
-    console.log("select");
     setSelectedDate(date);
   };
 
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
-    if (isGpsGranted.status !== "granted") {
+    if (isGpsGranted.status !== "granted" && isGpsGranted.status !== "denied") {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
       const location = await Location.getCurrentPositionAsync({});
@@ -91,9 +90,6 @@ export const Map = () => {
       }
     }
     if (!myLocation) return;
-    // camera.current?.setCamera({
-    //   centerCoordinate: [myLocation.longitude, myLocation.latitude],
-    // });
     camera.current?.setCamera({
       zoomLevel: 15,
       animationDuration: 2000,
@@ -198,7 +194,7 @@ export const Map = () => {
                   </Mapbox.PointAnnotation>
                 ))}
 
-              {myLocation && (
+              {myLocation?.longitude && myLocation.latitude && (
                 <Mapbox.PointAnnotation
                   key="pointAnnotation"
                   id="pointAnnotation"
@@ -211,7 +207,7 @@ export const Map = () => {
                 </Mapbox.PointAnnotation>
               )}
               {/* {myLocation && ( */}
-              {myLocation && (
+              {myLocation?.longitude && myLocation.latitude && (
                 <Mapbox.Camera
                   // zoomLevel={15}
                   ref={camera}

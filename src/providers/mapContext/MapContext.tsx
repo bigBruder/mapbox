@@ -35,12 +35,11 @@ export const MapContextProvider = ({
   });
 
   useEffect(() => {
-    (async () => {
-      const location = await fetchLocation();
+    fetchLocation().then((location) => {
       if (location) {
         setMyLocation(location);
       }
-    })();
+    });
   }, []);
 
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
@@ -72,20 +71,11 @@ export const MapContextProvider = ({
       queryParams["After"] = TransformToIsoDate(selectedDate).after;
     }
 
-    console.log(TransformToIsoDate(selectedDate).before);
-    console.log(TransformToIsoDate(selectedDate).after);
-    console.log("selectedDate", selectedDate);
-
-    (async () => {
-      try {
-        const pinsForBound = await getPinsForBound(queryParams);
-        setPinsForBound(pinsForBound.value.vibes);
-        setTags(Object.keys(pinsForBound.value.tags));
-        setHeatMap(pinsForBound.value.heatmap);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
+    getPinsForBound(queryParams).then((pinsForBound) => {
+      setPinsForBound(pinsForBound.value.vibes);
+      setTags(Object.keys(pinsForBound.value.tags));
+      setHeatMap(pinsForBound.value.heatmap);
+    });
   }, [cameraBound?.properties.bounds.ne, selectedTag, selectedDate]);
 
   const value = {

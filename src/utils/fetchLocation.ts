@@ -4,6 +4,7 @@ import { getLocationByIP } from "./getLocationByIP";
 export const fetchLocation = async () => {
   try {
     const { status } = await Location.getForegroundPermissionsAsync();
+    console.log("Location status:", status);
     let location = null;
 
     if (status !== "granted") {
@@ -13,6 +14,11 @@ export const fetchLocation = async () => {
     }
 
     if (!location) return null;
+
+    if (location?.source === "ip") {
+      return location;
+    }
+
     return {
       latitude: location?.coords.latitude,
       longitude: location?.coords.longitude,
