@@ -33,8 +33,6 @@ export const TransformToIsoDate = (
       afterDate.setDate(afterDate.getDate() + (8 - afterDate.getDay())); // Next week
       afterDate.setHours(0, 0, 0, 0);
 
-      console.log(afterDate.getDay(), "day of week");
-
       beforeDate.setDate(afterDate.getDate() + 7); // Next week
       beforeDate.setHours(23, 59, 59, 999); // End of the week
       break;

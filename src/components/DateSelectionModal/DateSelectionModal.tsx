@@ -31,8 +31,6 @@ export const DateSelectionModal: React.FC<Props> = ({
   const [startDate, setStartDate] = useState<DateType>("");
   const [endDate, setEndDate] = useState<DateType>("");
 
-  console.log("startDate", startDate);
-
   const preparedStartDate = formatDate(startDate).split(",")[1];
   const preparedEndDate = formatDate(endDate).split(",")[1];
 

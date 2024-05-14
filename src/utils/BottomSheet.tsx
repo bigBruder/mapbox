@@ -1,11 +1,13 @@
-import { Dimensions, StyleSheet, Text, View, Image } from "react-native";
-import React, { FC, useEffect, useState } from "react";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  ScrollView,
+} from "react-native";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import LikeIcon from "../assets/icons/like";
 import { ShareIcon } from "../assets/icons";
 import MoreIcon from "../assets/icons/more";
@@ -17,96 +19,35 @@ import {
   PostDetailsResponse,
 } from "../types/responses/PostDetailsResponse";
 import { formatDate } from "./formatDate";
+import BottomSheet, {
+  BottomSheetFooter,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { formatTagsInText } from "./formatTagsInText";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MAX_TRANSLATE_Y = SCREEN_HEIGHT / 1.5;
 const MIN_TRANSLATE_Y = SCREEN_HEIGHT / 5;
-
-interface BottomsheetProps {
-  selectedMarker: VibesItem;
-  onClose: () => void;
-}
-
-const IS_UPPER_THRESHOLD = -100;
-
-export default function Bottomsheet({
-  selectedMarker,
-  onClose,
-}: BottomsheetProps) {
-  const translateY = useSharedValue(0);
-  const context = useSharedValue({ y: 0 });
-
-  const gesture = Gesture.Pan()
-    .onStart((e) => {
-      context.value = { y: translateY.value };
-    })
-    .onUpdate((e) => {
-      translateY.value = e.translationY + context.value.y;
-      translateY.value = Math.max(translateY.value, -MAX_TRANSLATE_Y);
-    })
-    .onEnd((e) => {
-      if (translateY.value > -MIN_TRANSLATE_Y) {
-        translateY.value = withSpring(SCREEN_HEIGHT);
-      }
-      if (translateY.value < -MIN_TRANSLATE_Y) {
-        translateY.value = withSpring(-MAX_TRANSLATE_Y);
-      }
-    });
-
-  /**
-   * Animated style for the bottom sheet
-   */
-  const reanimatedBottomStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-    };
-  });
-
-  /**
-   * Scrolls to a specific destination
-   * @param {number} destination - The destination to scroll to
-   */
-  const scrollTo = (destination: number) => {
-    "worklet";
-    translateY.value = withSpring(destination, { damping: 50 });
-  };
-
-  useEffect(() => {
-    // Initial scroll to show the bottom sheet partially
-    scrollTo(-SCREEN_HEIGHT / 3);
-  }, [selectedMarker, onClose]);
-
-  return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View
-        style={[styles.bottomsheet_container, reanimatedBottomStyle]}
-      >
-        <ModalDataMarker selectedMarker={selectedMarker} />
-      </Animated.View>
-    </GestureDetector>
-  );
-}
-
-const styles = StyleSheet.create({
-  bottomsheet_container: {
-    flex: 1,
-    width: "100%",
-    height: SCREEN_HEIGHT,
-    backgroundColor: "white",
-    position: "absolute",
-    top: SCREEN_HEIGHT / 1,
-    zIndex: 12000,
-    borderRadius: 25,
-    paddingHorizontal: 10,
-  },
-});
-
 type sIPoints = {
   selectedMarker: VibesItem;
+  setSelectedMarker: (pin: VibesItem | null) => void;
 };
 
-const ModalDataMarker: FC<sIPoints> = ({ selectedMarker }) => {
+export const ModalDataMarker: FC<sIPoints> = ({
+  selectedMarker,
+  setSelectedMarker,
+}) => {
+  const snapPoints = ["35%", "60%"];
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // callbacks
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      console.log("handleSheetChanges", index);
+    },
+    [selectedMarker]
+  );
+
   const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
     null
   );
@@ -128,60 +69,91 @@ const ModalDataMarker: FC<sIPoints> = ({ selectedMarker }) => {
       }
     })();
   }, [selectedMarker.id]);
+  const handleClosePress = () => setSelectedMarker(null);
 
-  if (loading) return <Text>Loading...</Text>;
   return (
-    <View style={styleContent.sheetContainer}>
-      <View style={styleContent.line} />
-
-      <View style={styleContent.topBox}>
-        <Image
-          source={{ uri: getIconUrl(selectedMarker.icon.split(":")[1]) }}
-          style={{ width: 50, height: 50 }}
-        />
-        <View>
-          <Text>{vibeDetails?.author["userName"]}</Text>
-          <Text>{vibeDetails?.venue.name}</Text>
-        </View>
-      </View>
-      <View style={styleContent.dateContainer}>
-        {vibeDetails?.expiresAt && (
-          <Text style={{ color: "#005DF2" }}>
-            {formatDate(vibeDetails?.expiresAt)}
-          </Text>
+    <>
+      <BottomSheet
+        ref={bottomSheetRef}
+        onChange={handleSheetChanges}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        onClose={() => {
+          setSelectedMarker(null);
+        }}
+        animateOnMount={true}
+        footerComponent={(props) => (
+          <BottomSheetFooter {...props} style={styleContent.bottomContainer}>
+            <View style={styleContent.bottomLeftContainer}>
+              <View style={styleContent.actionContainer}>
+                <LikeIcon />
+                <Text>{vibeDetails?.likes}</Text>
+              </View>
+              <View
+                style={{
+                  ...styleContent.actionContainer,
+                  ...styleContent.space,
+                }}
+              >
+                <ShareIcon />
+                <Text>{vibeDetails?.shares}</Text>
+              </View>
+            </View>
+            <MoreIcon />
+          </BottomSheetFooter>
         )}
-      </View>
-      <View>
-        {vibeDetails?.message && (
-          <Text>
-            {/* {formatTagsInText(
-            isShortDescription
-              ? vibeDetails?.message.slice(0, 100) + "..."
-              : vibeDetails?.message
-          )} */}
-            {vibeDetails.message}
-          </Text>
-        )}
-      </View>
-      <View style={styleContent.bottomContainer}>
-        <View style={styleContent.bottomLeftContainer}>
-          <View style={styleContent.actionContainer}>
-            <LikeIcon />
-            <Text>{vibeDetails?.likes}</Text>
+      >
+        <BottomSheetView style={styles.contentContainer}>
+          <View style={[styleContent.sheetContainer]}>
+            <View style={styleContent.topBox}>
+              <Image
+                source={{ uri: getIconUrl(selectedMarker.icon.split(":")[1]) }}
+                style={{ width: 50, height: 50 }}
+              />
+              <View>
+                <Text>{vibeDetails?.author["userName"]}</Text>
+                <Text>{vibeDetails?.venue.name}</Text>
+              </View>
+            </View>
+            <View style={styleContent.dateContainer}>
+              {vibeDetails?.expiresAt && (
+                <Text style={{ color: "#005DF2" }}>
+                  {formatDate(vibeDetails?.expiresAt)}
+                </Text>
+              )}
+            </View>
+            <ScrollView>
+              {vibeDetails?.message && (
+                <Text>
+                  {formatTagsInText(
+                    isShortDescription
+                      ? vibeDetails?.message.slice(0, 100) + "..."
+                      : vibeDetails?.message
+                  )}
+                  {vibeDetails.message}
+                </Text>
+              )}
+            </ScrollView>
           </View>
-          <View
-            style={{ ...styleContent.actionContainer, ...styleContent.space }}
-          >
-            <ShareIcon />
-            <Text>{vibeDetails?.shares}</Text>
-          </View>
-        </View>
-        <MoreIcon />
-      </View>
-    </View>
-    // <></>
+        </BottomSheetView>
+      </BottomSheet>
+      {/* {selectedMarker && (
+        
+      )} */}
+    </>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "grey",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+});
 
 const styleContent = StyleSheet.create({
   sheetContainer: {
@@ -207,9 +179,7 @@ const styleContent = StyleSheet.create({
     gap: 10,
   },
   bottomContainer: {
-    marginTop: 10,
-    width: "100%",
-    height: "auto",
+    padding: 33,
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",

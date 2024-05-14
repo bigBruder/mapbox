@@ -50,13 +50,6 @@ export const MapContextProvider = ({
 
   const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
 
-  console.log(
-    "pins ==> ",
-    pinsForBound.map(
-      (pin) => "\n" + pin.startsAt + "----" + pin.expiresAt + "\n"
-    )
-  );
-
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
@@ -95,14 +88,9 @@ export const MapContextProvider = ({
       ) {
         queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
       } else {
-        console.log("selectedDate = ", selectedDate);
         queryParams.After = TransformToIsoDate(selectedDate).after;
       }
     }
-
-    console.log(selectedDate);
-    console.log("startDate = ", customDate.startDate);
-    console.log("endDate = ", customDate.endDate);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       setPinsForBound(pinsForBound.value.vibes);

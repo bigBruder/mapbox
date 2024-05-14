@@ -4,12 +4,16 @@ import { VibesItem } from "../../types/searchResponse";
 
 export const Marker = ({
   pin,
+  setSelectedMarker,
 }: {
   pin: VibesItem;
   setSelectedMarker: (pin: VibesItem | null) => void;
 }) => {
   return (
-    <TouchableOpacity style={styles.annotationContainer}>
+    <TouchableOpacity
+      style={styles.annotationContainer}
+      onPress={() => setSelectedMarker(pin)}
+    >
       <Image
         source={{
           uri: getIconUrl(pin.icon.split(":")[1]),

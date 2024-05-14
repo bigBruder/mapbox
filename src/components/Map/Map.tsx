@@ -22,7 +22,7 @@ import {
   ShareIcon,
 } from "../../assets/icons";
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
-import Bottomsheet from "../../utils/BottomSheet";
+import Bottomsheet, { ModalDataMarker } from "../../utils/BottomSheet";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
 import MapContext from "../../providers/mapContext/MapContext";
@@ -298,9 +298,9 @@ export const Map = () => {
           </View>
         </View>
         {selectedMarker && (
-          <Bottomsheet
+          <ModalDataMarker
             selectedMarker={selectedMarker}
-            onClose={() => setSelectedMarker(null)}
+            setSelectedMarker={setSelectedMarker}
           />
         )}
       </GestureHandlerRootView>
