@@ -4,7 +4,7 @@ export type queryParams = {
   "SW.Latitude": number;
   "SW.Longitude": number;
   After?: string;
-  Before: string;
+  Before?: string;
   OrderBy: string;
   PageSize: number;
   IncludeTotalCount: boolean;

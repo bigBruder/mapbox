@@ -4,7 +4,7 @@ import { getLocationByIP } from "./getLocationByIP";
 export const fetchLocation = async () => {
   try {
     const { status } = await Location.getForegroundPermissionsAsync();
-    console.log("Location status:", status);
+    // console.log("Location status:", status);
     let location = null;
 
     if (status !== "granted") {

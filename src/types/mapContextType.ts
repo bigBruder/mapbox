@@ -1,6 +1,7 @@
 import { Dispatch } from "react";
 import { CameraBound } from "./CameraBound";
 import { Heatmap, VibesItem } from "./searchResponse";
+import { DateType } from "react-native-ui-datepicker";
 
 export type MapContextType = {
   myLocation: { latitude: number; longitude: number; source: string } | null;
@@ -23,4 +24,9 @@ export type MapContextType = {
   setTags: (tags: string[]) => void;
   heatMap: Heatmap;
   cameraBound: CameraBound | null;
+  customDate: {
+    startDate: Date;
+    endDate: Date;
+  };
+  setCustomDate: (date: { startDate: DateType; endDate: DateType }) => void;
 };

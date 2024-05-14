@@ -4,7 +4,8 @@ export const TransformToIsoDate = (
   before: string;
   after: string;
 } => {
-  let beforeDate, afterDate;
+  let beforeDate = new Date(),
+    afterDate = new Date();
 
   switch (date) {
     case "Now":
@@ -12,27 +13,35 @@ export const TransformToIsoDate = (
       beforeDate = new Date();
       break;
     case "Today":
-      beforeDate = new Date();
-      afterDate = new Date();
       beforeDate.setDate(beforeDate.getDate() + 1);
       break;
     case "Tomorrow":
-      beforeDate = new Date();
-      afterDate = new Date();
-      afterDate.setDate(afterDate.getDate() + 1);
-      beforeDate.setDate(beforeDate.getDate() + 2);
+      // Set time to the start of the next day
+      beforeDate.setDate(beforeDate.getDate() + 1);
+      beforeDate.setHours(0, 0, 0, 0);
+
+      // Set time to the end of the next day
+      afterDate.setDate(afterDate.getDate() + 2); // Next day
+      afterDate.setHours(23, 59, 59, 999); // End of the day
       break;
     case "Next Week":
-      beforeDate = new Date();
-      afterDate = new Date();
-      afterDate.setDate(afterDate.getDate() + 7);
-      beforeDate.setDate(beforeDate.getDate() + 14);
-      break;
+      // Set time to the start of the next week
+      beforeDate.setDate(beforeDate.getDate() + (8 - beforeDate.getDay())); // Move to the next Sunday (start of the week)
+      beforeDate.setHours(0, 0, 0, 0);
+
+      // Set time to the end of the next week
+      afterDate.setDate(afterDate.getDate() + (14 - afterDate.getDay())); // Move to the next Saturday (end of the week)
+      afterDate.setHours(23, 59, 59, 999);
     case "Next Month":
-      beforeDate = new Date();
-      afterDate = new Date();
-      beforeDate.setMonth(beforeDate.getMonth() + 2);
-      afterDate.setMonth(afterDate.getMonth() + 1);
+      // Set time to the start of the next month
+      beforeDate.setMonth(beforeDate.getMonth() + 1);
+      beforeDate.setDate(1);
+      beforeDate.setHours(0, 0, 0, 0);
+
+      // Set time to the end of the next month
+      afterDate.setMonth(afterDate.getMonth() + 2);
+      afterDate.setDate(0); // Set to the last day of the next month
+      afterDate.setHours(23, 59, 59, 999);
       break;
     default:
       beforeDate = new Date();

@@ -4,6 +4,11 @@ import { MapContextType } from "../../types/mapContextType";
 import { VibesItem } from "../../types/searchResponse";
 
 const initialValue: MapContextType = {
+  customDate: {
+    startDate: new Date(),
+    endDate: new Date(),
+  },
+  setCustomDate: (date: { startDate: string; endDate: string }) => {},
   cameraBound: null,
   myLocation: null,
   setMyLocation: (

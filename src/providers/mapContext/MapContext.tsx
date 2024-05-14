@@ -24,7 +24,11 @@ export const MapContextProvider = ({
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
 
   const [showModal, setShowModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("Next Month");
+  const [selectedDate, setSelectedDate] = useState("Now");
+  const [customDate, setCustomDate] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -46,6 +50,13 @@ export const MapContextProvider = ({
 
   const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
 
+  console.log(
+    "pins ==> ",
+    pinsForBound.map(
+      (pin) => "\n" + pin.startsAt + "----" + pin.expiresAt + "\n"
+    )
+  );
+
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
@@ -54,7 +65,8 @@ export const MapContextProvider = ({
       "NE.Longitude": sw[0],
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
-      Before: TransformToIsoDate(selectedDate).before,
+      // Before: TransformToIsoDate(selectedDate).before,
+      // endsAfter: TransformToIsoDate(selectedDate).after,
       OrderBy: "Points",
       PageSize: cameraBound.properties.zoom > 15 ? 40 : 20,
       IncludeTotalCount: true,
@@ -65,11 +77,17 @@ export const MapContextProvider = ({
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
-    if (selectedDate === "Now") {
-      queryParams["endsAfter"] = new Date().toISOString();
+
+    if (selectedDate === "Custom") {
+      queryParams.Before = customDate.endDate.toISOString();
+      queryParams.endsAfter = customDate.startDate.toISOString();
     } else {
-      queryParams["After"] = TransformToIsoDate(selectedDate).after;
+      queryParams.Before = TransformToIsoDate(selectedDate).before;
+      queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
     }
+
+    console.log("startDate = ", customDate.startDate);
+    console.log("endDate = ", customDate.endDate);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       setPinsForBound(pinsForBound.value.vibes);
@@ -79,6 +97,8 @@ export const MapContextProvider = ({
   }, [cameraBound?.properties.bounds.ne, selectedTag, selectedDate]);
 
   const value = {
+    customDate,
+    setCustomDate,
     selectedDate,
     myLocation,
     setMyLocation,

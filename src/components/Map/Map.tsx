@@ -32,9 +32,11 @@ import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
 import * as Location from "expo-location";
+import { DateToShortFormat } from "../../utils/DateToShortFormat";
 
 export const Map = () => {
   const {
+    customDate,
     selectedDate,
     setSelectedDate,
     myLocation,
@@ -248,7 +250,13 @@ export const Map = () => {
                     onPress={() => setShowModal(true)}
                   >
                     <CalendarIcon style={styles.calendarIcon} />
-                    <Text>{selectedDate}</Text>
+                    <Text>
+                      {selectedDate === "Custom"
+                        ? DateToShortFormat(customDate.startDate) +
+                          " - " +
+                          DateToShortFormat(customDate.endDate)
+                        : selectedDate}
+                    </Text>
                   </TouchableOpacity>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {selectedTag && (

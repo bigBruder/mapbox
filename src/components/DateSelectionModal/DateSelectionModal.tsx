@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -12,6 +12,7 @@ import DateTimePicker, { DateType } from "react-native-ui-datepicker";
 import { buttonsSelectData } from "../../utils/mockMarkers";
 import { formatDate } from "../../utils/helpersFunctions";
 import { StatusBar } from "expo-status-bar";
+import MyContext from "../../providers/mapContext/MapContext";
 
 interface Props {
   onSelect: (date: string) => void;
@@ -24,10 +25,13 @@ export const DateSelectionModal: React.FC<Props> = ({
   onCloseModal,
   selectedDate,
 }) => {
+  const { customDate, setCustomDate } = useContext(MyContext);
   const [showDatePiker, setShowDatePiker] = useState(false);
 
   const [startDate, setStartDate] = useState<DateType>("");
   const [endDate, setEndDate] = useState<DateType>("");
+
+  console.log("startDate", startDate);
 
   const preparedStartDate = formatDate(startDate).split(",")[1];
   const preparedEndDate = formatDate(endDate).split(",")[1];
@@ -97,11 +101,15 @@ export const DateSelectionModal: React.FC<Props> = ({
               todayContainerStyle={{
                 borderColor: "#fff",
               }}
-              startDate={startDate}
-              endDate={endDate}
+              startDate={customDate.startDate}
+              endDate={customDate.endDate}
               onChange={(params) => {
                 setStartDate(params.startDate);
                 setEndDate(params.endDate);
+                setCustomDate({
+                  startDate: params.startDate,
+                  endDate: params.endDate,
+                });
               }}
             />
 
@@ -114,11 +122,12 @@ export const DateSelectionModal: React.FC<Props> = ({
             <TouchableOpacity
               style={styles.buttonApplyDate}
               onPress={() => {
-                if (!startDate || !endDate) {
+                if (!customDate.startDate || !customDate.endDate) {
                   return;
                 }
 
-                onSelect(`${preparedStartDate} - ${preparedEndDate}`);
+                // onSelect(`${preparedStartDate} - ${preparedEndDate}`);
+                onSelect(`Custom`);
                 onCloseModal(false);
               }}
             >
