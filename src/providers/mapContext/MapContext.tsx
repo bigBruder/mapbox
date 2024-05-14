@@ -83,18 +83,37 @@ export const MapContextProvider = ({
       queryParams.endsAfter = customDate.startDate.toISOString();
     } else {
       queryParams.Before = TransformToIsoDate(selectedDate).before;
-      queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
+      if (
+        selectedDate === "Next Month" ||
+        selectedDate === "Now" ||
+        selectedDate === "Today" ||
+        selectedDate === "Next 7 days" ||
+        selectedDate === "Next 14 days" ||
+        selectedDate === "Next 30 days"
+      ) {
+        queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
+      } else {
+        console.log("selectedDate = ", selectedDate);
+        queryParams.After = TransformToIsoDate(selectedDate).after;
+      }
     }
 
-    console.log("startDate = ", customDate.startDate);
-    console.log("endDate = ", customDate.endDate);
+    console.log(selectedDate);
+    console.log("startDate = ", TransformToIsoDate(selectedDate).after);
+    console.log("endDate = ", TransformToIsoDate(selectedDate).before);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       setPinsForBound(pinsForBound.value.vibes);
       setTags(Object.keys(pinsForBound.value.tags));
       setHeatMap(pinsForBound.value.heatmap);
     });
-  }, [cameraBound?.properties.bounds.ne, selectedTag, selectedDate]);
+  }, [
+    cameraBound?.properties.bounds.ne,
+    selectedTag,
+    selectedDate,
+    customDate.startDate,
+    customDate.endDate,
+  ]);
 
   const value = {
     customDate,

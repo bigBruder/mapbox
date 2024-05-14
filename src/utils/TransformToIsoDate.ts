@@ -26,22 +26,27 @@ export const TransformToIsoDate = (
       break;
     case "Next Week":
       // Set time to the start of the next week
-      beforeDate.setDate(beforeDate.getDate() + (8 - beforeDate.getDay())); // Move to the next Sunday (start of the week)
-      beforeDate.setHours(0, 0, 0, 0);
 
       // Set time to the end of the next week
-      afterDate.setDate(afterDate.getDate() + (14 - afterDate.getDay())); // Move to the next Saturday (end of the week)
-      afterDate.setHours(23, 59, 59, 999);
+      afterDate.setHours(0, 0, 0, 0);
+      afterDate.setDate(afterDate.getDate() + (8 - afterDate.getDay())); // Next week
+      afterDate.setHours(0, 0, 0, 0);
+
+      console.log(afterDate.getDay(), "day of week");
+
+      beforeDate.setDate(afterDate.getDate() + 7); // Next week
+      beforeDate.setHours(23, 59, 59, 999); // End of the week
+      break;
     case "Next Month":
       // Set time to the start of the next month
-      beforeDate.setMonth(beforeDate.getMonth() + 1);
-      beforeDate.setDate(1);
-      beforeDate.setHours(0, 0, 0, 0);
+      afterDate.setMonth(beforeDate.getMonth() + 1);
+      afterDate.setDate(1);
+      afterDate.setHours(0, 0, 0, 0);
 
       // Set time to the end of the next month
-      afterDate.setMonth(afterDate.getMonth() + 2);
-      afterDate.setDate(0); // Set to the last day of the next month
-      afterDate.setHours(23, 59, 59, 999);
+      beforeDate.setMonth(afterDate.getMonth() + 2);
+      beforeDate.setDate(0); // Set to the last day of the next month
+      beforeDate.setHours(23, 59, 59, 999);
       break;
     default:
       beforeDate = new Date();
