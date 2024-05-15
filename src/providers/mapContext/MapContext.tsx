@@ -6,6 +6,7 @@ import { queryParams } from "../../types/queryParams";
 import { fetchLocation } from "../../utils/fetchLocation";
 import initialValue from "./initialValue";
 import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
+import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 
 const MyContext = createContext(initialValue);
 
@@ -14,11 +15,13 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [myLocation, setMyLocation] = useState<{
-    latitude: number;
-    longitude: number;
-    source: string;
-  } | null>(null);
+  // const [myLocation, setMyLocation] = useState<{
+  //   latitude: number;
+  //   longitude: number;
+  //   source: string;
+  // } | null>(null);
+
+  const { location, error } = useRealTimeLocation();
 
   const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
@@ -38,13 +41,13 @@ export const MapContextProvider = ({
     cellRadius: 100,
   });
 
-  useEffect(() => {
-    fetchLocation().then((location) => {
-      if (location) {
-        setMyLocation(location);
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetchLocation().then((location) => {
+  //     if (location) {
+  //       setMyLocation(location);
+  //     }
+  //   });
+  // }, []);
 
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
 
@@ -126,8 +129,8 @@ export const MapContextProvider = ({
     customDate,
     setCustomDate,
     selectedDate,
-    myLocation,
-    setMyLocation,
+    location,
+    // setMyLocation,
     selectedTag,
     setSelectedTag,
     pinsForBound,

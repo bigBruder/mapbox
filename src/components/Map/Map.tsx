@@ -34,14 +34,15 @@ import mapboxStyleUrl from "../../constants/mapStyleUrl";
 import * as Location from "expo-location";
 import { DateToShortFormat } from "../../utils/DateToShortFormat";
 import useFlyToLocation from "../../hooks/useFirstFlyToLocation";
+import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 
 export const Map = () => {
   const {
+    location,
     customDate,
     selectedDate,
     setSelectedDate,
-    myLocation,
-    setMyLocation,
+    // setMyLocation,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -54,13 +55,15 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
+  const { setPermissionStatus } = useRealTimeLocation();
 
+  // console.log("myLocation", location);
   useEffect(() => {
-    if (!myLocation) return;
+    if (!location) return;
     if (isFirstFlyHappened) return;
 
     camera.current?.flyTo(
-      [myLocation.longitude, myLocation.latitude],
+      [location.longitude, location.latitude],
 
       4000
     );
@@ -68,20 +71,15 @@ export const Map = () => {
       zoomLevel: 15,
       animationDuration: 2000,
       animationMode: "flyTo",
-      centerCoordinate: [myLocation.longitude, myLocation.latitude],
+      centerCoordinate: [location.longitude, location.latitude],
     });
 
     setIsFirstFlyHappened(true);
-  }, [myLocation]);
+  }, [location]);
 
   const camera = useRef<Mapbox.Camera | null>(null);
 
-  useFlyToLocation(
-    myLocation,
-    camera,
-    isFirstFlyHappened,
-    setIsFirstFlyHappened
-  );
+  useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -90,26 +88,31 @@ export const Map = () => {
     setSelectedDate(date);
   };
 
+  console.log("location", location);
+
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
-    if (isGpsGranted.status !== "granted" && isGpsGranted.status !== "denied") {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") return;
-      const location = await Location.getCurrentPositionAsync({});
-      if (location) {
-        setMyLocation({
-          latitude: location?.coords.latitude,
-          longitude: location?.coords.longitude,
-          source: "gps",
-        });
-      }
-    }
-    if (!myLocation) return;
+    // if (isGpsGranted.status !== "granted") {
+    //   const { status } = await Location.requestForegroundPermissionsAsync();
+    // if (status !== "granted") return
+
+    // const location = await Location.getCurrentPositionAsync({});
+    // if (location) {
+    //   setMyLocation({
+    //     latitude: location?.coords.latitude,
+    //     longitude: location?.coords.longitude,
+    //     source: "gps",
+    //   });
+    // }
+    // }
+    // setPermissionStatus(isGpsGranted.status);
+    // setPermissionStatus(isGpsGranted.status);
+    if (!location) return;
     camera.current?.setCamera({
       zoomLevel: 15,
       animationDuration: 2000,
       animationMode: "flyTo",
-      centerCoordinate: [myLocation.longitude, myLocation.latitude],
+      centerCoordinate: [location.longitude, location.latitude],
     });
   };
 
@@ -210,11 +213,11 @@ export const Map = () => {
                   </Mapbox.MarkerView>
                 ))}
 
-              {myLocation?.longitude && myLocation.latitude && (
+              {location?.longitude && location.latitude && (
                 <Mapbox.MarkerView
                   key="pointAnnotation"
                   id="pointAnnotation"
-                  coordinate={[myLocation.longitude, myLocation.latitude]}
+                  coordinate={[location.longitude, location.latitude]}
                 >
                   <View>
                     <Text style={styles.annotationText}>📍</Text>
@@ -222,7 +225,7 @@ export const Map = () => {
                 </Mapbox.MarkerView>
               )}
               {/* {myLocation && ( */}
-              {myLocation?.longitude && myLocation.latitude && (
+              {location?.longitude && location.latitude && (
                 <Mapbox.Camera
                   // zoomLevel={15}
                   ref={camera}
