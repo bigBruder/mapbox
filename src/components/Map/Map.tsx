@@ -133,7 +133,7 @@ export const Map = () => {
                 return (
                   <Mapbox.HeatmapLayer
                     key={data.features.toString() + index.toString()}
-                    id={`my-heatmap-source-${index}`}
+                    id={`my-heatmap-source-${index + 1}`}
                     sourceID={`my-heatmap-source-${index + 1}`}
                     aboveLayerID="waterway-label"
                     sourceLayerID=""
@@ -187,7 +187,7 @@ export const Map = () => {
                       pin.venue.geo.longitude,
                       pin.venue.geo.latitude,
                     ]}
-                    allowOverlap={true}
+                    allowOverlap={false}
                   >
                     <Marker
                       key={index}

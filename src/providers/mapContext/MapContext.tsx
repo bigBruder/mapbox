@@ -61,7 +61,7 @@ export const MapContextProvider = ({
       // Before: TransformToIsoDate(selectedDate).before,
       // endsAfter: TransformToIsoDate(selectedDate).after,
       OrderBy: "Points",
-      PageSize: cameraBound.properties.zoom > 15 ? 40 : 20,
+      PageSize: cameraBound.properties.zoom > 15 ? 10 : 5,
       IncludeTotalCount: true,
       "TopTags.Enable": true,
       "Heatmap.Enable": true,
