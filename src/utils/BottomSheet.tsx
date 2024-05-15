@@ -113,6 +113,8 @@ export const ModalDataMarker: FC<sIPoints> = ({
                 <Text style={styleContent.venueName}>
                   {vibeDetails?.venue.name}
                 </Text>
+                <Text>Rank: {vibeDetails?.points}</Text>
+                <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
               </View>
             </View>
             <View style={styleContent.dateContainer}>

@@ -65,7 +65,7 @@ export const MapContextProvider = ({
       IncludeTotalCount: true,
       "TopTags.Enable": true,
       "Heatmap.Enable": true,
-      "Heatmap.Resolution": 9,
+      "Heatmap.Resolution": cameraBound.properties.zoom > 10 ? 9 : 8,
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
@@ -93,7 +93,11 @@ export const MapContextProvider = ({
     }
 
     getPinsForBound(queryParams).then((pinsForBound) => {
-      setPinsForBound(pinsForBound.value.vibes);
+      const sortedPins = [...pinsForBound.value.vibes].sort(
+        (a, b) => (a.points + a.isTop ? 5 : 0) - (b.points + b.isTop ? 5 : 0)
+      );
+      setPinsForBound(sortedPins);
+
       setTags(Object.keys(pinsForBound.value.tags));
       setHeatMap(pinsForBound.value.heatmap);
     });
