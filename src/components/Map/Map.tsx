@@ -22,7 +22,7 @@ import {
   ShareIcon,
 } from "../../assets/icons";
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
-import Bottomsheet, { ModalDataMarker } from "../../utils/BottomSheet";
+import { ModalDataMarker } from "../../utils/BottomSheet";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
 import MapContext from "../../providers/mapContext/MapContext";
@@ -33,6 +33,7 @@ import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
 import * as Location from "expo-location";
 import { DateToShortFormat } from "../../utils/DateToShortFormat";
+import useFlyToLocation from "../../hooks/useFirstFlyToLocation";
 
 export const Map = () => {
   const {
@@ -52,8 +53,11 @@ export const Map = () => {
     setSelectedTag,
   } = useContext(MapContext);
 
+  const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
+
   useEffect(() => {
     if (!myLocation) return;
+    if (isFirstFlyHappened) return;
 
     camera.current?.flyTo(
       [myLocation.longitude, myLocation.latitude],
@@ -66,9 +70,18 @@ export const Map = () => {
       animationMode: "flyTo",
       centerCoordinate: [myLocation.longitude, myLocation.latitude],
     });
+
+    setIsFirstFlyHappened(true);
   }, [myLocation]);
 
   const camera = useRef<Mapbox.Camera | null>(null);
+
+  useFlyToLocation(
+    myLocation,
+    camera,
+    isFirstFlyHappened,
+    setIsFirstFlyHappened
+  );
 
   const [showModal, setShowModal] = useState(false);
 
