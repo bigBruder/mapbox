@@ -42,9 +42,7 @@ export const ModalDataMarker: FC<sIPoints> = ({
 
   // callbacks
   const handleSheetChanges = useCallback(
-    (index: number) => {
-      console.log("handleSheetChanges", index);
-    },
+    (index: number) => {},
     [selectedMarker]
   );
 
@@ -112,19 +110,21 @@ export const ModalDataMarker: FC<sIPoints> = ({
               />
               <View>
                 <Text>{vibeDetails?.author["userName"]}</Text>
-                <Text>{vibeDetails?.venue.name}</Text>
+                <Text style={styleContent.venueName}>
+                  {vibeDetails?.venue.name}
+                </Text>
               </View>
             </View>
             <View style={styleContent.dateContainer}>
-              {vibeDetails?.expiresAt && (
+              {vibeDetails?.startsAt && (
                 <Text style={{ color: "#005DF2" }}>
-                  {formatDate(vibeDetails?.expiresAt)}
+                  {formatDate(new Date(vibeDetails?.startsAt).toString())}
                 </Text>
               )}
             </View>
             <ScrollView>
               {vibeDetails?.message && (
-                <Text>
+                <Text style={styleContent.venueMessage}>
                   {formatTagsInText(
                     isShortDescription
                       ? vibeDetails?.message.slice(0, 100) + "..."
