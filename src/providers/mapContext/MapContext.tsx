@@ -90,7 +90,7 @@ export const MapContextProvider = ({
       }
     }
 
-    console.log("queryParams", queryParams);
+    // console.log("queryParams", queryParams);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       const sortedPins = [...pinsForBound.value.vibes].sort(
@@ -109,18 +109,18 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  console.log(
-    "\n" +
-      pinsForBound.map(
-        (pin) =>
-          "event StartAt: " +
-          pin.startsAt +
-          " ----- " +
-          "event ExpiredAt" +
-          pin.expiresAt +
-          "\n\n"
-      )
-  );
+  // console.log(
+  //   "\n" +
+  //     pinsForBound.map(
+  //       (pin) =>
+  //         "event StartAt: " +
+  //         pin.startsAt +
+  //         " ----- " +
+  //         "event ExpiredAt" +
+  //         pin.expiresAt +
+  //         "\n\n"
+  //     )
+  // );
 
   const value = {
     customDate,

@@ -28,11 +28,28 @@ export const DateSelectionModal: React.FC<Props> = ({
   const { customDate, setCustomDate, setSelectedDate } = useContext(MyContext);
   const [showDatePiker, setShowDatePiker] = useState(false);
 
-  const [startDate, setStartDate] = useState<DateType>("");
-  const [endDate, setEndDate] = useState<DateType>("");
+  const [startDate, setStartDate] = useState<DateType>(
+    customDate?.startDate || new Date()
+  );
+  const [endDate, setEndDate] = useState<DateType>(
+    customDate?.endDate || new Date()
+  );
 
   const preparedStartDate = formatDate(startDate).split(",")[1];
   const preparedEndDate = formatDate(endDate).split(",")[1];
+
+  const handleClear = () => {
+    setCustomDate({
+      startDate: new Date(),
+      endDate: new Date(),
+    });
+
+    setStartDate(new Date());
+    setEndDate(new Date());
+
+    // setSelectedDate("Now");
+    // onCloseModal(false);
+  };
 
   return (
     <SafeAreaView
@@ -84,7 +101,7 @@ export const DateSelectionModal: React.FC<Props> = ({
       </View>
 
       <Modal visible={showDatePiker} animationType="slide">
-        <View>
+        <SafeAreaView>
           <View style={styles.headerContainer}>
             <TouchableOpacity onPress={() => setShowDatePiker(false)}>
               <AntDesign name="left" size={24} color="black" />
@@ -94,12 +111,7 @@ export const DateSelectionModal: React.FC<Props> = ({
 
             <TouchableOpacity
               onPress={() => {
-                setCustomDate({
-                  startDate: new Date(),
-                  endDate: new Date(),
-                });
-                setSelectedDate("Now");
-                onCloseModal(false);
+                handleClear();
               }}
             >
               <Text style={styles.headerCancel}>Clear</Text>
@@ -133,20 +145,21 @@ export const DateSelectionModal: React.FC<Props> = ({
                 if (!customDate.startDate || !customDate.endDate) {
                   return;
                 }
+                setShowDatePiker(false);
 
                 // onSelect(`${preparedStartDate} - ${preparedEndDate}`);
                 setCustomDate({
                   startDate: startDate,
                   endDate: endDate,
                 });
-                onSelect(`Custom`);
-                onCloseModal(false);
+                // onSelect(`Custom`);
+                // onCloseModal(false);
               }}
             >
               <Text style={styles.textApplyDate}>Apply</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
       <StatusBar style="auto" />
     </SafeAreaView>

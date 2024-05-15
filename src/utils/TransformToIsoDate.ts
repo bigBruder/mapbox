@@ -12,7 +12,7 @@ export const TransformToIsoDate = (
       afterDate = new Date();
       beforeDate = new Date();
 
-      console.log("BEFORE DAY _______> ", beforeDate);
+    // console.log("BEFORE DAY _______> ", beforeDate);
 
     case "Today":
       beforeDate.setDate(beforeDate.getDate() + 1);
@@ -67,7 +67,7 @@ export const TransformToIsoDate = (
       break;
   }
 
-  console.log(beforeDate, afterDate);
+  // console.log(beforeDate, afterDate);
 
   return {
     before: beforeDate,
