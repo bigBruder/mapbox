@@ -44,6 +44,8 @@ export const DateSelectionModal: React.FC<Props> = ({
       endDate: new Date(),
     });
 
+    setSelectedDate("Now");
+
     setStartDate(new Date());
     setEndDate(new Date());
 
@@ -131,6 +133,8 @@ export const DateSelectionModal: React.FC<Props> = ({
                 setStartDate(params.startDate);
                 setEndDate(params.endDate);
               }}
+              minDate={new Date().setDate(new Date().getDate() - 1)}
+              maxDate={new Date().setMonth(new Date().getMonth() + 3)}
             />
 
             <View>
