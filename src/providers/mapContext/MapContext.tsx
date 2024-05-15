@@ -58,8 +58,6 @@ export const MapContextProvider = ({
       "NE.Longitude": sw[0],
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
-      // Before: TransformToIsoDate(selectedDate).before,
-      // endsAfter: TransformToIsoDate(selectedDate).after,
       OrderBy: "Points",
       PageSize: cameraBound.properties.zoom > 15 ? 10 : 5,
       IncludeTotalCount: true,
@@ -92,6 +90,8 @@ export const MapContextProvider = ({
       }
     }
 
+    console.log("queryParams", queryParams);
+
     getPinsForBound(queryParams).then((pinsForBound) => {
       const sortedPins = [...pinsForBound.value.vibes].sort(
         (a, b) => (a.points + a.isTop ? 5 : 0) - (b.points + b.isTop ? 5 : 0)
@@ -108,6 +108,19 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
+
+  console.log(
+    "\n" +
+      pinsForBound.map(
+        (pin) =>
+          "event StartAt: " +
+          pin.startsAt +
+          " ----- " +
+          "event ExpiredAt" +
+          pin.expiresAt +
+          "\n\n"
+      )
+  );
 
   const value = {
     customDate,

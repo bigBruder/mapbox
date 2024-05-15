@@ -18,12 +18,12 @@ import {
   PorstDetailsValue,
   PostDetailsResponse,
 } from "../types/responses/PostDetailsResponse";
-import { formatDate } from "./formatDate";
 import BottomSheet, {
   BottomSheetFooter,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { formatTagsInText } from "./formatTagsInText";
+import { formatDate } from "./formatDate";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MAX_TRANSLATE_Y = SCREEN_HEIGHT / 1.5;
@@ -120,7 +120,7 @@ export const ModalDataMarker: FC<sIPoints> = ({
             <View style={styleContent.dateContainer}>
               {vibeDetails?.startsAt && (
                 <Text style={{ color: "#005DF2" }}>
-                  {formatDate(new Date(vibeDetails?.startsAt).toString())}
+                  {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
                 </Text>
               )}
             </View>
