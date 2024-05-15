@@ -179,7 +179,11 @@ const styleContent = StyleSheet.create({
     gap: 10,
   },
   bottomContainer: {
-    padding: 33,
+    backgroundColor: "white",
+    paddingTop: 20,
+    paddingBottom: 30,
+    paddingHorizontal: 30,
+
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
