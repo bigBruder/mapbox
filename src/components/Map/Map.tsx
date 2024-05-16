@@ -92,16 +92,17 @@ export const Map = () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       setPermissionStatus(status);
     }
-    // console.log("location", location);
-    // if (!location) return;
-    // setTimeout(() => {
-    //   camera.current?.setCamera({
-    //     zoomLevel: 15,
-    //     animationDuration: 2000,
-    //     animationMode: "flyTo",
-    //     centerCoordinate: [location.longitude, location.latitude],
-    //   });
-    // }, 1000);
+    camera.current?.flyTo(
+      [location.longitude, location.latitude],
+
+      4000
+    );
+    camera.current?.setCamera({
+      zoomLevel: 15,
+      animationDuration: 2000,
+      animationMode: "flyTo",
+      centerCoordinate: [location.longitude, location.latitude],
+    });
   };
 
   if (loading) {

@@ -78,6 +78,7 @@ export const MapContextProvider = ({
     // console.log("queryParams", queryParams);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
+      if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort(
         (a, b) => (a.points + a.isTop ? 5 : 0) - (b.points + b.isTop ? 5 : 0)
       );
