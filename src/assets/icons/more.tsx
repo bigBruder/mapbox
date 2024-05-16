@@ -1,14 +1,7 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
-const MoreIcon = (props) => (
-  <Svg
-    width={24}
-    height={24}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+export const MoreIcon = () => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
     <Path
       d="M7.55559 12.2222C7.55559 11.2404 6.75965 10.4444 5.7778 10.4444C4.79595 10.4444 4 11.2404 4 12.2222C4 13.2041 4.79595 14 5.7778 14C6.75965 14 7.55559 13.2041 7.55559 12.2222Z"
       fill="#333659"
@@ -23,4 +16,3 @@ const MoreIcon = (props) => (
     />
   </Svg>
 );
-export default MoreIcon;

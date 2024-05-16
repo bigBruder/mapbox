@@ -1,23 +1,20 @@
-import { Text, View, Image, ScrollView } from "react-native";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import LikeIcon from "../../assets/icons/like";
-import { ShareIcon } from "../../assets/icons";
-import MoreIcon from "../../assets/icons/more";
-import { VibesItem } from "../../types/searchResponse";
-import { getIconUrl } from "../../utils/getIconUrl";
+import { Image, ScrollView, Text, View } from "react-native";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+
+import { LikeIcon, ShareIcon, MoreIcon } from "../../assets/icons";
 import { getVibeDetails } from "../../api/client";
+import { formatDate } from "../../utils/formatDate";
+import { formatTagsInText } from "../../utils/formatTagsInText";
+import { getIconUrl } from "../../utils/getIconUrl";
+import { VibesItem } from "../../types/searchResponse";
 import {
   PorstDetailsValue,
   PostDetailsResponse,
 } from "../../types/responses/PostDetailsResponse";
-import BottomSheet, {
-  BottomSheetFooter,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { formatTagsInText } from "../../utils/formatTagsInText";
-import { formatDate } from "../../utils/formatDate";
 
 import styles from "./styles";
+import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
 
 interface Props {
   selectedMarker: VibesItem;
@@ -40,7 +37,7 @@ export const ModalDataMarker: FC<Props> = ({
     null
   );
   const [loading, setLoading] = useState(true);
-  const [isShortDescription, setIsShortDescription] = useState(false);
+  // const [isShortDescription, setIsShortDescription] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -69,24 +66,7 @@ export const ModalDataMarker: FC<Props> = ({
       }}
       animateOnMount={true}
       footerComponent={(props) => (
-        <BottomSheetFooter {...props} style={styles.bottomContainer}>
-          <View style={styles.bottomLeftContainer}>
-            <View style={styles.actionContainer}>
-              <LikeIcon />
-              <Text>{vibeDetails?.likes}</Text>
-            </View>
-            <View
-              style={{
-                ...styles.actionContainer,
-                ...styles.space,
-              }}
-            >
-              <ShareIcon />
-              <Text>{vibeDetails?.shares}</Text>
-            </View>
-          </View>
-          <MoreIcon />
-        </BottomSheetFooter>
+        <BottomSheetFooterCustom vibeDetails={vibeDetails} props={props} />
       )}
     >
       <BottomSheetView style={styles.contentContainer}>
@@ -112,14 +92,7 @@ export const ModalDataMarker: FC<Props> = ({
           </View>
           <ScrollView>
             {vibeDetails?.message && (
-              <Text>
-                {formatTagsInText(
-                  isShortDescription
-                    ? vibeDetails?.message.slice(0, 100) + "..."
-                    : vibeDetails?.message
-                )}
-                {vibeDetails.message}
-              </Text>
+              <Text>{formatTagsInText(vibeDetails?.message)}</Text>
             )}
           </ScrollView>
         </View>
