@@ -92,6 +92,7 @@ export const Map = () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       setPermissionStatus(status);
     }
+    if (!location) return;
     camera.current?.flyTo(
       [location.longitude, location.latitude],
 
@@ -202,8 +203,15 @@ export const Map = () => {
                   </Mapbox.MarkerView>
                 ))}
 
-              {location?.longitude && location.latitude && (
-                <Mapbox.MarkerView
+              {location && location.source === "gps" && (
+                <Mapbox.UserLocation
+                  visible
+                  animated
+                  showsUserHeadingIndicator
+                />
+              )}
+              {location && location.source === "ip" && (
+                <Mapbox.PointAnnotation
                   key="pointAnnotation"
                   id="pointAnnotation"
                   coordinate={[location.longitude, location.latitude]}
@@ -211,19 +219,11 @@ export const Map = () => {
                   <View>
                     <Text style={styles.annotationText}>📍</Text>
                   </View>
-                </Mapbox.MarkerView>
+                  <Mapbox.Callout title="Your approximate location" />
+                </Mapbox.PointAnnotation>
               )}
-              {/* {myLocation && ( */}
               {location?.longitude && location.latitude && (
-                <Mapbox.Camera
-                  // zoomLevel={15}
-                  ref={camera}
-                  // followZoomLevel={2}
-                  animationDuration={4000}
-                  // centerCoordinate={
-                  //   [myLocation.longitude, myLocation.latitude] || undefined
-                  // }
-                />
+                <Mapbox.Camera ref={camera} animationDuration={4000} />
               )}
               {/* )} */}
             </Mapbox.MapView>
