@@ -165,7 +165,7 @@ export const DateSelectionModal: React.FC<Props> = ({
           </View>
         </SafeAreaView>
       </Modal>
-      <StatusBar style="auto" />
+      <StatusBar style="auto" backgroundColor="white" />
     </SafeAreaView>
   );
 };
