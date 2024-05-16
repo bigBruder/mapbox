@@ -2,19 +2,9 @@ import { NativeModules, StyleSheet } from "react-native";
 const { StatusBarManager } = NativeModules;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: "grey",
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
   sheetContainer: {
     padding: 10,
     display: "flex",
-    flex: 1,
     flexDirection: "column",
     gap: 10,
   },
@@ -51,6 +41,7 @@ const styles = StyleSheet.create({
   actionContainer: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
   },
   space: {
     marginLeft: 56,

@@ -19,7 +19,6 @@ const useRealTimeLocation = () => {
         setPermissionStatus(status);
 
         if (status === "granted") {
-          console.log(status);
           const initialLocation = await Location.getCurrentPositionAsync({});
           setLocation({
             latitude: initialLocation.coords.latitude,
@@ -51,36 +50,12 @@ const useRealTimeLocation = () => {
       }
     };
 
-    console.log("location", location);
-
-    // const checkPermissionStatus = async () => {
-    //   console.log("Checking permission status");
-    //   try {
-    //     const { status } = await Location.getForegroundPermissionsAsync();
-    //     await Location.requestForegroundPermissionsAsync();
-    //     if (status !== permissionStatus) {
-    //       setPermissionStatus(status);
-    //       if (status === "granted") {
-    //         fetchInitialLocation();
-    //       } else if (status === "denied" || status === "undetermined") {
-    //         const ipLocation = await getLocationByIP();
-    //         setLocation(ipLocation);
-    //       }
-    //     }
-    //   } catch (err) {
-    //     console.error(err);
-    //     console.error("Error checking permission status:", err);
-    //   }
-    // };
-
     fetchInitialLocation();
-    // const intervalId = setInterval(checkPermissionStatus, 10000); // Check every 10 seconds
 
     return () => {
       if (subscription) {
         subscription.remove();
       }
-      // clearInterval(intervalId);
     };
   }, [permissionStatus]);
 

@@ -28,6 +28,10 @@ export const BottomSheetFooterCustom: FC<Props> = ({ vibeDetails, props }) => (
         <Text>{vibeDetails?.shares}</Text>
       </View>
     </View>
-    <MoreIcon />
+
+    <View style={styles.actionContainer}>
+      <MoreIcon />
+      <Text>More</Text>
+    </View>
   </BottomSheetFooter>
 );

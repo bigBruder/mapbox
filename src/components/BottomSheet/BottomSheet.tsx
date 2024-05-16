@@ -64,7 +64,7 @@ export const ModalDataMarker: FC<Props> = ({
         <BottomSheetFooterCustom vibeDetails={vibeDetails} props={props} />
       )}
     >
-      <BottomSheetView style={styles.contentContainer}>
+      <BottomSheetView>
         <View style={[styles.sheetContainer]}>
           <View style={styles.topBox}>
             <Image
