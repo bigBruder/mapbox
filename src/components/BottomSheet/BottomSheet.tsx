@@ -2,7 +2,6 @@ import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
-import { LikeIcon, ShareIcon, MoreIcon } from "../../assets/icons";
 import { getVibeDetails } from "../../api/client";
 import { formatDate } from "../../utils/formatDate";
 import { formatTagsInText } from "../../utils/formatTagsInText";
@@ -36,21 +35,16 @@ export const ModalDataMarker: FC<Props> = ({
   const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
     null
   );
-  const [loading, setLoading] = useState(true);
-  // const [isShortDescription, setIsShortDescription] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
         const details: PostDetailsResponse = await getVibeDetails(
           selectedMarker.id
         );
         setVibeDetails(details.value);
       } catch (error) {
         console.error("Error fetching vibe details:", error);
-      } finally {
-        setLoading(false);
       }
     })();
   }, [selectedMarker.id]);
