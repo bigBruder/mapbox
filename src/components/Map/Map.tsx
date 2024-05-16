@@ -1,30 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  Image,
-} from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 
 import { styles } from "./styles";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-  CalendarIcon,
-  LocationIcon,
-  PlusIcon,
-  ProfileIcon,
-  SearchIcon,
-  ShareIcon,
-} from "../../assets/icons";
-import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
+import { LocationIcon, PlusIcon } from "../../assets/icons";
 import { ModalDataMarker } from "../BottomSheet/BottomSheet";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Tag } from "../tag/Tag";
 import MapContext from "../../providers/mapContext/MapContext";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
@@ -32,25 +15,18 @@ import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
 import * as Location from "expo-location";
-import { DateToShortFormat } from "../../utils/DateToShortFormat";
 import useFlyToLocation from "../../hooks/useFirstFlyToLocation";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
+import { MapTopContainer } from "./MapTopContainer";
 
 export const Map = () => {
   const {
-    // location,
-    customDate,
-    selectedDate,
-    setSelectedDate,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
     loading,
-    tags,
     heatMap,
     setCameraBound,
-    selectedTag,
-    setSelectedTag,
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
@@ -82,9 +58,6 @@ export const Map = () => {
   const [showModal, setShowModal] = useState(false);
 
   const map = useRef<Mapbox.MapView | null>(null);
-  const handleDateSelect = (date: string) => {
-    setSelectedDate(date);
-  };
 
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
@@ -227,67 +200,10 @@ export const Map = () => {
               )}
               {/* )} */}
             </Mapbox.MapView>
-            <View style={styles.topContainer}>
-              <View style={styles.upperContainer}>
-                <TouchableOpacity style={styles.searchButton}>
-                  <ProfileIcon />
-                </TouchableOpacity>
-                <View style={styles.searchContainer}>
-                  <SearchIcon />
-                  <TextInput placeholder="Search" style={styles.search} />
-                </View>
-                <TouchableOpacity style={styles.searchButton}>
-                  <ShareIcon />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.tagsContainer}>
-                <Modal visible={showModal} animationType="slide">
-                  <DateSelectionModal
-                    onSelect={handleDateSelect}
-                    onCloseModal={setShowModal}
-                    selectedDate={selectedDate}
-                  />
-                </Modal>
-
-                <>
-                  <TouchableOpacity
-                    style={styles.calendarContainer}
-                    onPress={() => setShowModal(true)}
-                  >
-                    <CalendarIcon style={styles.calendarIcon} />
-                    <Text>
-                      {selectedDate === "Custom"
-                        ? DateToShortFormat(customDate.startDate) +
-                          " - " +
-                          DateToShortFormat(customDate.endDate)
-                        : selectedDate}
-                    </Text>
-                  </TouchableOpacity>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {selectedTag && (
-                      <TouchableOpacity onPress={() => setSelectedTag(null)}>
-                        <Tag tag={selectedTag || ""} isActive={true} />
-                      </TouchableOpacity>
-                    )}
-                    {tags &&
-                      tags
-                        .filter((tag) => selectedTag !== tag)
-                        .map((tag, id) => (
-                          <TouchableOpacity
-                            onPress={() =>
-                              setSelectedTag((prev) =>
-                                prev === tag ? null : tag
-                              )
-                            }
-                            key={tag}
-                          >
-                            <Tag key={id} tag={tag} />
-                          </TouchableOpacity>
-                        ))}
-                  </ScrollView>
-                </>
-              </View>
-            </View>
+            <MapTopContainer
+              showModal={showModal}
+              setShowModal={setShowModal}
+            />
             <View style={styles.bottomContainer}>
               <TouchableOpacity
                 style={styles.searchButton}
