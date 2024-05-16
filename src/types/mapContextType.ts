@@ -4,10 +4,8 @@ import { Heatmap, VibesItem } from "./searchResponse";
 import { DateType } from "react-native-ui-datepicker";
 
 export type MapContextType = {
-  myLocation: { latitude: number; longitude: number; source: string } | null;
-  setMyLocation: (
-    location: { latitude: number; longitude: number; source: string } | null
-  ) => void;
+  location: { latitude: number; longitude: number; source: string } | null;
+
   setCameraBound: (cameraBound: CameraBound | null) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;

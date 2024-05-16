@@ -3,10 +3,8 @@ import { getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
-import { fetchLocation } from "../../utils/fetchLocation";
 import initialValue from "./initialValue";
 import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
-import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 
 const MyContext = createContext(initialValue);
 
@@ -15,14 +13,6 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  // const [myLocation, setMyLocation] = useState<{
-  //   latitude: number;
-  //   longitude: number;
-  //   source: string;
-  // } | null>(null);
-
-  const { location, error } = useRealTimeLocation();
-
   const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
 
@@ -40,14 +30,6 @@ export const MapContextProvider = ({
     resolution: 9,
     cellRadius: 100,
   });
-
-  // useEffect(() => {
-  //   fetchLocation().then((location) => {
-  //     if (location) {
-  //       setMyLocation(location);
-  //     }
-  //   });
-  // }, []);
 
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
 
@@ -112,25 +94,10 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  // console.log(
-  //   "\n" +
-  //     pinsForBound.map(
-  //       (pin) =>
-  //         "event StartAt: " +
-  //         pin.startsAt +
-  //         " ----- " +
-  //         "event ExpiredAt" +
-  //         pin.expiresAt +
-  //         "\n\n"
-  //     )
-  // );
-
   const value = {
     customDate,
     setCustomDate,
     selectedDate,
-    location,
-    // setMyLocation,
     selectedTag,
     setSelectedTag,
     pinsForBound,

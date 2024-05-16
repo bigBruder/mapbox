@@ -8,7 +8,7 @@ const initialValue: MapContextType = {
     startDate: new Date(),
     endDate: new Date(),
   },
-  setCustomDate: (date: { startDate: string; endDate: string }) => {},
+  setCustomDate: (date: { startDate: Date; endDate: Date }) => {},
   cameraBound: null,
   myLocation: null,
   setMyLocation: (

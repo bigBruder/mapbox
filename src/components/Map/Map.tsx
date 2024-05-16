@@ -38,11 +38,10 @@ import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 
 export const Map = () => {
   const {
-    location,
+    // location,
     customDate,
     selectedDate,
     setSelectedDate,
-    // setMyLocation,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -55,12 +54,11 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
-  const { setPermissionStatus } = useRealTimeLocation();
 
-  // console.log("myLocation", location);
+  const { location, setPermissionStatus } = useRealTimeLocation();
+
   useEffect(() => {
     if (!location) return;
-    if (isFirstFlyHappened) return;
 
     camera.current?.flyTo(
       [location.longitude, location.latitude],
@@ -75,7 +73,7 @@ export const Map = () => {
     });
 
     setIsFirstFlyHappened(true);
-  }, [location]);
+  }, [location?.source]);
 
   const camera = useRef<Mapbox.Camera | null>(null);
 
@@ -88,32 +86,22 @@ export const Map = () => {
     setSelectedDate(date);
   };
 
-  console.log("location", location);
-
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
-    // if (isGpsGranted.status !== "granted") {
-    //   const { status } = await Location.requestForegroundPermissionsAsync();
-    // if (status !== "granted") return
-
-    // const location = await Location.getCurrentPositionAsync({});
-    // if (location) {
-    //   setMyLocation({
-    //     latitude: location?.coords.latitude,
-    //     longitude: location?.coords.longitude,
-    //     source: "gps",
+    if (isGpsGranted.status !== "granted") {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      setPermissionStatus(status);
+    }
+    // console.log("location", location);
+    // if (!location) return;
+    // setTimeout(() => {
+    //   camera.current?.setCamera({
+    //     zoomLevel: 15,
+    //     animationDuration: 2000,
+    //     animationMode: "flyTo",
+    //     centerCoordinate: [location.longitude, location.latitude],
     //   });
-    // }
-    // }
-    // setPermissionStatus(isGpsGranted.status);
-    // setPermissionStatus(isGpsGranted.status);
-    if (!location) return;
-    camera.current?.setCamera({
-      zoomLevel: 15,
-      animationDuration: 2000,
-      animationMode: "flyTo",
-      centerCoordinate: [location.longitude, location.latitude],
-    });
+    // }, 1000);
   };
 
   if (loading) {
