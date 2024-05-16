@@ -22,7 +22,7 @@ import {
   ShareIcon,
 } from "../../assets/icons";
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
-import { ModalDataMarker } from "../../utils/BottomSheet";
+import { ModalDataMarker } from "../BottomSheet/BottomSheet";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Tag } from "../tag/Tag";
 import MapContext from "../../providers/mapContext/MapContext";
