@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { ScrollView } from "react-native-gesture-handler";
 
 import { getVibeDetails } from "../../api/client";
 import { formatDate } from "../../utils/formatDate";
@@ -84,7 +85,7 @@ export const ModalDataMarker: FC<Props> = ({
               </Text>
             )}
           </View>
-          <ScrollView>
+          <ScrollView style={{ marginBottom: 80 }}>
             {vibeDetails?.message && (
               <Text>{formatTagsInText(vibeDetails?.message)}</Text>
             )}
