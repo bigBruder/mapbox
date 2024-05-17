@@ -54,12 +54,16 @@ export const MapContextProvider = ({
       queryParams["Tags"] = selectedTag;
     }
 
+    console.log("--------------------------------------------");
+
     if (selectedDate === "Custom") {
       if (customDate.startDate && customDate.endDate) {
         queryParams.Before = customDate.endDate.toISOString();
         queryParams.endsAfter = customDate.startDate.toISOString();
       }
     } else {
+      console.log("selectedDate ==>", selectedDate);
+      console.log("BeforeDate ==> ", TransformToIsoDate(selectedDate).before);
       queryParams.Before = TransformToIsoDate(selectedDate).before;
       if (
         selectedDate === "Next Month" ||
@@ -70,31 +74,23 @@ export const MapContextProvider = ({
         selectedDate === "Next 30 Days"
       ) {
         queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
+        console.log("EndsAfter ==> ", TransformToIsoDate(selectedDate).after);
       } else {
         queryParams.After = TransformToIsoDate(selectedDate).after;
+        console.log("After ==> ", TransformToIsoDate(selectedDate).after);
       }
     }
 
-    // console.log("queryParams", queryParams);
-
     getPinsForBound(queryParams).then((pinsForBound) => {
-      // console.log("pinsForBound", pinsForBound);
       if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
-        console.log("a", a.points, "b", b.points);
         return a.points - b.points;
       });
-      console.log("sortedPins", sortedPins);
       setPinsForBound(sortedPins);
-      console.log(sortedPins.map((pin) => pin.points));
 
       setTags(Object.keys(pinsForBound.value.tags));
       setHeatMap(pinsForBound.value.heatmap);
     });
-
-    // return () => {
-    //   setPinsForBound([]);
-    // };
   }, [
     cameraBound?.properties.bounds.ne[0],
     selectedTag,
@@ -102,21 +98,6 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
-
-  // console.log(
-  //   "\n",
-  //   pinsForBound.map(
-  //     (pin) =>
-  //       "\n" +
-  //       pin.id +
-  //       "\n  " +
-  //       pin.points +
-  //       "\n  " +
-  //       pin.venue.geo.latitude +
-  //       "\n   " +
-  //       pin.venue.geo.longitude
-  //   )
-  // );
 
   const value = {
     customDate,

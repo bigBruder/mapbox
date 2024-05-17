@@ -21,6 +21,7 @@ export const mockMarkers = [
 export const buttonsSelectData = [
   { label: "Now" },
   { label: "Today" },
+  { label: "Tomorrow" },
   { label: "Next 7 Days" },
   { label: "Next Week" },
   { label: "Next 14 Days" },

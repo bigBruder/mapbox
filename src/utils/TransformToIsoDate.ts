@@ -16,15 +16,16 @@ export const TransformToIsoDate = (
 
     case "Today":
       beforeDate.setDate(beforeDate.getDate() + 1);
+      beforeDate.setHours(0, 0, 0, 0);
       break;
     case "Tomorrow":
       // Set time to the start of the next day
-      beforeDate.setDate(beforeDate.getDate() + 1);
-      beforeDate.setHours(0, 0, 0, 0);
+      afterDate.setDate(beforeDate.getDate() + 1);
+      afterDate.setHours(0, 0, 0, 0);
 
       // Set time to the end of the next day
-      afterDate.setDate(afterDate.getDate() + 2); // Next day
-      afterDate.setHours(23, 59, 59, 999); // End of the day
+      beforeDate.setDate(beforeDate.getDate() + 1); // Next day
+      beforeDate.setHours(23, 59, 59, 999); // End of the day
       break;
     case "Next 7 Days":
       beforeDate.setDate(afterDate.getDate() + 7);
@@ -36,7 +37,7 @@ export const TransformToIsoDate = (
       afterDate.setHours(0, 0, 0, 0);
 
       beforeDate.setDate(afterDate.getDate() + 7); // Next week
-      beforeDate.setHours(23, 59, 59, 999); // End of the week
+      beforeDate.setHours(0, 0, 0, 0); // End of the week
 
       return {
         before: new Date(beforeDate).toISOString(),
@@ -66,8 +67,6 @@ export const TransformToIsoDate = (
       afterDate = new Date();
       break;
   }
-
-  // console.log(beforeDate, afterDate);
 
   return {
     before: beforeDate,
