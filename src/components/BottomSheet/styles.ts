@@ -53,6 +53,10 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     alignSelf: "flex-start",
   },
+  icon: {
+    width: 50,
+    height: 50,
+  },
 });
 
 export default styles;

@@ -1,30 +1,29 @@
+import { useContext, useEffect, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import * as Location from "expo-location";
 import { Text, View, TouchableOpacity, Image } from "react-native";
-import Mapbox from "@rnmapbox/maps";
-
-import { styles } from "./styles";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Mapbox from "@rnmapbox/maps";
 import { LocationIcon, PlusIcon } from "../../assets/icons";
 import { ModalDataMarker } from "../BottomSheet/BottomSheet";
-import { useContext, useEffect, useRef, useState } from "react";
 import MapContext from "../../providers/mapContext/MapContext";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
 import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
-import * as Location from "expo-location";
 import useFlyToLocation from "../../hooks/useFirstFlyToLocation";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { MapTopContainer } from "./MapTopContainer";
+
+import { styles } from "./styles";
 
 export const Map = () => {
   const {
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
-    loading,
+    isLoading,
     heatMap,
     setCameraBound,
   } = useContext(MapContext);
@@ -75,7 +74,7 @@ export const Map = () => {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.page}>
         <Image

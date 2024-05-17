@@ -36,9 +36,6 @@ export const DateSelectionModal: React.FC<Props> = ({
     customDate?.endDate || new Date()
   );
 
-  const preparedStartDate = formatDate(startDate).split(",")[1];
-  const preparedEndDate = formatDate(endDate).split(",")[1];
-
   const handleClear = () => {
     setCustomDate({
       startDate: new Date(),
@@ -52,12 +49,7 @@ export const DateSelectionModal: React.FC<Props> = ({
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "#fff",
-      }}
-    >
+    <SafeAreaView style={styles.viewContainer}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => onCloseModal(false)}>
           <AntDesign name="left" size={24} color="black" />

@@ -4,7 +4,6 @@ import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
-import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 import { sortPinsByWeightAndDate } from "../../utils/sortPins";
 import { queryParamsBuilder } from "../../helpers/queryParamsBuilder";
 
@@ -15,7 +14,7 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
 
   const [showModal, setShowModal] = useState(false);
@@ -74,8 +73,8 @@ export const MapContextProvider = ({
     heatMap,
     tags,
     setTags,
-    loading,
-    setLoading,
+    isLoading,
+    setIsLoading,
     selectedMarker,
     setSelectedMarker,
     showModal,

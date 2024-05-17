@@ -12,12 +12,16 @@ Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 export default function App() {
   useEffect(() => {
     (async () => {
-      const access_token = await SecureStore.getItemAsync(
-        "mapbox_secure_access_token"
-      );
-      getDeviceUniqueId().then(async () => {
-        getAccessToken();
-      });
+      try {
+        const access_token = await SecureStore.getItemAsync(
+          "mapbox_secure_access_token"
+        );
+        getDeviceUniqueId().then(async () => {
+          getAccessToken();
+        });
+      } catch (error) {
+        console.log("Error getting access token", error);
+      }
     })();
   }, []);
 

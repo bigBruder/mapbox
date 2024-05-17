@@ -7,8 +7,8 @@ export type MapContextType = {
   location: { latitude: number; longitude: number; source: string } | null;
 
   setCameraBound: (cameraBound: CameraBound | null) => void;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
   selectedMarker: VibesItem | null;
   setSelectedMarker: (marker: VibesItem | null) => void;
   showModal: boolean;

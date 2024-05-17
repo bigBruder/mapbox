@@ -14,8 +14,8 @@ const initialValue: MapContextType = {
   setMyLocation: (
     location: { latitude: number; longitude: number; source: string } | null
   ) => {},
-  loading: false,
-  setLoading: (loading: boolean) => {},
+  isLoading: false,
+  setIsLoading: (loading: boolean) => {},
   selectedMarker: null,
   setSelectedMarker: (marker: VibesItem | null) => {},
   showModal: false,

@@ -69,7 +69,7 @@ export const ModalDataMarker: FC<Props> = ({
           <View style={styles.topBox}>
             <Image
               source={{ uri: getIconUrl(selectedMarker.icon.split(":")[1]) }}
-              style={{ width: 50, height: 50 }}
+              style={styles.icon}
             />
             <View>
               <Text>{vibeDetails?.author["userName"]}</Text>
