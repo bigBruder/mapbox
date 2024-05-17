@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center",
-    height: "90%",
+    height: "80%",
     gap: 15,
   },
   buttonDate: {
