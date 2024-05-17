@@ -40,7 +40,7 @@ const useRealTimeLocation = () => {
               });
             }
           );
-        } else if (status === "denied" || status === "undetermined") {
+        } else {
           const ipLocation = await getLocationByIP();
           setLocation(ipLocation);
         }
