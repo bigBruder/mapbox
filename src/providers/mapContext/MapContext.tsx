@@ -44,7 +44,7 @@ export const MapContextProvider = ({
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
       OrderBy: "Points",
-      PageSize: cameraBound.properties.zoom > 15 ? 10 : 5,
+      PageSize: cameraBound.properties.zoom > 15 ? 15 : 10,
       IncludeTotalCount: true,
       "TopTags.Enable": true,
       "Heatmap.Enable": true,
@@ -84,7 +84,11 @@ export const MapContextProvider = ({
     getPinsForBound(queryParams).then((pinsForBound) => {
       if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
-        return a.points - b.points;
+        console.log(a);
+        return (b.points + b.isTop ? 1 : 0 + b.startsAt) >
+          (a.points + a.isTop ? 1 : 0 + a.startsAt)
+          ? -1
+          : 1;
       });
       setPinsForBound(sortedPins);
 
@@ -98,6 +102,11 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
+
+  console.log(
+    "sortedPins: ",
+    pinsForBound.map((pin) => pin.points)
+  );
 
   const value = {
     customDate,
