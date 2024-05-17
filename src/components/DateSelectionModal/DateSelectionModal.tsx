@@ -195,7 +195,8 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: "70%",
+    alignContent: "center",
+    height: "90%",
     gap: 15,
   },
   buttonDate: {
