@@ -84,12 +84,21 @@ export const MapContextProvider = ({
     getPinsForBound(queryParams).then((pinsForBound) => {
       if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
-        console.log(a);
-        return (b.points + b.isTop ? 1 : 0 + b.startsAt) >
-          (a.points + a.isTop ? 1 : 0 + a.startsAt)
-          ? -1
-          : 1;
+        const aWeight = a.points + (a.isTop ? 1 : 0);
+        const bWeight = b.points + (b.isTop ? 1 : 0);
+
+        if (aWeight > bWeight) {
+          return 1;
+        } else if (aWeight < bWeight) {
+          return -1;
+        } else {
+          return new Date(a.startsAt) > new Date(b.startsAt) ? 1 : -1;
+        }
       });
+
+      // Additional code to handle sortedPins if needed
+      // });
+
       setPinsForBound(sortedPins);
 
       setTags(Object.keys(pinsForBound.value.tags));
@@ -105,7 +114,8 @@ export const MapContextProvider = ({
 
   console.log(
     "sortedPins: ",
-    pinsForBound.map((pin) => pin.points)
+    pinsForBound.map((b) => b.points),
+    pinsForBound.map((b) => b.points + b.startsAt + "\n")
   );
 
   const value = {
