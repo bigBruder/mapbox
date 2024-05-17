@@ -78,22 +78,45 @@ export const MapContextProvider = ({
     // console.log("queryParams", queryParams);
 
     getPinsForBound(queryParams).then((pinsForBound) => {
+      // console.log("pinsForBound", pinsForBound);
       if (!pinsForBound.value) return;
-      const sortedPins = [...pinsForBound.value.vibes].sort(
-        (a, b) => (a.points + a.isTop ? 5 : 0) - (b.points + b.isTop ? 5 : 0)
-      );
+      const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
+        console.log("a", a.points, "b", b.points);
+        return a.points - b.points;
+      });
+      console.log("sortedPins", sortedPins);
       setPinsForBound(sortedPins);
+      console.log(sortedPins.map((pin) => pin.points));
 
       setTags(Object.keys(pinsForBound.value.tags));
       setHeatMap(pinsForBound.value.heatmap);
     });
+
+    return () => {
+      setPinsForBound([]);
+    };
   }, [
-    cameraBound?.properties.bounds.ne,
+    cameraBound?.properties.bounds.ne[0],
     selectedTag,
     selectedDate,
     customDate.startDate,
     customDate.endDate,
   ]);
+
+  // console.log(
+  //   "\n",
+  //   pinsForBound.map(
+  //     (pin) =>
+  //       "\n" +
+  //       pin.id +
+  //       "\n  " +
+  //       pin.points +
+  //       "\n  " +
+  //       pin.venue.geo.latitude +
+  //       "\n   " +
+  //       pin.venue.geo.longitude
+  //   )
+  // );
 
   const value = {
     customDate,
