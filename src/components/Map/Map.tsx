@@ -159,7 +159,8 @@ export const Map = () => {
                       pin.icon +
                       pin.venue.geo.latitude +
                       pin.venue.geo.longitude +
-                      index
+                      index +
+                      Math.random()
                     }
                     id={index.toString()}
                     coordinate={[

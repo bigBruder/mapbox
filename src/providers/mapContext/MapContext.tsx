@@ -92,9 +92,9 @@ export const MapContextProvider = ({
       setHeatMap(pinsForBound.value.heatmap);
     });
 
-    return () => {
-      setPinsForBound([]);
-    };
+    // return () => {
+    //   setPinsForBound([]);
+    // };
   }, [
     cameraBound?.properties.bounds.ne[0],
     selectedTag,
