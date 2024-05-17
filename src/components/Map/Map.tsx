@@ -66,11 +66,7 @@ export const Map = () => {
       setPermissionStatus(status);
     }
     if (!location) return;
-    camera.current?.flyTo(
-      [location.longitude, location.latitude],
-
-      4000
-    );
+    camera.current?.flyTo([location.longitude, location.latitude], 4000);
     camera.current?.setCamera({
       zoomLevel: 15,
       animationDuration: 2000,

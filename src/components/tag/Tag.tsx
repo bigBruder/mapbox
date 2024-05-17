@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
   active: {
     backgroundColor: "#005DF2",
     color: "white",
-    // borderColor: "#FFD700",
     opacity: 1,
   },
   activeText: {

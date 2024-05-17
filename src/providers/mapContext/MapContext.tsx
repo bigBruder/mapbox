@@ -54,16 +54,12 @@ export const MapContextProvider = ({
       queryParams["Tags"] = selectedTag;
     }
 
-    console.log("--------------------------------------------");
-
     if (selectedDate === "Custom") {
       if (customDate.startDate && customDate.endDate) {
         queryParams.Before = customDate.endDate.toISOString();
         queryParams.endsAfter = customDate.startDate.toISOString();
       }
     } else {
-      console.log("selectedDate ==>", selectedDate);
-      console.log("BeforeDate ==> ", TransformToIsoDate(selectedDate).before);
       queryParams.Before = TransformToIsoDate(selectedDate).before;
       if (
         selectedDate === "Next Month" ||
@@ -74,10 +70,8 @@ export const MapContextProvider = ({
         selectedDate === "Next 30 Days"
       ) {
         queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
-        console.log("EndsAfter ==> ", TransformToIsoDate(selectedDate).after);
       } else {
         queryParams.After = TransformToIsoDate(selectedDate).after;
-        console.log("After ==> ", TransformToIsoDate(selectedDate).after);
       }
     }
 
@@ -96,9 +90,6 @@ export const MapContextProvider = ({
         }
       });
 
-      // Additional code to handle sortedPins if needed
-      // });
-
       setPinsForBound(sortedPins);
 
       setTags(Object.keys(pinsForBound.value.tags));
@@ -111,12 +102,6 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
-
-  console.log(
-    "sortedPins: ",
-    pinsForBound.map((b) => b.points),
-    pinsForBound.map((b) => b.points + b.startsAt + "\n")
-  );
 
   const value = {
     customDate,
