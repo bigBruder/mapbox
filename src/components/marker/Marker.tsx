@@ -1,6 +1,8 @@
 import { StyleSheet, Image, TouchableOpacity } from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
 
 export const Marker = ({
   pin,
@@ -11,14 +13,18 @@ export const Marker = ({
 }) => {
   return (
     <TouchableOpacity
-      style={styles.annotationContainer}
+      style={[styles.annotationContainer]}
       onPress={() => setSelectedMarker(pin)}
     >
       <Image
         source={{
           uri: getIconUrl(pin.icon.split(":")[1]),
         }}
-        style={{ width: 20, height: 20 }}
+        style={{
+          width: getMarkerSizeByPoints(pin.points),
+          height: getMarkerSizeByPoints(pin.points),
+          objectFit: "cover",
+        }}
       />
     </TouchableOpacity>
   );
@@ -26,8 +32,6 @@ export const Marker = ({
 
 const styles = StyleSheet.create({
   annotationContainer: {
-    width: 30,
-    height: 30,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -36,6 +40,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: "white",
     borderStyle: "solid",
+    padding: 5,
   },
   annotationText: {
     fontSize: 24,
