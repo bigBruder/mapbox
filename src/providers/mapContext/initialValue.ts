@@ -4,6 +4,8 @@ import { MapContextType } from "../../types/mapContextType";
 import { VibesItem } from "../../types/searchResponse";
 
 const initialValue: MapContextType = {
+  totalResultsAmount: 0,
+  setTotalResultsAmount: (totalResultsAmount: number) => {},
   customDate: {
     startDate: new Date(),
     endDate: new Date(),

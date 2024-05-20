@@ -78,6 +78,9 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  totalResults: {
+    width: 100,
+  },
   addButton: {
     width: 48,
     height: 48,

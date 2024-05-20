@@ -26,6 +26,7 @@ interface Props {
 
 export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
   const {
+    totalResultsAmount,
     customDate,
     selectedDate,
     setSelectedDate,
@@ -45,6 +46,13 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
         <View style={styles.searchContainer}>
           <SearchIcon />
           <TextInput placeholder="Search" style={styles.search} />
+        </View>
+        <View style={[styles.searchButton, styles.totalResults]}>
+          <Text>
+            {totalResultsAmount > 0
+              ? `Results: ${totalResultsAmount}`
+              : "No results"}
+          </Text>
         </View>
         <TouchableOpacity style={styles.searchButton}>
           <ShareIcon />

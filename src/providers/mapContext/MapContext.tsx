@@ -15,25 +15,22 @@ export const MapContextProvider = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
-
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Now");
-  const [customDate, setCustomDate] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
-
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
+  const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
+  const [totalResultsAmount, setTotalResultsAmount] = useState(0);
   const [heatMap, setHeatMap] = useState<Heatmap>({
     data: {},
     resolution: 9,
     cellRadius: 100,
   });
-
-  const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
-
-  const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
+  const [customDate, setCustomDate] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
   useEffect(() => {
     if (!cameraBound) return;
@@ -54,16 +51,12 @@ export const MapContextProvider = ({
       queryParams["Tags"] = selectedTag;
     }
 
-    // console.log("--------------------------------------------");
-
     if (selectedDate === "Custom") {
       if (customDate.startDate && customDate.endDate) {
         queryParams.Before = customDate.endDate.toISOString();
         queryParams.endsAfter = customDate.startDate.toISOString();
       }
     } else {
-      // console.log("selectedDate ==>", selectedDate);
-      // console.log("BeforeDate ==> ", TransformToIsoDate(selectedDate).before);
       queryParams.Before = TransformToIsoDate(selectedDate).before;
       if (
         selectedDate === "Next Month" ||
@@ -74,14 +67,13 @@ export const MapContextProvider = ({
         selectedDate === "Next 30 Days"
       ) {
         queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
-        // console.log("EndsAfter ==> ", TransformToIsoDate(selectedDate).after);
       } else {
         queryParams.After = TransformToIsoDate(selectedDate).after;
-        // console.log("After ==> ", TransformToIsoDate(selectedDate).after);
       }
     }
 
     getPinsForBound(queryParams).then((pinsForBound) => {
+      console.log("pinsForBound: ", pinsForBound);
       if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
         const aWeight = a.points + (a.isTop ? 1 : 0);
@@ -96,13 +88,10 @@ export const MapContextProvider = ({
         }
       });
 
-      // Additional code to handle sortedPins if needed
-      // });
-
       setPinsForBound(sortedPins);
-
       setTags(Object.keys(pinsForBound.value.tags));
       setHeatMap(pinsForBound.value.heatmap);
+      setTotalResultsAmount(pinsForBound.value.totalResults);
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
@@ -112,13 +101,9 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  // console.log(
-  //   "sortedPins: ",
-  //   pinsForBound.map((b) => b.points),
-  //   pinsForBound.map((b) => b.points + b.startsAt + "\n")
-  // );
-
   const value = {
+    totalResultsAmount,
+    setTotalResultsAmount,
     customDate,
     setCustomDate,
     selectedDate,
