@@ -45,7 +45,6 @@ const useRealTimeLocation = () => {
           setLocation(ipLocation);
         }
       } catch (err) {
-        console.error(err);
         console.error("Error fetching location:", err);
       }
     };
