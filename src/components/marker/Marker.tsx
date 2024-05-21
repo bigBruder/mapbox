@@ -7,9 +7,11 @@ import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
 export const Marker = ({
   pin,
   setSelectedMarker,
+  zoom,
 }: {
   pin: VibesItem;
   setSelectedMarker: (pin: VibesItem | null) => void;
+  zoom: number;
 }) => {
   return (
     <TouchableOpacity
@@ -21,8 +23,8 @@ export const Marker = ({
           uri: getIconUrl(pin.icon.split(":")[1]),
         }}
         style={{
-          width: getMarkerSizeByPoints(pin.points),
-          height: getMarkerSizeByPoints(pin.points),
+          width: getMarkerSizeByPoints(pin.points, zoom),
+          height: getMarkerSizeByPoints(pin.points, zoom),
           objectFit: "cover",
         }}
       />

@@ -30,6 +30,7 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
+  const [currentZoom, setCurrentZoom] = useState(0);
 
   const { location, setPermissionStatus } = useRealTimeLocation();
 
@@ -107,6 +108,9 @@ export const Map = () => {
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
+              onCameraChanged={(e) => {
+                setCurrentZoom(e.properties.zoom);
+              }}
             >
               {transformDataToHeatmap(heatMap).map((data, index) => {
                 return (
@@ -166,6 +170,7 @@ export const Map = () => {
                     <Marker
                       key={index}
                       setSelectedMarker={setSelectedMarker}
+                      zoom={currentZoom}
                       pin={pin}
                     />
                   </Mapbox.MarkerView>

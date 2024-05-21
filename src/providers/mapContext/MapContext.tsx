@@ -69,7 +69,6 @@ export const MapContextProvider = ({
 
   useEffect(() => {
     if (!cameraBound) return;
-    console.log("effect");
     const { ne, sw } = cameraBound.properties.bounds;
     const queryParams: queryParams = {
       "NE.Latitude": sw[1],
