@@ -6,6 +6,7 @@ import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
 import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
+import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 
 const MyContext = createContext(initialValue);
 
@@ -110,7 +111,7 @@ export const MapContextProvider = ({
       }
     }
 
-    console.log("res", getHeatmapResolutionByZoom(cameraBound.properties.zoom));
+    // console.log("res", getHeatmapResolutionByZoom(cameraBound.properties.zoom));
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       if (!pinsForBound.value) return;

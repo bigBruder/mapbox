@@ -32,29 +32,29 @@ export const Map = () => {
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
   const [currentZoom, setCurrentZoom] = useState(0);
 
-  const { location, setPermissionStatus } = useRealTimeLocation();
+  const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
 
-  useEffect(() => {
-    if (!location) return;
+  // useEffect(() => {
+  //   if (!location) return;
 
-    camera.current?.flyTo(
-      [location.longitude, location.latitude],
+  //   camera.current?.flyTo(
+  //     [location.longitude, location.latitude],
 
-      4000
-    );
-    camera.current?.setCamera({
-      zoomLevel: 15,
-      animationDuration: 2000,
-      animationMode: "flyTo",
-      centerCoordinate: [location.longitude, location.latitude],
-    });
+  //     4000
+  //   );
+  //   camera.current?.setCamera({
+  //     zoomLevel: 15,
+  //     animationDuration: 2000,
+  //     animationMode: "flyTo",
+  //     centerCoordinate: [location.longitude, location.latitude],
+  //   });
 
-    setIsFirstFlyHappened(true);
-  }, [location?.source]);
+  //   setIsFirstFlyHappened(true);
+  // }, [location?.source]);
 
   const camera = useRef<Mapbox.Camera | null>(null);
 
-  useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
+  // useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -80,7 +80,7 @@ export const Map = () => {
     });
   };
 
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <View style={styles.page}>
         <Image
@@ -195,10 +195,18 @@ export const Map = () => {
                   <Mapbox.Callout title="Your approximate location" />
                 </Mapbox.PointAnnotation>
               )}
-              {location?.longitude && location.latitude && (
+              {/* {location?.longitude && location.latitude && (
                 <Mapbox.Camera ref={camera} animationDuration={4000} />
-              )}
+              )} */}
               {/* )} */}
+
+              {location && (
+                <Mapbox.Camera
+                  zoomLevel={10}
+                  centerCoordinate={[location.longitude, location.latitude]}
+                  animationDuration={0}
+                />
+              )}
             </Mapbox.MapView>
             <MapTopContainer
               showModal={showModal}
