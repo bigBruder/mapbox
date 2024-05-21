@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     padding: 10,
     display: "flex",
     flexDirection: "column",
+    // marginBottom: 95,
     gap: 10,
   },
   line: {

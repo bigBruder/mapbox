@@ -2,6 +2,7 @@ import axios from "axios";
 import { parseCSV } from "../utils/parseCsv";
 import * as SecureStore from "expo-secure-store";
 import { queryParams } from "../types/queryParams";
+import cheerio from "cheerio";
 
 const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
@@ -94,5 +95,27 @@ export const getPinsForBound = async (queryParams: Partial<queryParams>) => {
   } catch (error) {
     console.error("Error fetching pins for bound:", error);
     return null;
+  }
+};
+
+export const getWebPageMeta = async (url: string) => {
+  try {
+    const response = await axios.get(url);
+    const html = response.data;
+    const $ = cheerio.load(html);
+    const meta = {};
+    $("meta").each((i, elem) => {
+      const name = $(elem).attr("name") || $(elem).attr("property");
+      const content = $(elem).attr("content");
+      if (name) {
+        meta[name] = content;
+      }
+    });
+    console.log(meta);
+    // console.log(meta);
+    if (meta && meta["og:title"].includes("Log in or sign")) return null;
+    return meta;
+  } catch (error) {
+    console.error("Error fetching metadata:", error);
   }
 };

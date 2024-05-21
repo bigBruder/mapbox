@@ -3,7 +3,7 @@ import { Image, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { getVibeDetails } from "../../api/client";
+import { getVibeDetails, getWebPageMeta } from "../../api/client";
 import { formatDate } from "../../utils/formatDate";
 import { formatTagsInText } from "../../utils/formatTagsInText";
 import { getIconUrl } from "../../utils/getIconUrl";
@@ -15,6 +15,10 @@ import {
 
 import styles from "./styles";
 import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
+import axios from "axios";
+import cheerio from "cheerio";
+import { LinkPreview } from "../linkPreview/LinkPreview";
+import { removeLinkFromString } from "../../helpers/removeLinkFromString";
 
 interface Props {
   selectedMarker: VibesItem;
@@ -36,6 +40,8 @@ export const ModalDataMarker: FC<Props> = ({
   const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
     null
   );
+
+  // console.log(vibeDetails?.message);
 
   useEffect(() => {
     (async () => {
@@ -60,12 +66,13 @@ export const ModalDataMarker: FC<Props> = ({
         setSelectedMarker(null);
       }}
       animateOnMount={true}
+      bottomInset={0}
       footerComponent={(props) => (
         <BottomSheetFooterCustom vibeDetails={vibeDetails} props={props} />
       )}
     >
-      <BottomSheetView>
-        <View style={[styles.sheetContainer]}>
+      <BottomSheetView style={{ marginBottom: 100 }}>
+        <ScrollView style={[styles.sheetContainer]}>
           <View style={styles.topBox}>
             <Image
               source={{
@@ -87,12 +94,16 @@ export const ModalDataMarker: FC<Props> = ({
               </Text>
             )}
           </View>
-          <ScrollView style={{ marginBottom: 80 }}>
-            {vibeDetails?.message && (
-              <Text>{formatTagsInText(vibeDetails?.message)}</Text>
+          {vibeDetails?.message && (
+            <Text>
+              {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
+            </Text>
+          )}
+          {vibeDetails?.message &&
+            vibeDetails?.message.includes("https://") && (
+              <LinkPreview message={vibeDetails?.message} />
             )}
-          </ScrollView>
-        </View>
+        </ScrollView>
       </BottomSheetView>
     </BottomSheet>
   );
