@@ -88,7 +88,7 @@ export const getVibeDetails = async (id: string) => {
   }
 };
 
-export const getPinsForBound = async (queryParams: queryParams) => {
+export const getPinsForBound = async (queryParams: Partial<queryParams>) => {
   try {
     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
   } catch (error) {

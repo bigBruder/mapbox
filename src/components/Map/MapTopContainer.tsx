@@ -48,11 +48,15 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
           <TextInput placeholder="Search" style={styles.search} />
         </View>
         <View style={[styles.searchButton, styles.totalResults]}>
-          <Text>
-            {totalResultsAmount > 0
-              ? `Results: ${totalResultsAmount}`
-              : "No results"}
-          </Text>
+          {totalResultsAmount > 0 ? (
+            <>
+              <Text style={styles.resultText}>
+                Results: {totalResultsAmount}
+              </Text>
+            </>
+          ) : (
+            <Text>No results</Text>
+          )}
         </View>
         <TouchableOpacity style={styles.searchButton}>
           <ShareIcon />

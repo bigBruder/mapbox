@@ -33,6 +33,41 @@ export const MapContextProvider = ({
   });
 
   useEffect(() => {
+    const queryParams: Partial<queryParams> = {
+      PageSize: 1,
+      IncludeTotalCount: true,
+    };
+    if (selectedTag) {
+      queryParams["Tags"] = selectedTag;
+    }
+
+    if (selectedDate === "Custom") {
+      if (customDate.startDate && customDate.endDate) {
+        queryParams.Before = customDate.endDate.toISOString();
+        queryParams.endsAfter = customDate.startDate.toISOString();
+      }
+    } else {
+      queryParams.Before = TransformToIsoDate(selectedDate).before;
+      if (
+        selectedDate === "Next Month" ||
+        selectedDate === "Now" ||
+        selectedDate === "Today" ||
+        selectedDate === "Next 7 Days" ||
+        selectedDate === "Next 14 Days" ||
+        selectedDate === "Next 30 Days"
+      ) {
+        queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
+      } else {
+        queryParams.After = TransformToIsoDate(selectedDate).after;
+      }
+    }
+
+    getPinsForBound(queryParams).then((pinsForBound) => {
+      setTotalResultsAmount(pinsForBound.value.totalResults);
+    });
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+
+  useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
     const queryParams: queryParams = {
@@ -42,7 +77,6 @@ export const MapContextProvider = ({
       "SW.Longitude": ne[0],
       OrderBy: "Points",
       PageSize: cameraBound.properties.zoom > 15 ? 15 : 10,
-      IncludeTotalCount: true,
       "TopTags.Enable": true,
       "Heatmap.Enable": true,
       "Heatmap.Resolution": cameraBound.properties.zoom > 10 ? 9 : 8,
@@ -73,7 +107,6 @@ export const MapContextProvider = ({
     }
 
     getPinsForBound(queryParams).then((pinsForBound) => {
-      console.log("pinsForBound: ", pinsForBound);
       if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
         const aWeight = a.points + (a.isTop ? 1 : 0);
@@ -91,7 +124,6 @@ export const MapContextProvider = ({
       setPinsForBound(sortedPins);
       setTags(Object.keys(pinsForBound.value.tags));
       setHeatMap(pinsForBound.value.heatmap);
-      setTotalResultsAmount(pinsForBound.value.totalResults);
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
