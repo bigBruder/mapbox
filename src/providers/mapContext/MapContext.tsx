@@ -5,6 +5,7 @@ import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
 import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
+import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 
 const MyContext = createContext(initialValue);
 
@@ -80,7 +81,9 @@ export const MapContextProvider = ({
       "TopTags.Enable": true,
       IncludeTotalCount: true,
       "Heatmap.Enable": true,
-      "Heatmap.Resolution": cameraBound.properties.zoom > 10 ? 9 : 8,
+      "Heatmap.Resolution": getHeatmapResolutionByZoom(
+        cameraBound.properties.zoom
+      ),
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
@@ -106,6 +109,8 @@ export const MapContextProvider = ({
         queryParams.After = TransformToIsoDate(selectedDate).after;
       }
     }
+
+    console.log("res", getHeatmapResolutionByZoom(cameraBound.properties.zoom));
 
     getPinsForBound(queryParams).then((pinsForBound) => {
       if (!pinsForBound.value) return;

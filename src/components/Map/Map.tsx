@@ -124,7 +124,7 @@ export const Map = () => {
                     filter={[]}
                     maxZoomLevel={14}
                     style={{
-                      heatmapRadius: data.cellRadius / 1000 || 100,
+                      // heatmapRadius: data.cellRadius / 1000 || 100,
                       heatmapColor: heatmapColor,
                     }}
                   />
