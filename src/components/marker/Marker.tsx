@@ -1,4 +1,10 @@
-import { StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+  View,
+} from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
@@ -8,32 +14,65 @@ export const Marker = ({
   pin,
   setSelectedMarker,
   zoom,
+  isSelected = false,
 }: {
   pin: VibesItem;
   setSelectedMarker: (pin: VibesItem | null) => void;
   zoom: number;
+  isSelected: boolean;
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.annotationContainer]}
+      style={isSelected ? styles.activePinContainer : styles.pinContainer}
       onPress={() => setSelectedMarker(pin)}
     >
-      <Image
-        source={{
-          uri: getIconUrl(pin.icon.split(":")[1]),
-        }}
-        style={{
-          width: getMarkerSizeByPoints(pin.points, zoom),
-          height: getMarkerSizeByPoints(pin.points, zoom),
-          objectFit: "cover",
-        }}
-      />
+      {isSelected ? (
+        <>
+          <ImageBackground
+            source={require("../../assets/active_pin_background.png")}
+          >
+            <View
+              style={{
+                width: 50,
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={{
+                  uri: getIconUrl(pin.icon.split(":")[1]),
+                }}
+                style={[
+                  {
+                    width: getMarkerSizeByPoints(pin.points, zoom),
+                    height: getMarkerSizeByPoints(pin.points, zoom),
+                    objectFit: "cover",
+                  },
+                  styles.activePinImage,
+                ]}
+              />
+            </View>
+          </ImageBackground>
+        </>
+      ) : (
+        <Image
+          source={{
+            uri: getIconUrl(pin.icon.split(":")[1]),
+          }}
+          style={{
+            width: getMarkerSizeByPoints(pin.points, zoom),
+            height: getMarkerSizeByPoints(pin.points, zoom),
+            objectFit: "cover",
+          }}
+        />
+      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  annotationContainer: {
+  pinContainer: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -43,6 +82,13 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderStyle: "solid",
     padding: 5,
+  },
+  activePinContainer: {
+    backgroundColor: "none",
+  },
+  activePinImage: {
+    width: 30,
+    height: 30,
   },
   annotationText: {
     fontSize: 24,

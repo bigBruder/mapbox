@@ -56,7 +56,6 @@ export const Map = () => {
   const [showModal, setShowModal] = useState(false);
 
   const map = useRef<Mapbox.MapView | null>(null);
-
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
     if (isGpsGranted.status !== "granted") {
@@ -164,6 +163,7 @@ export const Map = () => {
                     allowOverlap={false}
                   >
                     <Marker
+                      isSelected={false}
                       key={index}
                       setSelectedMarker={setSelectedMarker}
                       zoom={currentZoom}
@@ -171,6 +171,23 @@ export const Map = () => {
                     />
                   </Mapbox.MarkerView>
                 ))}
+
+              {selectedMarker && (
+                <Mapbox.MarkerView
+                  coordinate={[
+                    selectedMarker.venue.geo.longitude,
+                    selectedMarker.venue.geo.latitude,
+                  ]}
+                  allowOverlap={true}
+                >
+                  <Marker
+                    isSelected={true}
+                    setSelectedMarker={setSelectedMarker}
+                    zoom={currentZoom}
+                    pin={selectedMarker}
+                  />
+                </Mapbox.MarkerView>
+              )}
 
               {location && location.source === "gps" && (
                 <Mapbox.UserLocation
