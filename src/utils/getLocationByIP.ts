@@ -18,7 +18,6 @@ export const getLocationByIP = async () => {
 
     if (Platform.OS === "android") {
       const { data } = await axios.get("http://ip-api.com/json/");
-      console.log(data);
       return {
         longitude: data.lon,
         latitude: data.lat,

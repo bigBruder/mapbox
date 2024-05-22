@@ -26,8 +26,8 @@ export const LinkPreview: FC<Props> = ({ message }) => {
         );
         // setUrl(url);
         const meta = await getWebPageMeta(
-          //   "https://www.instagram.com/reel/C7O4bPytH09/?utm_source=ig_web_copy_link"
-          url
+          "https://www.instagram.com/reel/C7O4bPytH09/?utm_source=ig_web_copy_link"
+          // url
         );
         if (!meta) return;
         setMetaData(meta);

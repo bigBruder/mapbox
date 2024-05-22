@@ -33,26 +33,23 @@ export const Map = () => {
   const [currentZoom, setCurrentZoom] = useState(0);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
-
-  // useEffect(() => {
-  //   if (!location) return;
-
-  //   camera.current?.flyTo(
-  //     [location.longitude, location.latitude],
-
-  //     4000
-  //   );
-  //   camera.current?.setCamera({
-  //     zoomLevel: 15,
-  //     animationDuration: 2000,
-  //     animationMode: "flyTo",
-  //     centerCoordinate: [location.longitude, location.latitude],
-  //   });
-
-  //   setIsFirstFlyHappened(true);
-  // }, [location?.source]);
-
   const camera = useRef<Mapbox.Camera | null>(null);
+
+  useEffect(() => {
+    if (!location) return;
+
+    console.log("effect", location);
+
+    camera.current?.setCamera({
+      zoomLevel: 10,
+      animationDuration: 0,
+      animationMode: "flyTo",
+      centerCoordinate: [location.longitude, location.latitude],
+    });
+    setTimeout(() => {
+      setIsFirstFlyHappened(true);
+    }, 1000);
+  }, [location?.source]);
 
   // useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
@@ -67,17 +64,14 @@ export const Map = () => {
       setPermissionStatus(status);
     }
     if (!location) return;
-    camera.current?.flyTo(
-      [location.longitude, location.latitude],
-
-      4000
-    );
-    camera.current?.setCamera({
-      zoomLevel: 15,
-      animationDuration: 2000,
-      animationMode: "flyTo",
-      centerCoordinate: [location.longitude, location.latitude],
-    });
+    if (!isLoading) {
+      camera.current?.setCamera({
+        zoomLevel: 10,
+        animationDuration: 2000,
+        animationMode: "flyTo",
+        centerCoordinate: [location.longitude, location.latitude],
+      });
+    }
   };
 
   if (loading || isLoading) {
@@ -92,6 +86,8 @@ export const Map = () => {
       </View>
     );
   }
+
+  // console.log(location);
 
   return (
     <View style={styles.page}>
@@ -183,7 +179,7 @@ export const Map = () => {
                   showsUserHeadingIndicator
                 />
               )}
-              {location && location.source === "ip" && (
+              {/* {location && location.source === "ip" && (
                 <Mapbox.PointAnnotation
                   key="pointAnnotation"
                   id="pointAnnotation"
@@ -194,13 +190,10 @@ export const Map = () => {
                   </View>
                   <Mapbox.Callout title="Your approximate location" />
                 </Mapbox.PointAnnotation>
-              )}
-              {/* {location?.longitude && location.latitude && (
-                <Mapbox.Camera ref={camera} animationDuration={4000} />
               )} */}
-              {/* )} */}
+              <Mapbox.Camera ref={camera} />
 
-              {location && (
+              {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
                   zoomLevel={10}
                   centerCoordinate={[location.longitude, location.latitude]}

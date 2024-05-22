@@ -111,7 +111,7 @@ export const getWebPageMeta = async (url: string) => {
         meta[name] = content;
       }
     });
-    console.log(meta);
+    // console.log(meta);
     // console.log(meta);
     if (meta && meta["og:title"].includes("Log in or sign")) return null;
     return meta;
