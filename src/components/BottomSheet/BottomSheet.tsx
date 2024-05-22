@@ -41,8 +41,6 @@ export const ModalDataMarker: FC<Props> = ({
     null
   );
 
-  // console.log(vibeDetails?.message);
-
   useEffect(() => {
     (async () => {
       try {
@@ -70,30 +68,31 @@ export const ModalDataMarker: FC<Props> = ({
       footerComponent={(props) => (
         <BottomSheetFooterCustom vibeDetails={vibeDetails} props={props} />
       )}
+      style={styles.bottomSheet}
     >
-      <BottomSheetView style={{ marginBottom: 100 }}>
+      <BottomSheetView style={styles.bottomsheetView}>
+        <View style={styles.topBox}>
+          <Image
+            source={{
+              uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
+            }}
+            style={styles.icon}
+          />
+          <View style={styles.topRightContainer}>
+            <Text>{vibeDetails?.author["userName"]}</Text>
+            <Text>{vibeDetails?.venue.name}</Text>
+          </View>
+          <Text>Points: {vibeDetails?.points}</Text>
+          <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
+        </View>
+        <View style={styles.dateContainer}>
+          {vibeDetails?.startsAt && (
+            <Text style={{ color: "#005DF2" }}>
+              {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
+            </Text>
+          )}
+        </View>
         <ScrollView style={[styles.sheetContainer]}>
-          <View style={styles.topBox}>
-            <Image
-              source={{
-                uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
-              }}
-              style={styles.icon}
-            />
-            <View>
-              <Text>{vibeDetails?.author["userName"]}</Text>
-              <Text>{vibeDetails?.venue.name}</Text>
-              <Text>Rank: {vibeDetails?.points}</Text>
-              <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
-            </View>
-          </View>
-          <View style={styles.dateContainer}>
-            {vibeDetails?.startsAt && (
-              <Text style={{ color: "#005DF2" }}>
-                {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
-              </Text>
-            )}
-          </View>
           {vibeDetails?.message && (
             <Text>
               {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
