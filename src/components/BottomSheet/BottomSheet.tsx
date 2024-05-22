@@ -42,6 +42,12 @@ export const ModalDataMarker: FC<Props> = ({
   );
 
   useEffect(() => {
+    if (selectedMarker.id) {
+      bottomSheetRef.current?.snapToIndex(0);
+    }
+  }, [selectedMarker.id]);
+
+  useEffect(() => {
     (async () => {
       try {
         const details: PostDetailsResponse = await getVibeDetails(

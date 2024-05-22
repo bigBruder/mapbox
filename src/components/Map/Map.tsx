@@ -51,6 +51,19 @@ export const Map = () => {
     }, 1000);
   }, [location?.source]);
 
+  useEffect(() => {
+    if (!selectedMarker?.id) return;
+
+    camera.current?.setCamera({
+      animationDuration: 500,
+      animationMode: "flyTo",
+      centerCoordinate: [
+        selectedMarker.venue.geo.longitude,
+        selectedMarker.venue.geo.latitude,
+      ],
+    });
+  }, [selectedMarker?.id]);
+
   // useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
   const [showModal, setShowModal] = useState(false);
