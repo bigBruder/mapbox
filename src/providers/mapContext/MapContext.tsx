@@ -87,6 +87,7 @@ export const MapContextProvider = ({
       setTags(Object.keys(pinsForBound.value.tags));
       // setHeatMap(pinsForBound.value.heatmap);
     });
+    const tag = selectedTag ? selectedTag : "";
     getHeatmap({
       "NE.Latitude": ne[1],
       "NE.Longitude": ne[0],
@@ -95,6 +96,8 @@ export const MapContextProvider = ({
       "Heatmap.Resolution": getHeatmapResolutionByZoom(
         cameraBound.properties.zoom
       ),
+      Tags: tag || undefined,
+
       ...dateParams,
     }).then((heatmap) => {
       // console.log(heatmap.value, "heatmap");
