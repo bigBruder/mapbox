@@ -7,6 +7,7 @@ import initialValue from "./initialValue";
 import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
+import { getDateParams } from "../../helpers/getDateParams";
 
 const MyContext = createContext(initialValue);
 
@@ -43,28 +44,9 @@ export const MapContextProvider = ({
       queryParams["Tags"] = selectedTag;
     }
 
-    if (selectedDate === "Custom") {
-      if (customDate.startDate && customDate.endDate) {
-        queryParams.Before = customDate.endDate.toISOString();
-        queryParams.endsAfter = customDate.startDate.toISOString();
-      }
-    } else {
-      queryParams.Before = TransformToIsoDate(selectedDate).before;
-      if (
-        selectedDate === "Next Month" ||
-        selectedDate === "Now" ||
-        selectedDate === "Today" ||
-        selectedDate === "Next 7 Days" ||
-        selectedDate === "Next 14 Days" ||
-        selectedDate === "Next 30 Days"
-      ) {
-        queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
-      } else {
-        queryParams.After = TransformToIsoDate(selectedDate).after;
-      }
-    }
+    const dateParams = getDateParams(selectedDate, customDate);
 
-    getPinsForBound(queryParams).then((pinsForBound) => {
+    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       setTotalResultsAmount(pinsForBound.value.totalResults);
     });
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
@@ -90,30 +72,13 @@ export const MapContextProvider = ({
       queryParams["Tags"] = selectedTag;
     }
 
-    if (selectedDate === "Custom") {
-      if (customDate.startDate && customDate.endDate) {
-        queryParams.Before = customDate.endDate.toISOString();
-        queryParams.endsAfter = customDate.startDate.toISOString();
-      }
-    } else {
-      queryParams.Before = TransformToIsoDate(selectedDate).before;
-      if (
-        selectedDate === "Next Month" ||
-        selectedDate === "Now" ||
-        selectedDate === "Today" ||
-        selectedDate === "Next 7 Days" ||
-        selectedDate === "Next 14 Days" ||
-        selectedDate === "Next 30 Days"
-      ) {
-        queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
-      } else {
-        queryParams.After = TransformToIsoDate(selectedDate).after;
-      }
-    }
+    const dateParams = getDateParams(selectedDate, customDate);
 
     // console.log("res", getHeatmapResolutionByZoom(cameraBound.properties.zoom));
 
-    getPinsForBound(queryParams).then((pinsForBound) => {
+    console.log({ ...dateParams });
+
+    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       if (!pinsForBound.value) return;
       const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
         const aWeight = a.points + (a.isTop ? 1 : 0);
