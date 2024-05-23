@@ -76,7 +76,7 @@ export const MapContextProvider = ({
 
     // console.log("res", getHeatmapResolutionByZoom(cameraBound.properties.zoom));
 
-    console.log({ ...dateParams });
+    // console.log({ ...dateParams });
 
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       if (!pinsForBound.value) return;
@@ -107,7 +107,7 @@ export const MapContextProvider = ({
       ),
       ...dateParams,
     }).then((heatmap) => {
-      console.log(heatmap.value, "heatmap");
+      // console.log(heatmap.value, "heatmap");
       setHeatMap(heatmap.value.heatmap);
     });
   }, [

@@ -4,19 +4,21 @@ export const TransformToIsoDate = (
   before: string;
   after: string;
 } => {
+  // console.log("DATE _______> ", date);
   let beforeDate = new Date(),
     afterDate = new Date();
 
   switch (date) {
     case "Now":
       afterDate = new Date();
-      beforeDate = new Date();
+    // beforeDate = new Date();
+    // console.log("NOW _______> ", beforeDate, afterDate);
 
     // console.log("BEFORE DAY _______> ", beforeDate);
 
     case "Today":
-      beforeDate.setDate(beforeDate.getDate() + 1);
-      beforeDate.setHours(0, 0, 0, 0);
+      // beforeDate.setDate(beforeDate.getDate());
+      beforeDate.setHours(23, 59, 59, 999);
       break;
     case "Tomorrow":
       // Set time to the start of the next day
@@ -63,9 +65,17 @@ export const TransformToIsoDate = (
       beforeDate.setDate(beforeDate.getDate() + 30);
       break;
     default:
+      // console.log("default> ");
       beforeDate = new Date();
       afterDate = new Date();
       break;
+  }
+
+  if (date === "Now") {
+    return {
+      before: afterDate,
+      after: afterDate,
+    };
   }
 
   return {

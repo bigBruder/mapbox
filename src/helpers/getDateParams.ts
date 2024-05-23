@@ -9,6 +9,7 @@ export function getDateParams(
   }
 ): Partial<queryParams> {
   const params: Partial<queryParams> = {};
+  console.log(selectedDate, TransformToIsoDate(selectedDate));
   if (selectedDate === "Custom") {
     if (customDate.startDate && customDate.endDate) {
       params.Before = customDate.endDate.toISOString();
