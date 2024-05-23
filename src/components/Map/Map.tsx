@@ -237,14 +237,16 @@ export const Map = () => {
               showModal={showModal}
               setShowModal={setShowModal}
             />
-            <View style={styles.bottomContainer}>
+            <View style={styles.bottomContainer} pointerEvents="box-none">
               <TouchableOpacity
                 style={styles.searchButton}
                 onPress={() => handleCenterCamera()}
               >
                 <LocationIcon />
               </TouchableOpacity>
-              <Text style={styles.pointText}>Some point</Text>
+              <View style={styles.regionContainer} pointerEvents="box-none">
+                <Text style={styles.pointText}>Some point</Text>
+              </View>
               <TouchableOpacity style={styles.addButton} onPress={() => {}}>
                 <PlusIcon />
               </TouchableOpacity>

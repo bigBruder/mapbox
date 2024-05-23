@@ -49,10 +49,7 @@ export const styles = StyleSheet.create({
   pointText: {
     fontSize: 18,
     lineHeight: 22,
-    textAlign: "left",
     color: "white",
-    fontFamily: "SF Pro Text",
-    flex: 1,
   },
   annotationContainer: {
     width: 30,
@@ -144,5 +141,10 @@ export const styles = StyleSheet.create({
   },
   resultText: {
     fontSize: 12,
+  },
+  regionContainer: {
+    alignItems: "flex-start",
+    justifyContent: "center",
+    flex: 1,
   },
 });
