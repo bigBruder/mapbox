@@ -90,8 +90,6 @@ export const ModalDataMarker: FC<Props> = ({
             <Text>{vibeDetails?.author["userName"]}</Text>
             <Text>{vibeDetails?.venue.name}</Text>
           </View>
-          <Text>Points: {vibeDetails?.points}</Text>
-          <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
         </View>
         <View style={styles.dateContainer}>
           {vibeDetails?.startsAt && (
@@ -100,18 +98,19 @@ export const ModalDataMarker: FC<Props> = ({
             </Text>
           )}
         </View>
-        <ScrollView style={[styles.sheetContainer]}>
-          {vibeDetails?.message && (
-            <Text>
-              {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
-            </Text>
-          )}
-          {vibeDetails?.message &&
-            vibeDetails?.message.includes("https://") && (
-              <LinkPreview message={vibeDetails?.message} />
-            )}
-        </ScrollView>
       </BottomSheetView>
+      <ScrollView style={[styles.sheetContainer]}>
+        <Text>Points: {vibeDetails?.points}</Text>
+        <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
+        {vibeDetails?.message && (
+          <Text>
+            {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
+          </Text>
+        )}
+        {vibeDetails?.message && vibeDetails?.message.includes("https://") && (
+          <LinkPreview message={vibeDetails?.message} />
+        )}
+      </ScrollView>
     </BottomSheet>
   );
 };

@@ -7,11 +7,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   bottomsheetView: {
-    marginBottom: 100,
     gap: 10,
   },
   sheetContainer: {
-    display: "flex",
+    height: "100%",
     flexDirection: "column",
     marginBottom: 100,
     gap: 10,

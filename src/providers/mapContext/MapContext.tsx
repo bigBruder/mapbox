@@ -140,7 +140,7 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  console.log(heatMap.cellRadius, "heatMap");
+  // console.log(heatMap.cellRadius, "heatMap");
 
   const value = {
     totalResultsAmount,

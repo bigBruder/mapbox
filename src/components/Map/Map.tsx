@@ -38,7 +38,7 @@ export const Map = () => {
   useEffect(() => {
     if (!location) return;
 
-    console.log("effect", location);
+    // console.log("effect", location);
 
     camera.current?.setCamera({
       zoomLevel: 10,
@@ -112,11 +112,12 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL={mapboxStyleUrl}
-              regionDidChangeDebounceTime={100}
+              regionDidChangeDebounceTime={0}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
               onCameraChanged={(e) => {
+                // console.log(e);
                 setCurrentZoom(e.properties.zoom);
               }}
             >
