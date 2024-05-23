@@ -1,8 +1,8 @@
 export const TransformToIsoDate = (
   date: string
 ): {
-  before: string;
-  after: string;
+  before: Date;
+  after: Date;
 } => {
   // console.log("DATE _______> ", date);
   let beforeDate = new Date(),
@@ -41,10 +41,10 @@ export const TransformToIsoDate = (
       beforeDate.setDate(afterDate.getDate() + 7); // Next week
       beforeDate.setHours(0, 0, 0, 0); // End of the week
 
-      return {
-        before: new Date(beforeDate).toISOString(),
-        after: new Date(afterDate).toISOString(),
-      };
+      // return {
+      //   before: new Date(beforeDate),
+      //   after: new Date(afterDate),
+      // };
       break;
     case "Next 14 Days":
       beforeDate.setDate(beforeDate.getDate() + 14);
