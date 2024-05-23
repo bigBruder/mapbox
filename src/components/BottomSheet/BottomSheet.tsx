@@ -60,6 +60,8 @@ export const ModalDataMarker: FC<Props> = ({
     })();
   }, [selectedMarker.id]);
 
+  console.log("vibeDetails", vibeDetails);
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
