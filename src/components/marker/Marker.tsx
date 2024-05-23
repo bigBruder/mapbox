@@ -28,32 +28,30 @@ export const Marker = ({
     >
       {isSelected ? (
         <>
-          <ImageBackground
-            source={require("../../assets/active_pin_background.png")}
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            <View
+            <ImageBackground
+              source={require("../../assets/selected_pin_background.png")}
               style={{
-                width: 50,
+                width: 45,
                 height: 50,
-                justifyContent: "center",
                 alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <Image
                 source={{
                   uri: getIconUrl(pin.icon.split(":")[1]),
                 }}
-                style={[
-                  {
-                    width: getMarkerSizeByPoints(pin.points, zoom),
-                    height: getMarkerSizeByPoints(pin.points, zoom),
-                    objectFit: "cover",
-                  },
-                  styles.activePinImage,
-                ]}
+                style={[styles.activePinImage]}
               />
-            </View>
-          </ImageBackground>
+            </ImageBackground>
+          </View>
         </>
       ) : (
         <Image
@@ -84,11 +82,17 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   activePinContainer: {
-    backgroundColor: "none",
+    width: 100,
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
   },
   activePinImage: {
-    width: 30,
-    height: 30,
+    height: 20,
+    width: 20,
+    transform: [{ translateY: -3 }],
+    objectFit: "cover",
   },
   annotationText: {
     fontSize: 24,
