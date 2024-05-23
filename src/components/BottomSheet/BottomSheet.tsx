@@ -102,6 +102,7 @@ export const ModalDataMarker: FC<Props> = ({
       <ScrollView style={[styles.sheetContainer]}>
         <Text>Points: {vibeDetails?.points}</Text>
         <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
+        <Text>Starts at: {vibeDetails?.startsAt}</Text>
         {vibeDetails?.message && (
           <Text>
             {formatTagsInText(removeLinkFromString(vibeDetails?.message))}

@@ -8,6 +8,7 @@ import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { getDateParams } from "../../helpers/getDateParams";
+import { sortPinsByWeightAndDate } from "../../helpers/sortPins";
 
 const MyContext = createContext(initialValue);
 
@@ -80,18 +81,7 @@ export const MapContextProvider = ({
 
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       if (!pinsForBound.value) return;
-      const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
-        const aWeight = a.points + (a.isTop ? 1 : 0);
-        const bWeight = b.points + (b.isTop ? 1 : 0);
-
-        if (aWeight > bWeight) {
-          return 1;
-        } else if (aWeight < bWeight) {
-          return -1;
-        } else {
-          return new Date(a.startsAt) > new Date(b.startsAt) ? 1 : -1;
-        }
-      });
+      const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
 
       setPinsForBound(sortedPins);
       setTags(Object.keys(pinsForBound.value.tags));
