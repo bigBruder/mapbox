@@ -119,3 +119,29 @@ export const getWebPageMeta = async (url: string) => {
     console.error("Error fetching metadata:", error);
   }
 };
+
+export const getHeatmap = async (
+  queryParams: Pick<
+    queryParams,
+    | "NE.Latitude"
+    | "NE.Longitude"
+    | "SW.Latitude"
+    | "SW.Longitude"
+    | "Heatmap.Resolution"
+  >
+) => {
+  const baseParams = {
+    "Heatmap.Enable": true,
+    PageSize: 0,
+  };
+  const pageSize = 0;
+  try {
+    return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, {
+      ...baseParams,
+      ...queryParams,
+    });
+  } catch (error) {
+    console.error("Error fetching heatmap:", error);
+    return null;
+  }
+};

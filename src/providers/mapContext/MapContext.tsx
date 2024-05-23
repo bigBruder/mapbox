@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { getPinsForBound } from "../../api/client";
+import { getHeatmap, getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
@@ -60,7 +60,7 @@ export const MapContextProvider = ({
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
       OrderBy: "Points",
-      PageSize: cameraBound.properties.zoom > 15 ? 15 : 10,
+      PageSize: cameraBound.properties.zoom > 15 ? 25 : 10,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
       "Heatmap.Enable": true,
@@ -95,7 +95,20 @@ export const MapContextProvider = ({
 
       setPinsForBound(sortedPins);
       setTags(Object.keys(pinsForBound.value.tags));
-      setHeatMap(pinsForBound.value.heatmap);
+      // setHeatMap(pinsForBound.value.heatmap);
+    });
+    getHeatmap({
+      "NE.Latitude": ne[1],
+      "NE.Longitude": ne[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": sw[0],
+      "Heatmap.Resolution": getHeatmapResolutionByZoom(
+        cameraBound.properties.zoom
+      ),
+      ...dateParams,
+    }).then((heatmap) => {
+      console.log(heatmap.value, "heatmap");
+      setHeatMap(heatmap.value.heatmap);
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
