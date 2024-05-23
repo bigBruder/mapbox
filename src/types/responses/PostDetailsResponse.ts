@@ -70,7 +70,6 @@ export interface PorstDetailsValue {
   id: string;
   venueId: string;
   venue: Venue;
-  isTop: boolean;
   icon: string;
   points: number;
   publishedAt: string;

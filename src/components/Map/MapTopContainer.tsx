@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import {
   CalendarIcon,
+  EyeHiddenIcon,
+  EyeIcon,
   ProfileIcon,
   SearchIcon,
   ShareIcon,
@@ -47,17 +49,29 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
           <SearchIcon />
           <TextInput placeholder="Search" style={styles.search} />
         </View>
-        <View style={[styles.searchButton, styles.totalResults]}>
-          {totalResultsAmount > 0 ? (
-            <>
+        {totalResultsAmount.total > 0 ? (
+          <View style={[styles.searchButton, styles.totalResults]}>
+            <View style={styles.resultContainer}>
+              <EyeHiddenIcon />
               <Text style={styles.resultText}>
-                Results: {totalResultsAmount}
+                {totalResultsAmount.total - totalResultsAmount.visible >= 0
+                  ? totalResultsAmount.total - totalResultsAmount.visible
+                  : "-"}
               </Text>
-            </>
-          ) : (
+            </View>
+            <View style={styles.line} />
+            <View>
+              <EyeIcon />
+              <Text style={styles.resultText}>
+                {totalResultsAmount.visible}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={[styles.searchButton, styles.totalResults]}>
             <Text>No results</Text>
-          )}
-        </View>
+          </View>
+        )}
         <TouchableOpacity style={styles.searchButton}>
           <ShareIcon />
         </TouchableOpacity>

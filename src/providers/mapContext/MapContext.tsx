@@ -25,7 +25,10 @@ export const MapContextProvider = ({
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
   const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
-  const [totalResultsAmount, setTotalResultsAmount] = useState(0);
+  const [totalResultsAmount, setTotalResultsAmount] = useState({
+    total: 0,
+    visible: 0,
+  });
   const [heatMap, setHeatMap] = useState<Heatmap>({
     data: {},
     resolution: 9,
@@ -48,7 +51,12 @@ export const MapContextProvider = ({
     const dateParams = getDateParams(selectedDate, customDate);
 
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      setTotalResultsAmount(pinsForBound.value.totalResults);
+      setTotalResultsAmount((prev) => {
+        return {
+          ...prev,
+          total: pinsForBound.value.totalResults,
+        };
+      });
     });
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
@@ -75,17 +83,15 @@ export const MapContextProvider = ({
 
     const dateParams = getDateParams(selectedDate, customDate);
 
-    // console.log("res", getHeatmapResolutionByZoom(cameraBound.properties.zoom));
-
-    // console.log({ ...dateParams });
-
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       if (!pinsForBound.value) return;
       const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
-
+      setTotalResultsAmount((prev) => ({
+        ...prev,
+        visible: pinsForBound.value.totalResults,
+      }));
       setPinsForBound(sortedPins);
       setTags(Object.keys(pinsForBound.value.tags));
-      // setHeatMap(pinsForBound.value.heatmap);
     });
     const tag = selectedTag ? selectedTag : "";
     getHeatmap({
@@ -100,7 +106,6 @@ export const MapContextProvider = ({
 
       ...dateParams,
     }).then((heatmap) => {
-      // console.log(heatmap.value, "heatmap");
       setHeatMap(heatmap.value.heatmap);
     });
   }, [
@@ -110,8 +115,6 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
-
-  // console.log(heatMap.cellRadius, "heatMap");
 
   const value = {
     totalResultsAmount,

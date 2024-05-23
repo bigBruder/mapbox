@@ -6,3 +6,5 @@ export * from "./profile";
 export * from "./share";
 export * from "./like";
 export * from "./more";
+export * from "./eye";
+export * from "./eye_hidden";

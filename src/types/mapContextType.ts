@@ -4,7 +4,10 @@ import { Heatmap, VibesItem } from "./searchResponse";
 import { DateType } from "react-native-ui-datepicker";
 
 export type MapContextType = {
-  totalResultsAmount: number;
+  totalResultsAmount: {
+    total: number;
+    visible: number;
+  };
   setCameraBound: (cameraBound: CameraBound | null) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;

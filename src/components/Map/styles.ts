@@ -76,7 +76,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   totalResults: {
+    gap: 10,
     width: 100,
+    flexDirection: "row",
+    alignItems: "center",
   },
   addButton: {
     width: 48,
@@ -140,11 +143,21 @@ export const styles = StyleSheet.create({
     height: "100%",
   },
   resultText: {
+    alignSelf: "center",
     fontSize: 12,
   },
   regionContainer: {
     alignItems: "flex-start",
     justifyContent: "center",
     flex: 1,
+  },
+  line: {
+    width: 1,
+    height: 20,
+    backgroundColor: "grey",
+  },
+  resultContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

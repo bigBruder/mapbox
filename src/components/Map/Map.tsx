@@ -38,8 +38,6 @@ export const Map = () => {
   useEffect(() => {
     if (!location) return;
 
-    // console.log("effect", location);
-
     camera.current?.setCamera({
       zoomLevel: 10,
       animationDuration: 0,
@@ -99,8 +97,6 @@ export const Map = () => {
     );
   }
 
-  // console.log(location);
-
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -117,7 +113,6 @@ export const Map = () => {
                 setCameraBound(e as CameraBound);
               }}
               onCameraChanged={(e) => {
-                // console.log(e);
                 setCurrentZoom(e.properties.zoom);
               }}
             >

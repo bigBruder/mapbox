@@ -60,8 +60,6 @@ export const ModalDataMarker: FC<Props> = ({
     })();
   }, [selectedMarker.id]);
 
-  // console.log("vibeDetails", vibeDetails);
-
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -101,7 +99,6 @@ export const ModalDataMarker: FC<Props> = ({
       </BottomSheetView>
       <ScrollView style={[styles.sheetContainer]}>
         <Text>Points: {vibeDetails?.points}</Text>
-        <Text>IsTop: {vibeDetails?.isTop ? "yes" : "no"}</Text>
         <Text>Starts at: {vibeDetails?.startsAt}</Text>
         {vibeDetails?.message && (
           <Text>

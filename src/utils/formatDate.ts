@@ -1,21 +1,9 @@
 export function formatDate(startDateString: string, expiredAtString: string) {
   const startDate = new Date(startDateString);
   const expiredAt = new Date(expiredAtString);
-  // console.log("startDate === >", startDate);
-  // console.log("endDate === >", expiredAtString);
   const now = new Date();
-  // console.log("now === >", now);
-
-  // Check if the event has already expired
 
   if (expiredAt < now) {
-    // console.log(
-    //   "Event has already expired",
-    //   "startDate === >",
-    //   startDate,
-    //   "endDate === >",
-    //   expiredAt
-    // );
     return "Event has already expired";
   }
 
