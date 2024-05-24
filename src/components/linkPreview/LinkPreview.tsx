@@ -57,7 +57,7 @@ export const LinkPreview: FC<Props> = ({ message }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       {metaData && <Text style={styles.title}>{metaData["og:title"]}</Text>}
-      <Text>{editedMessage}</Text>
+      {/* <Text>{editedMessage}</Text> */}
       {metaData && metaData["og:image"] && (
         <Image source={{ uri: metaData["og:image"] }} style={styles.image} />
       )}
