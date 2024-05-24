@@ -69,13 +69,13 @@ export const MapContextProvider = ({
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
       OrderBy: "Points",
-      PageSize: cameraBound.properties.zoom > 15 ? 25 : 10,
+      PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
-      "Heatmap.Enable": true,
-      "Heatmap.Resolution": getHeatmapResolutionByZoom(
-        cameraBound.properties.zoom
-      ),
+      "Heatmap.Enable": false,
+      // "Heatmap.Resolution": getHeatmapResolutionByZoom(
+      //   cameraBound.properties.zoom
+      // ),
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
