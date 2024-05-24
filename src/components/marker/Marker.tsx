@@ -4,11 +4,13 @@ import {
   TouchableOpacity,
   ImageBackground,
   View,
+  Animated,
 } from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
+import { useEffect, useRef } from "react";
 
 export const Marker = ({
   pin,
@@ -21,6 +23,18 @@ export const Marker = ({
   zoom: number;
   isSelected: boolean;
 }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: -5,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+
+    return () => {
+      fadeAnim.setValue(0);
+    };
+  }, [fadeAnim, isSelected, pin.id]);
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
@@ -28,11 +42,16 @@ export const Marker = ({
     >
       {isSelected ? (
         <>
-          <View
+          <Animated.View
             style={{
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
+              transform: [
+                {
+                  translateY: fadeAnim,
+                },
+              ],
             }}
           >
             <ImageBackground
@@ -51,7 +70,7 @@ export const Marker = ({
                 style={[styles.activePinImage]}
               />
             </ImageBackground>
-          </View>
+          </Animated.View>
         </>
       ) : (
         <Image
@@ -87,6 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 5,
+    transform: [{ translateY: -10 }],
   },
   activePinImage: {
     height: 20,
