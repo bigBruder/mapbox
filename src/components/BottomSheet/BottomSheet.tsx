@@ -29,7 +29,7 @@ export const ModalDataMarker: FC<Props> = ({
   selectedMarker,
   setSelectedMarker,
 }) => {
-  const snapPoints = ["35%", "60%"];
+  const snapPoints = ["35%", "60%", "80%"];
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handleSheetChanges = useCallback(
@@ -97,7 +97,7 @@ export const ModalDataMarker: FC<Props> = ({
           )}
         </View>
       </BottomSheetView>
-      <ScrollView style={[styles.sheetContainer]}>
+      <View style={[styles.sheetContainer]}>
         <Text>Points: {vibeDetails?.points}</Text>
         <Text>Starts at: {vibeDetails?.startsAt}</Text>
         {vibeDetails?.message && (
@@ -108,7 +108,7 @@ export const ModalDataMarker: FC<Props> = ({
         {vibeDetails?.message && vibeDetails?.message.includes("https://") && (
           <LinkPreview message={vibeDetails?.message} />
         )}
-      </ScrollView>
+      </View>
     </BottomSheet>
   );
 };
