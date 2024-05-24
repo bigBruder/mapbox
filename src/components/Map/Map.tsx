@@ -131,6 +131,7 @@ export const Map = () => {
                       heatmapRadius:
                         data.cellRadius > 60 ? 60 : data.cellRadius,
                       heatmapColor: heatmapColor,
+                      // heatmapIntensity: 0.4,
                     }}
                   />
                 );
@@ -140,25 +141,6 @@ export const Map = () => {
                   id={`my-heatmap-source-${index + 1}`}
                   shape={data}
                   key={data.toString() + index}
-                  // paint={{
-                  //   "heatmap-radius":
-                  //     data?.features[0]?.properties?.intensity / 50 || 30,
-                  //   "heatmap-weight": 1,
-                  //   "heatmap-intensity":
-                  //     data?.features[0]?.properties?.intensity / 50 || 0,
-                  //   "heatmap-opacity": 0.1,
-                  // "heatmap-color": heatmapColor,
-                  // "circle-radius": {
-                  //   property: "dbh",
-                  //   type: "exponential",
-                  //   stops: [
-                  //     [{ zoom: 15, value: data.cellRadius }, 5],
-                  //     [{ zoom: 15, value: data.cellRadius }, 10],
-                  //     [{ zoom: 22, value: data.cellRadius }, 20],
-                  //     [{ zoom: 22, value: data.cellRadius }, 50],
-                  //   ],
-                  // },
-                  // }}
                 />
               ))}
               {pinsForBound &&
