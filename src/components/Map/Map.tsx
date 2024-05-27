@@ -21,6 +21,8 @@ import { MapTopContainer } from "./MapTopContainer";
 
 export const Map = () => {
   const {
+    currentCamera,
+    setCurrentCamera,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -133,7 +135,8 @@ export const Map = () => {
                         data.cellRadius > 60 ? 60 : data.cellRadius,
                       // heatmapColor: heatmapColor,
                       heatmapOpacity: 0.1,
-                      // heatmapIntensity: 0.8,
+                      heatmapIntensity:
+                        0.3 + ((currentZoom - 1) / (15 - 1)) * (1 - 0.3),
                     }}
                   />
                 );

@@ -38,6 +38,7 @@ export const MapContextProvider = ({
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [currentCamera, setCurrentCamera] = useState<CameraBound | null>(null);
 
   useEffect(() => {
     const queryParams: Partial<queryParams> = {
@@ -143,6 +144,8 @@ export const MapContextProvider = ({
   ]);
 
   const value = {
+    currentCamera,
+    setCurrentCamera,
     totalResultsAmount,
     setTotalResultsAmount,
     customDate,
