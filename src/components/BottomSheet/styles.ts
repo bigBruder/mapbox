@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     backgroundColor: "white",
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 50,
     paddingHorizontal: 30,
 
     flexDirection: "row",
