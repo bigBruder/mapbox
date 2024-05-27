@@ -126,12 +126,14 @@ export const Map = () => {
                     sourceLayerID=""
                     layerIndex={5}
                     filter={[]}
+                    minZoomLevel={0}
                     maxZoomLevel={14}
                     style={{
                       heatmapRadius:
                         data.cellRadius > 60 ? 60 : data.cellRadius,
-                      heatmapColor: heatmapColor,
-                      // heatmapIntensity: 0.4,
+                      // heatmapColor: heatmapColor,
+                      heatmapOpacity: 0.1,
+                      // heatmapIntensity: 0.8,
                     }}
                   />
                 );
