@@ -30,35 +30,43 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
+  const [currentZoom, setCurrentZoom] = useState(0);
 
-  const { location, setPermissionStatus } = useRealTimeLocation();
+  const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
+  const camera = useRef<Mapbox.Camera | null>(null);
 
   useEffect(() => {
     if (!location) return;
 
-    camera.current?.flyTo(
-      [location.longitude, location.latitude],
-
-      4000
-    );
     camera.current?.setCamera({
-      zoomLevel: 15,
-      animationDuration: 2000,
+      zoomLevel: 10,
+      animationDuration: 0,
       animationMode: "flyTo",
       centerCoordinate: [location.longitude, location.latitude],
     });
-
-    setIsFirstFlyHappened(true);
+    setTimeout(() => {
+      setIsFirstFlyHappened(true);
+    }, 1000);
   }, [location?.source]);
 
-  const camera = useRef<Mapbox.Camera | null>(null);
+  useEffect(() => {
+    if (!selectedMarker?.id) return;
 
-  useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
+    camera.current?.setCamera({
+      animationDuration: 500,
+      animationMode: "flyTo",
+      centerCoordinate: [
+        selectedMarker.venue.geo.longitude,
+        selectedMarker.venue.geo.latitude,
+      ],
+    });
+  }, [selectedMarker?.id]);
+
+  // useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
   const [showModal, setShowModal] = useState(false);
 
   const map = useRef<Mapbox.MapView | null>(null);
-
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
     if (isGpsGranted.status !== "granted") {
@@ -66,20 +74,17 @@ export const Map = () => {
       setPermissionStatus(status);
     }
     if (!location) return;
-    camera.current?.flyTo(
-      [location.longitude, location.latitude],
-
-      4000
-    );
-    camera.current?.setCamera({
-      zoomLevel: 15,
-      animationDuration: 2000,
-      animationMode: "flyTo",
-      centerCoordinate: [location.longitude, location.latitude],
-    });
+    if (!isLoading) {
+      camera.current?.setCamera({
+        zoomLevel: 10,
+        animationDuration: 2000,
+        animationMode: "flyTo",
+        centerCoordinate: [location.longitude, location.latitude],
+      });
+    }
   };
 
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <View style={styles.page}>
         <Image
@@ -103,9 +108,12 @@ export const Map = () => {
               ref={map}
               rotateEnabled={false}
               styleURL={mapboxStyleUrl}
-              regionDidChangeDebounceTime={100}
+              regionDidChangeDebounceTime={0}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
+              }}
+              onCameraChanged={(e) => {
+                setCurrentZoom(e.properties.zoom);
               }}
             >
               {transformDataToHeatmap(heatMap).map((data, index) => {
@@ -120,8 +128,10 @@ export const Map = () => {
                     filter={[]}
                     maxZoomLevel={14}
                     style={{
-                      heatmapRadius: data.cellRadius / 1000 || 100,
+                      heatmapRadius:
+                        data.cellRadius > 60 ? 60 : data.cellRadius,
                       heatmapColor: heatmapColor,
+                      // heatmapIntensity: 0.4,
                     }}
                   />
                 );
@@ -131,25 +141,6 @@ export const Map = () => {
                   id={`my-heatmap-source-${index + 1}`}
                   shape={data}
                   key={data.toString() + index}
-                  paint={{
-                    "heatmap-radius":
-                      data?.features[0]?.properties?.intensity / 50 || 30,
-                    "heatmap-weight": 1,
-                    "heatmap-intensity":
-                      data?.features[0]?.properties?.intensity / 50 || 0,
-                    "heatmap-opacity": 1,
-                    "heatmap-color": heatmapColor,
-                    "circle-radius": {
-                      property: "dbh",
-                      type: "exponential",
-                      stops: [
-                        [{ zoom: 15, value: data.cellRadius }, 5],
-                        [{ zoom: 15, value: data.cellRadius }, 10],
-                        [{ zoom: 22, value: data.cellRadius }, 20],
-                        [{ zoom: 22, value: data.cellRadius }, 50],
-                      ],
-                    },
-                  }}
                 />
               ))}
               {pinsForBound &&
@@ -164,12 +155,31 @@ export const Map = () => {
                     allowOverlap={false}
                   >
                     <Marker
+                      isSelected={false}
                       key={index}
                       setSelectedMarker={setSelectedMarker}
+                      zoom={currentZoom}
                       pin={pin}
                     />
                   </Mapbox.MarkerView>
                 ))}
+
+              {selectedMarker && (
+                <Mapbox.MarkerView
+                  coordinate={[
+                    selectedMarker.venue.geo.longitude,
+                    selectedMarker.venue.geo.latitude,
+                  ]}
+                  allowOverlap={true}
+                >
+                  <Marker
+                    isSelected={true}
+                    setSelectedMarker={setSelectedMarker}
+                    zoom={currentZoom}
+                    pin={selectedMarker}
+                  />
+                </Mapbox.MarkerView>
+              )}
 
               {location && location.source === "gps" && (
                 <Mapbox.UserLocation
@@ -178,7 +188,7 @@ export const Map = () => {
                   showsUserHeadingIndicator
                 />
               )}
-              {location && location.source === "ip" && (
+              {/* {location && location.source === "ip" && (
                 <Mapbox.PointAnnotation
                   key="pointAnnotation"
                   id="pointAnnotation"
@@ -189,24 +199,31 @@ export const Map = () => {
                   </View>
                   <Mapbox.Callout title="Your approximate location" />
                 </Mapbox.PointAnnotation>
+              )} */}
+              <Mapbox.Camera ref={camera} />
+
+              {!isFirstFlyHappened && location && (
+                <Mapbox.Camera
+                  zoomLevel={10}
+                  centerCoordinate={[location.longitude, location.latitude]}
+                  animationDuration={0}
+                />
               )}
-              {location?.longitude && location.latitude && (
-                <Mapbox.Camera ref={camera} animationDuration={4000} />
-              )}
-              {/* )} */}
             </Mapbox.MapView>
             <MapTopContainer
               showModal={showModal}
               setShowModal={setShowModal}
             />
-            <View style={styles.bottomContainer}>
+            <View style={styles.bottomContainer} pointerEvents="box-none">
               <TouchableOpacity
                 style={styles.searchButton}
                 onPress={() => handleCenterCamera()}
               >
                 <LocationIcon />
               </TouchableOpacity>
-              <Text style={styles.pointText}>Some point</Text>
+              <View style={styles.regionContainer} pointerEvents="box-none">
+                <Text style={styles.pointText}>Some point</Text>
+              </View>
               <TouchableOpacity style={styles.addButton} onPress={() => {}}>
                 <PlusIcon />
               </TouchableOpacity>

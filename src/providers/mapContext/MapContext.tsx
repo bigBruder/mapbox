@@ -1,10 +1,14 @@
 import { createContext, useEffect, useState } from "react";
-import { getPinsForBound } from "../../api/client";
+import { getHeatmap, getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
 import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
+import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
+import useRealTimeLocation from "../../hooks/useRealTimeLocation";
+import { getDateParams } from "../../helpers/getDateParams";
+import { sortPinsByWeightAndDate } from "../../helpers/sortPins";
 
 const MyContext = createContext(initialValue);
 
@@ -15,25 +19,46 @@ export const MapContextProvider = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
-
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Now");
-  const [customDate, setCustomDate] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
-
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
+  const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
+  const [totalResultsAmount, setTotalResultsAmount] = useState({
+    total: 0,
+    visible: 0,
+  });
   const [heatMap, setHeatMap] = useState<Heatmap>({
     data: {},
     resolution: 9,
     cellRadius: 100,
   });
+  const [customDate, setCustomDate] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
-  const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
+  useEffect(() => {
+    const queryParams: Partial<queryParams> = {
+      PageSize: 1,
+      IncludeTotalCount: true,
+    };
+    if (selectedTag) {
+      queryParams["Tags"] = selectedTag;
+    }
 
-  const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
+    const dateParams = getDateParams(selectedDate, customDate);
+
+    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
+      setTotalResultsAmount((prev) => {
+        return {
+          ...prev,
+          total: pinsForBound.value.totalResults,
+        };
+      });
+    });
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   useEffect(() => {
     if (!cameraBound) return;
@@ -44,65 +69,44 @@ export const MapContextProvider = ({
       "SW.Latitude": ne[1],
       "SW.Longitude": ne[0],
       OrderBy: "Points",
-      PageSize: cameraBound.properties.zoom > 15 ? 15 : 10,
-      IncludeTotalCount: true,
+      PageSize: 25,
       "TopTags.Enable": true,
-      "Heatmap.Enable": true,
-      "Heatmap.Resolution": cameraBound.properties.zoom > 10 ? 9 : 8,
+      IncludeTotalCount: true,
+      "Heatmap.Enable": false,
+      // "Heatmap.Resolution": getHeatmapResolutionByZoom(
+      //   cameraBound.properties.zoom
+      // ),
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
 
-    console.log("--------------------------------------------");
+    const dateParams = getDateParams(selectedDate, customDate);
 
-    if (selectedDate === "Custom") {
-      if (customDate.startDate && customDate.endDate) {
-        queryParams.Before = customDate.endDate.toISOString();
-        queryParams.endsAfter = customDate.startDate.toISOString();
-      }
-    } else {
-      console.log("selectedDate ==>", selectedDate);
-      console.log("BeforeDate ==> ", TransformToIsoDate(selectedDate).before);
-      queryParams.Before = TransformToIsoDate(selectedDate).before;
-      if (
-        selectedDate === "Next Month" ||
-        selectedDate === "Now" ||
-        selectedDate === "Today" ||
-        selectedDate === "Next 7 Days" ||
-        selectedDate === "Next 14 Days" ||
-        selectedDate === "Next 30 Days"
-      ) {
-        queryParams.endsAfter = TransformToIsoDate(selectedDate).after;
-        console.log("EndsAfter ==> ", TransformToIsoDate(selectedDate).after);
-      } else {
-        queryParams.After = TransformToIsoDate(selectedDate).after;
-        console.log("After ==> ", TransformToIsoDate(selectedDate).after);
-      }
-    }
-
-    getPinsForBound(queryParams).then((pinsForBound) => {
+    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       if (!pinsForBound.value) return;
-      const sortedPins = [...pinsForBound.value.vibes].sort((a, b) => {
-        const aWeight = a.points + (a.isTop ? 1 : 0);
-        const bWeight = b.points + (b.isTop ? 1 : 0);
-
-        if (aWeight > bWeight) {
-          return 1;
-        } else if (aWeight < bWeight) {
-          return -1;
-        } else {
-          return new Date(a.startsAt) > new Date(b.startsAt) ? 1 : -1;
-        }
-      });
-
-      // Additional code to handle sortedPins if needed
-      // });
-
+      const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
+      setTotalResultsAmount((prev) => ({
+        ...prev,
+        visible: pinsForBound.value.totalResults,
+      }));
       setPinsForBound(sortedPins);
-
       setTags(Object.keys(pinsForBound.value.tags));
-      setHeatMap(pinsForBound.value.heatmap);
+    });
+    const tag = selectedTag ? selectedTag : "";
+    getHeatmap({
+      "NE.Latitude": ne[1],
+      "NE.Longitude": ne[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": sw[0],
+      "Heatmap.Resolution": getHeatmapResolutionByZoom(
+        cameraBound.properties.zoom
+      ),
+      Tags: tag || undefined,
+
+      ...dateParams,
+    }).then((heatmap) => {
+      setHeatMap(heatmap.value.heatmap);
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
@@ -112,13 +116,9 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  console.log(
-    "sortedPins: ",
-    pinsForBound.map((b) => b.points),
-    pinsForBound.map((b) => b.points + b.startsAt + "\n")
-  );
-
   const value = {
+    totalResultsAmount,
+    setTotalResultsAmount,
     customDate,
     setCustomDate,
     selectedDate,

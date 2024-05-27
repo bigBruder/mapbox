@@ -9,6 +9,7 @@ const useRealTimeLocation = () => {
     source: string;
   } | null>(null);
   const [permissionStatus, setPermissionStatus] = useState("undetermined");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
@@ -45,8 +46,9 @@ const useRealTimeLocation = () => {
           setLocation(ipLocation);
         }
       } catch (err) {
-        console.error(err);
         console.error("Error fetching location:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -59,7 +61,7 @@ const useRealTimeLocation = () => {
     };
   }, [permissionStatus]);
 
-  return { location, setPermissionStatus };
+  return { location, setPermissionStatus, isLoading };
 };
 
 export default useRealTimeLocation;

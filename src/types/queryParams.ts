@@ -7,7 +7,7 @@ export type queryParams = {
   Before?: string;
   OrderBy: string;
   PageSize: number;
-  IncludeTotalCount: boolean;
+  IncludeTotalCount?: boolean;
   "TopTags.Enable"?: boolean;
   "Heatmap.Enable"?: boolean;
   "Heatmap.Resolution"?: number;

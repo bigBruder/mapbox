@@ -26,6 +26,7 @@ export interface VibesItem {
   points: number;
   publishedAt: string;
   startsAt: string;
+  createdAt: string;
 }
 
 export interface Tags {

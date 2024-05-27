@@ -3,7 +3,7 @@ const { StatusBarManager } = NativeModules;
 
 export const styles = StyleSheet.create({
   page: {
-    flex: 1,
+    // flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -49,10 +49,7 @@ export const styles = StyleSheet.create({
   pointText: {
     fontSize: 18,
     lineHeight: 22,
-    textAlign: "left",
     color: "white",
-    fontFamily: "SF Pro Text",
-    flex: 1,
   },
   annotationContainer: {
     width: 30,
@@ -76,6 +73,12 @@ export const styles = StyleSheet.create({
     borderRadius: 40,
     display: "flex",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  totalResults: {
+    gap: 10,
+    width: 100,
+    flexDirection: "row",
     alignItems: "center",
   },
   addButton: {
@@ -138,5 +141,23 @@ export const styles = StyleSheet.create({
   absoluteFillObject: {
     width: "100%",
     height: "100%",
+  },
+  resultText: {
+    alignSelf: "center",
+    fontSize: 12,
+  },
+  regionContainer: {
+    alignItems: "flex-start",
+    justifyContent: "center",
+    flex: 1,
+  },
+  line: {
+    width: 1,
+    height: 20,
+    backgroundColor: "grey",
+  },
+  resultContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

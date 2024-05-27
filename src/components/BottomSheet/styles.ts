@@ -1,11 +1,18 @@
+import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
 import { NativeModules, StyleSheet } from "react-native";
 const { StatusBarManager } = NativeModules;
 
 const styles = StyleSheet.create({
+  bottomSheet: {
+    padding: 16,
+  },
+  bottomsheetView: {
+    gap: 10,
+  },
   sheetContainer: {
-    padding: 10,
-    display: "flex",
+    height: "100%",
     flexDirection: "column",
+    marginBottom: 100,
     gap: 10,
   },
   line: {
@@ -26,7 +33,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     backgroundColor: "white",
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 50,
     paddingHorizontal: 30,
 
     flexDirection: "row",
@@ -52,6 +59,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 2,
     alignSelf: "flex-start",
+  },
+  icon: {
+    width: 50,
+    height: 50,
+  },
+  topRightContainer: {
+    gap: 5,
   },
 });
 

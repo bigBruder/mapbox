@@ -21,7 +21,10 @@ export const getDeviceUniqueId = async () => {
       uniqueId = await Application.getAndroidId();
     }
 
-    await SecureStore.setItemAsync("mapbox_secure_deviceid", uniqueId);
+    await SecureStore.setItemAsync(
+      "mapbox_secure_deviceid",
+      uniqueId || "unset"
+    );
   } catch (err) {
     console.error(err);
   }
