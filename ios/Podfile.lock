@@ -9,7 +9,7 @@ PODS:
     - ExpoModulesCore
   - EXLocation (16.5.5):
     - ExpoModulesCore
-  - Expo (50.0.17):
+  - Expo (50.0.19):
     - ExpoModulesCore
   - ExpoFileSystem (16.0.9):
     - ExpoModulesCore
@@ -45,12 +45,12 @@ PODS:
     - hermes-engine/Pre-built (= 0.73.6)
   - hermes-engine/Pre-built (0.73.6)
   - libevent (2.1.12)
-  - MapboxCommon (23.9.1)
-  - MapboxCoreMaps (10.16.6):
+  - MapboxCommon (23.9.2)
+  - MapboxCoreMaps (10.17.0):
     - MapboxCommon (~> 23.9)
-  - MapboxMaps (10.16.6):
-    - MapboxCommon (= 23.9.1)
-    - MapboxCoreMaps (= 10.16.6)
+  - MapboxMaps (10.17.0):
+    - MapboxCommon (= 23.9.2)
+    - MapboxCoreMaps (= 10.17.0)
     - MapboxMobileEvents (= 1.0.10)
     - Turf (= 2.7.0)
   - MapboxMobileEvents (1.0.10)
@@ -1098,14 +1098,14 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - rnmapbox-maps (10.1.19):
-    - MapboxMaps (~> 10.16.4)
+  - rnmapbox-maps (10.1.24):
+    - MapboxMaps (~> 10.17.0)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.1.19)
+    - rnmapbox-maps/DynamicLibrary (= 10.1.24)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.1.19):
-    - MapboxMaps (~> 10.16.4)
+  - rnmapbox-maps/DynamicLibrary (10.1.24):
+    - MapboxMaps (~> 10.17.0)
     - React
     - React-Core
     - Turf
@@ -1338,7 +1338,7 @@ SPEC CHECKSUMS:
   EXConstants: a5f6276e565d98f9eb4280f81241fc342d641590
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXLocation: a631bd8dc4e7db986fb27edb7fc9ea8174ebe249
-  Expo: 2cdb5916749a1509cf88114f1f510bd458630eb4
+  Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
   ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoModulesCore: 4a8928a228569301ac4fc4a1e846713e05754d05
@@ -1351,9 +1351,9 @@ SPEC CHECKSUMS:
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
   hermes-engine: 9cecf9953a681df7556b8cc9c74905de8f3293c0
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MapboxCommon: 20466d839cc43381c44df09d19f7f794b55b9a93
-  MapboxCoreMaps: c21f433decbb295874f0c2464e492166db813b56
-  MapboxMaps: c3b36646b9038706bbceb5de203bcdd0f411e9d0
+  MapboxCommon: 768660d6fca8193529ecf82eb6f5f9ae7a5acdf9
+  MapboxCoreMaps: be412ff97b16aa7820922c818115a9a0d8211caa
+  MapboxMaps: 87ef0003e6db46e45e7a16939f29ae87e38e7ce2
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
   RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
   RCTRequired: ca1d7414aba0b27efcfa2ccd37637edb1ab77d96
@@ -1398,7 +1398,7 @@ SPEC CHECKSUMS:
   React-utils: d16c1d2251c088ad817996621947d0ac8167b46c
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
   RNGestureHandler: 15c6ef51acba34c49ff03003806cf5dd6098f383
-  rnmapbox-maps: 9c1b8403c28d354c8f0ad142d765054544f90cea
+  rnmapbox-maps: 8005faa8e35b413ea5f387d8e057e9c2d7bcfbff
   RNReanimated: f6b02d8f5eaa2830296411d4ec3b8ef5442dd13d
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
