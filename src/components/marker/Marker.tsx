@@ -57,8 +57,8 @@ export const Marker = ({
             <ImageBackground
               source={require("../../assets/selected_pin_background.png")}
               style={{
-                width: 45,
-                height: 50,
+                width: 55,
+                height: 60,
                 alignItems: "center",
                 justifyContent: "center",
               }}
