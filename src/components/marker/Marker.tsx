@@ -42,7 +42,13 @@ export const Marker = ({
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
-      onPress={() => setSelectedMarker(pin)}
+      onPress={() => {
+        if (isSelected) {
+          setSelectedMarker(null);
+        } else {
+          setSelectedMarker(pin);
+        }
+      }}
     >
       {isSelected ? (
         <>
