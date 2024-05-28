@@ -10,7 +10,7 @@ import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Marker = ({
   pin,
@@ -24,6 +24,8 @@ export const Marker = ({
   isSelected: boolean;
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [isImageLoading, setIsImageLoading] = useState(true);
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: -5,
@@ -62,6 +64,7 @@ export const Marker = ({
                   translateY: fadeAnim,
                 },
               ],
+              display: isImageLoading ? "none" : "flex",
             }}
           >
             <ImageBackground
@@ -78,6 +81,9 @@ export const Marker = ({
                   uri: getIconUrl(pin.icon.split(":")[1]),
                 }}
                 style={[styles.activePinImage]}
+                onLoadEnd={() => {
+                  setIsImageLoading(false);
+                }}
               />
             </ImageBackground>
           </Animated.View>
