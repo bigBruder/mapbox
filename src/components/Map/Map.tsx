@@ -118,12 +118,16 @@ export const Map = () => {
                 setCurrentZoom(e.properties.zoom);
               }}
             >
+              <Mapbox.ShapeSource
+                id={`heatmap`}
+                shape={transformDataToHeatmap(heatMap)[0]}
+              />
               {transformDataToHeatmap(heatMap).map((data, index) => {
                 return (
                   <Mapbox.HeatmapLayer
                     key={data.features.toString() + index.toString()}
-                    id={`my-heatmap-source-${index + 1}`}
-                    sourceID={`my-heatmap-source-${index + 1}`}
+                    id={`my-heatmap-source-1`}
+                    sourceID={`heatmap`}
                     aboveLayerID="waterway-label"
                     sourceLayerID=""
                     layerIndex={5}
@@ -141,13 +145,7 @@ export const Map = () => {
                   />
                 );
               })}
-              {transformDataToHeatmap(heatMap).map((data, index) => (
-                <Mapbox.ShapeSource
-                  id={`my-heatmap-source-${index + 1}`}
-                  shape={data}
-                  key={data.toString() + index}
-                />
-              ))}
+
               {pinsForBound &&
                 pinsForBound.map((pin, index) => (
                   <Mapbox.MarkerView
