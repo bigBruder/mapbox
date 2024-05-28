@@ -11,18 +11,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import MapContext from "../../providers/mapContext/MapContext";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
-import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
 import * as Location from "expo-location";
-import useFlyToLocation from "../../hooks/useFirstFlyToLocation";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { MapTopContainer } from "./MapTopContainer";
 
 export const Map = () => {
   const {
-    currentCamera,
-    setCurrentCamera,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -63,8 +59,6 @@ export const Map = () => {
       ],
     });
   }, [selectedMarker?.id]);
-
-  // useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -137,7 +131,6 @@ export const Map = () => {
                     style={{
                       heatmapRadius:
                         data.cellRadius > 60 ? 60 : data.cellRadius,
-                      // heatmapColor: heatmapColor,
                       heatmapOpacity: 0.1,
                       heatmapIntensity:
                         0.3 + ((currentZoom - 1) / (15 - 1)) * (1 - 0.3),
@@ -191,18 +184,6 @@ export const Map = () => {
                   showsUserHeadingIndicator
                 />
               )}
-              {/* {location && location.source === "ip" && (
-                <Mapbox.PointAnnotation
-                  key="pointAnnotation"
-                  id="pointAnnotation"
-                  coordinate={[location.longitude, location.latitude]}
-                >
-                  <View>
-                    <Text style={styles.annotationText}>📍</Text>
-                  </View>
-                  <Mapbox.Callout title="Your approximate location" />
-                </Mapbox.PointAnnotation>
-              )} */}
               <Mapbox.Camera ref={camera} />
 
               {!isFirstFlyHappened && location && (

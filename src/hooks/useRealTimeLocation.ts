@@ -43,7 +43,7 @@ const useRealTimeLocation = () => {
           );
         } else {
           const ipLocation = await getLocationByIP();
-          setLocation(ipLocation);
+          setLocation(ipLocation || null);
         }
       } catch (err) {
         console.error("Error fetching location:", err);

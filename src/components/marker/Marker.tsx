@@ -32,7 +32,11 @@ export const Marker = ({
     }).start();
 
     return () => {
-      fadeAnim.setValue(0);
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start();
     };
   }, [fadeAnim, isSelected, pin.id]);
   return (
