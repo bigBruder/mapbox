@@ -29,13 +29,16 @@ export const TransformToIsoDate = (
       beforeDate.setDate(afterDate.getDate() + 7);
       break;
     case "Next Week":
-      // Set time to the end of the next week
+      // Set time to the start of the next week
       afterDate.setHours(0, 0, 0, 0);
-      afterDate.setDate(afterDate.getDate() + (8 - afterDate.getDay())); // Next week
-      afterDate.setHours(0, 0, 0, 0);
+      afterDate.setDate(afterDate.getDate() + (8 - afterDate.getDay())); // Start of next week
 
-      beforeDate.setDate(afterDate.getDate() + 7); // Next week
-      beforeDate.setHours(0, 0, 0, 0); // End of the week
+      // Copy afterDate to beforeDate and set it to the end of the next week
+      beforeDate = new Date(afterDate);
+      beforeDate.setDate(afterDate.getDate() + 6);
+      beforeDate.setHours(23, 59, 59, 999); // End of next week
+
+      break;
 
       // return {
       //   before: new Date(beforeDate),

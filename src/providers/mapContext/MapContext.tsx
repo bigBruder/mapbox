@@ -74,7 +74,9 @@ export const MapContextProvider = ({
       PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
-      "Heatmap.Enable": false,
+      // SingleItemPerVenue: true,
+      // "Heatmap.Enable": false,
+      // SingleItemPerVenue: true,
       // "Heatmap.Resolution": getHeatmapResolutionByZoom(
       //   cameraBound.properties.zoom
       // ),
@@ -84,7 +86,8 @@ export const MapContextProvider = ({
     }
     const dateParams = getDateParams(selectedDate, customDate);
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      if (!pinsForBound.value) return;
+      // console.log(pinsForBound);
+      if (!pinsForBound?.value) return;
       const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
       setTotalResultsAmount((prev) => ({
         ...prev,

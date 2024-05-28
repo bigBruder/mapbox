@@ -13,4 +13,5 @@ export type queryParams = {
   "Heatmap.Resolution"?: number;
   Tags?: string;
   endsAfter?: string;
+  SingleItemPerVenue?: boolean;
 };
