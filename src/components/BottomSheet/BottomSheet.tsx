@@ -12,6 +12,7 @@ import {
   PorstDetailsValue,
   PostDetailsResponse,
 } from "../../types/responses/PostDetailsResponse";
+import ContentLoader, { Facebook } from "react-content-loader/native";
 
 import styles from "./styles";
 import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
@@ -40,6 +41,7 @@ export const ModalDataMarker: FC<Props> = ({
   const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
     null
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (selectedMarker.id) {
@@ -49,6 +51,7 @@ export const ModalDataMarker: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
+      setIsLoading(true);
       try {
         const details: PostDetailsResponse = await getVibeDetails(
           selectedMarker.id
@@ -56,6 +59,8 @@ export const ModalDataMarker: FC<Props> = ({
         setVibeDetails(details.value);
       } catch (error) {
         console.error("Error fetching vibe details:", error);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, [selectedMarker.id]);
@@ -78,37 +83,48 @@ export const ModalDataMarker: FC<Props> = ({
     >
       <BottomSheetView style={styles.bottomsheetView}>
         <View style={styles.topBox}>
-          <Image
-            source={{
-              uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
-            }}
-            style={styles.icon}
-          />
-          <View style={styles.topRightContainer}>
-            <Text>{vibeDetails?.author["userName"]}</Text>
-            <Text>{vibeDetails?.venue.name}</Text>
-          </View>
-        </View>
-        <View style={styles.dateContainer}>
-          {vibeDetails?.startsAt && (
-            <Text style={{ color: "#005DF2" }}>
-              {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
-            </Text>
+          {isLoading ? (
+            <Facebook />
+          ) : (
+            <>
+              <Image
+                source={{
+                  uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
+                }}
+                style={styles.icon}
+              />
+              <View style={styles.topRightContainer}>
+                <Text>{vibeDetails?.author["userName"]}</Text>
+                <Text>{vibeDetails?.venue.name}</Text>
+              </View>
+            </>
           )}
         </View>
+        {!isLoading && (
+          <View style={styles.dateContainer}>
+            {vibeDetails?.startsAt && (
+              <Text style={{ color: "#005DF2" }}>
+                {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
+              </Text>
+            )}
+          </View>
+        )}
       </BottomSheetView>
-      <View style={[styles.sheetContainer]}>
-        <Text>Points: {vibeDetails?.points}</Text>
-        <Text>Starts at: {vibeDetails?.startsAt}</Text>
-        {vibeDetails?.message && (
-          <Text>
-            {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
-          </Text>
-        )}
-        {vibeDetails?.message && vibeDetails?.message.includes("https://") && (
-          <LinkPreview message={vibeDetails?.message} />
-        )}
-      </View>
+      {!isLoading && (
+        <View style={[styles.sheetContainer]}>
+          <Text>Points: {vibeDetails?.points}</Text>
+          <Text>Starts at: {vibeDetails?.startsAt}</Text>
+          {vibeDetails?.message && (
+            <Text>
+              {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
+            </Text>
+          )}
+          {vibeDetails?.message &&
+            vibeDetails?.message.includes("https://") && (
+              <LinkPreview message={vibeDetails?.message} />
+            )}
+        </View>
+      )}
     </BottomSheet>
   );
 };
