@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, SafeAreaView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -30,7 +30,7 @@ export const ModalDataMarker: FC<Props> = ({
   selectedMarker,
   setSelectedMarker,
 }) => {
-  const snapPoints = ["35%", "60%", "80%"];
+  const snapPoints = ["30%", "60%"];
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handleSheetChanges = useCallback(
@@ -67,6 +67,7 @@ export const ModalDataMarker: FC<Props> = ({
 
   return (
     <BottomSheet
+      enableDynamicSizing
       ref={bottomSheetRef}
       onChange={handleSheetChanges}
       snapPoints={snapPoints}
@@ -82,49 +83,51 @@ export const ModalDataMarker: FC<Props> = ({
       style={styles.bottomSheet}
     >
       <BottomSheetView style={styles.bottomsheetView}>
-        <View style={styles.topBox}>
-          {isLoading ? (
-            <Facebook />
-          ) : (
-            <>
-              <Image
-                source={{
-                  uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
-                }}
-                style={styles.icon}
-              />
-              <View style={styles.topRightContainer}>
-                <Text>{vibeDetails?.author["userName"]}</Text>
-                <Text>{vibeDetails?.venue.name}</Text>
-              </View>
-            </>
-          )}
-        </View>
-        {!isLoading && (
-          <View style={styles.dateContainer}>
-            {vibeDetails?.startsAt && (
-              <Text style={{ color: "#005DF2" }}>
-                {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
-              </Text>
+        <SafeAreaView>
+          <View style={styles.topBox}>
+            {isLoading ? (
+              <Facebook />
+            ) : (
+              <>
+                <Image
+                  source={{
+                    uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
+                  }}
+                  style={styles.icon}
+                />
+                <View style={styles.topRightContainer}>
+                  <Text>{vibeDetails?.author["userName"]}</Text>
+                  <Text>{vibeDetails?.venue.name}</Text>
+                </View>
+              </>
             )}
           </View>
-        )}
-      </BottomSheetView>
-      {!isLoading && (
-        <View style={[styles.sheetContainer]}>
-          <Text>Points: {vibeDetails?.points}</Text>
-          <Text>Starts at: {vibeDetails?.startsAt}</Text>
-          {vibeDetails?.message && (
-            <Text>
-              {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
-            </Text>
+          {!isLoading && (
+            <View style={styles.dateContainer}>
+              {vibeDetails?.startsAt && (
+                <Text style={{ color: "#005DF2" }}>
+                  {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
+                </Text>
+              )}
+            </View>
           )}
-          {vibeDetails?.message &&
-            vibeDetails?.message.includes("https://") && (
-              <LinkPreview message={vibeDetails?.message} />
-            )}
-        </View>
-      )}
+          {!isLoading && (
+            <View style={[styles.sheetContainer]}>
+              <Text>Points: {vibeDetails?.points}</Text>
+              <Text>Starts at: {vibeDetails?.startsAt}</Text>
+              {vibeDetails?.message && (
+                <Text>
+                  {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
+                </Text>
+              )}
+              {vibeDetails?.message &&
+                vibeDetails?.message.includes("https://") && (
+                  <LinkPreview message={vibeDetails?.message} />
+                )}
+            </View>
+          )}
+        </SafeAreaView>
+      </BottomSheetView>
     </BottomSheet>
   );
 };
