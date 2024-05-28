@@ -1,12 +1,10 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { getHeatmap, getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
-import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
-import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { getDateParams } from "../../helpers/getDateParams";
 import { sortPinsByWeightAndDate } from "../../helpers/sortPins";
 
@@ -61,6 +59,11 @@ export const MapContextProvider = ({
       });
     });
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+  const tag = selectedTag ? selectedTag : "";
+  const dateParams = useMemo(
+    () => getDateParams(selectedDate, customDate),
+    [selectedDate, customDate.startDate, customDate.endDate]
+  );
 
   useEffect(() => {
     if (!cameraBound) return;
@@ -74,19 +77,11 @@ export const MapContextProvider = ({
       PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
-      // SingleItemPerVenue: true,
-      // "Heatmap.Enable": false,
-      // SingleItemPerVenue: true,
-      // "Heatmap.Resolution": getHeatmapResolutionByZoom(
-      //   cameraBound.properties.zoom
-      // ),
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
-    const dateParams = getDateParams(selectedDate, customDate);
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      // console.log(pinsForBound);
       if (!pinsForBound?.value) return;
       const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
       setTotalResultsAmount((prev) => ({
@@ -96,21 +91,6 @@ export const MapContextProvider = ({
       setPinsForBound(sortedPins);
       setTags(Object.keys(pinsForBound.value.tags));
     });
-    const tag = selectedTag ? selectedTag : "";
-    // getHeatmap({
-    //   "NE.Latitude": ne[1],
-    //   "NE.Longitude": ne[0],
-    //   "SW.Latitude": sw[1],
-    //   "SW.Longitude": sw[0],
-    //   "Heatmap.Resolution": getHeatmapResolutionByZoom(
-    //     cameraBound.properties.zoom
-    //   ),
-    //   Tags: tag || undefined,
-
-    //   ...dateParams,
-    // }).then((heatmap) => {
-    //   setHeatMap(heatmap.value.heatmap);
-    // });
   }, [
     cameraBound?.properties.bounds.ne[0],
     selectedTag,
@@ -122,8 +102,7 @@ export const MapContextProvider = ({
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
-    const dateParams = getDateParams(selectedDate, customDate);
-    const tag = selectedTag ? selectedTag : "";
+
     getHeatmap({
       "NE.Latitude": ne[1],
       "NE.Longitude": ne[0],

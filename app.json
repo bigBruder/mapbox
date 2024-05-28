@@ -15,7 +15,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ios"
+      "bundleIdentifier": "com.qnowing"
     },
     "android": {
       "adaptiveIcon": {
