@@ -64,7 +64,7 @@ export const Marker = ({
                   translateY: fadeAnim,
                 },
               ],
-              display: isImageLoading ? "none" : "flex",
+              display: isImageLoading && !isSelected ? "none" : "flex",
             }}
           >
             <ImageBackground
