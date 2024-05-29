@@ -137,25 +137,31 @@ export const Map = () => {
               })}
 
               {pinsForBound &&
-                pinsForBound.map((pin, index) => (
-                  <Mapbox.MarkerView
-                    key={index}
-                    id={index.toString()}
-                    coordinate={[
-                      pin.venue.geo.longitude,
-                      pin.venue.geo.latitude,
-                    ]}
-                    allowOverlap={pin.id === selectedMarker?.id}
-                  >
-                    <Marker
-                      isSelected={pin.id === selectedMarker?.id}
+                pinsForBound.map((pin, index) => {
+                  const isTop =
+                    pinsForBound.length - pinsForBound.length * 0.1 < index;
+                  console.log("isTop ==>", isTop, index);
+                  return (
+                    <Mapbox.MarkerView
                       key={index}
-                      setSelectedMarker={setSelectedMarker}
-                      zoom={currentZoom}
-                      pin={pin}
-                    />
-                  </Mapbox.MarkerView>
-                ))}
+                      id={index.toString()}
+                      coordinate={[
+                        pin.venue.geo.longitude,
+                        pin.venue.geo.latitude,
+                      ]}
+                      allowOverlap={pin.id === selectedMarker?.id}
+                    >
+                      <Marker
+                        isSelected={pin.id === selectedMarker?.id}
+                        key={index}
+                        setSelectedMarker={setSelectedMarker}
+                        zoom={currentZoom}
+                        isTop={isTop}
+                        pin={pin}
+                      />
+                    </Mapbox.MarkerView>
+                  );
+                })}
 
               {location && location.source === "gps" && (
                 <Mapbox.UserLocation
