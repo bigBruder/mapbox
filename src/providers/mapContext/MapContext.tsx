@@ -1,12 +1,10 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { getHeatmap, getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
-import { TransformToIsoDate } from "../../utils/TransformToIsoDate";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
-import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { getDateParams } from "../../helpers/getDateParams";
 import { sortPinsByWeightAndDate } from "../../helpers/sortPins";
 
@@ -38,6 +36,7 @@ export const MapContextProvider = ({
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [currentCamera, setCurrentCamera] = useState<CameraBound | null>(null);
 
   useEffect(() => {
     const queryParams: Partial<queryParams> = {
@@ -51,6 +50,7 @@ export const MapContextProvider = ({
     const dateParams = getDateParams(selectedDate, customDate);
 
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
+      if (!pinsForBound.value) return;
       setTotalResultsAmount((prev) => {
         return {
           ...prev,
@@ -59,6 +59,11 @@ export const MapContextProvider = ({
       });
     });
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+  const tag = selectedTag ? selectedTag : "";
+  const dateParams = useMemo(
+    () => getDateParams(selectedDate, customDate),
+    [selectedDate, customDate.startDate, customDate.endDate]
+  );
 
   useEffect(() => {
     if (!cameraBound) return;
@@ -72,19 +77,12 @@ export const MapContextProvider = ({
       PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
-      "Heatmap.Enable": false,
-      // "Heatmap.Resolution": getHeatmapResolutionByZoom(
-      //   cameraBound.properties.zoom
-      // ),
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
-
-    const dateParams = getDateParams(selectedDate, customDate);
-
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      if (!pinsForBound.value) return;
+      if (!pinsForBound?.value) return;
       const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
       setTotalResultsAmount((prev) => ({
         ...prev,
@@ -93,7 +91,18 @@ export const MapContextProvider = ({
       setPinsForBound(sortedPins);
       setTags(Object.keys(pinsForBound.value.tags));
     });
-    const tag = selectedTag ? selectedTag : "";
+  }, [
+    cameraBound?.properties.bounds.ne[0],
+    selectedTag,
+    selectedDate,
+    customDate.startDate,
+    customDate.endDate,
+  ]);
+
+  useEffect(() => {
+    if (!cameraBound) return;
+    const { ne, sw } = cameraBound.properties.bounds;
+
     getHeatmap({
       "NE.Latitude": ne[1],
       "NE.Longitude": ne[0],
@@ -109,14 +118,16 @@ export const MapContextProvider = ({
       setHeatMap(heatmap.value.heatmap);
     });
   }, [
-    cameraBound?.properties.bounds.ne[0],
     selectedTag,
     selectedDate,
     customDate.startDate,
     customDate.endDate,
+    cameraBound?.properties.bounds.ne[0],
   ]);
 
   const value = {
+    currentCamera,
+    setCurrentCamera,
     totalResultsAmount,
     setTotalResultsAmount,
     customDate,

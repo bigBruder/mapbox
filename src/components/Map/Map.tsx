@@ -11,11 +11,9 @@ import { useContext, useEffect, useRef, useState } from "react";
 import MapContext from "../../providers/mapContext/MapContext";
 import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
 import { CameraBound } from "../../types/CameraBound";
-import { heatmapColor } from "../../constants/heatmapColor";
 import { Marker } from "../marker/Marker";
 import mapboxStyleUrl from "../../constants/mapStyleUrl";
 import * as Location from "expo-location";
-import useFlyToLocation from "../../hooks/useFirstFlyToLocation";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { MapTopContainer } from "./MapTopContainer";
 
@@ -61,8 +59,6 @@ export const Map = () => {
       ],
     });
   }, [selectedMarker?.id]);
-
-  // useFlyToLocation(location, camera, isFirstFlyHappened, setIsFirstFlyHappened);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -115,34 +111,37 @@ export const Map = () => {
               onCameraChanged={(e) => {
                 setCurrentZoom(e.properties.zoom);
               }}
+              onPress={() => {
+                setSelectedMarker(null);
+              }}
             >
+              <Mapbox.ShapeSource
+                id={`heatmap`}
+                shape={transformDataToHeatmap(heatMap)[0]}
+              />
               {transformDataToHeatmap(heatMap).map((data, index) => {
                 return (
                   <Mapbox.HeatmapLayer
                     key={data.features.toString() + index.toString()}
-                    id={`my-heatmap-source-${index + 1}`}
-                    sourceID={`my-heatmap-source-${index + 1}`}
+                    id={`my-heatmap-source-1`}
+                    sourceID={`heatmap`}
                     aboveLayerID="waterway-label"
                     sourceLayerID=""
                     layerIndex={5}
                     filter={[]}
+                    minZoomLevel={0}
                     maxZoomLevel={14}
                     style={{
                       heatmapRadius:
                         data.cellRadius > 60 ? 60 : data.cellRadius,
-                      heatmapColor: heatmapColor,
-                      // heatmapIntensity: 0.4,
+                      heatmapOpacity: 0.1,
+                      heatmapIntensity:
+                        0.3 + ((currentZoom - 1) / (15 - 1)) * (1 - 0.3),
                     }}
                   />
                 );
               })}
-              {transformDataToHeatmap(heatMap).map((data, index) => (
-                <Mapbox.ShapeSource
-                  id={`my-heatmap-source-${index + 1}`}
-                  shape={data}
-                  key={data.toString() + index}
-                />
-              ))}
+
               {pinsForBound &&
                 pinsForBound.map((pin, index) => (
                   <Mapbox.MarkerView
@@ -188,18 +187,6 @@ export const Map = () => {
                   showsUserHeadingIndicator
                 />
               )}
-              {/* {location && location.source === "ip" && (
-                <Mapbox.PointAnnotation
-                  key="pointAnnotation"
-                  id="pointAnnotation"
-                  coordinate={[location.longitude, location.latitude]}
-                >
-                  <View>
-                    <Text style={styles.annotationText}>📍</Text>
-                  </View>
-                  <Mapbox.Callout title="Your approximate location" />
-                </Mapbox.PointAnnotation>
-              )} */}
               <Mapbox.Camera ref={camera} />
 
               {!isFirstFlyHappened && location && (
