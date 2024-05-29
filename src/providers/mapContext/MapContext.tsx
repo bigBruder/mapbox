@@ -6,7 +6,6 @@ import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import { getDateParams } from "../../helpers/getDateParams";
-import { sortPinsByWeightAndDate } from "../../helpers/sortPins";
 
 const MyContext = createContext(initialValue);
 
@@ -84,12 +83,7 @@ export const MapContextProvider = ({
     }
     getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
       if (!pinsForBound?.value) return;
-      const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
-      setTotalResultsAmount((prev) => ({
-        ...prev,
-        visible: pinsForBound.value.totalResults,
-      }));
-      setPinsForBound(sortedPins);
+      setPinsForBound(pinsForBound.value.vibes.reverse());
       setTags(Object.keys(pinsForBound.value.tags));
     });
   }, [

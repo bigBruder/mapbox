@@ -140,7 +140,6 @@ export const Map = () => {
                 pinsForBound.map((pin, index) => {
                   const isTop =
                     pinsForBound.length - pinsForBound.length * 0.1 < index;
-                  console.log("isTop ==>", isTop, index);
                   return (
                     <Mapbox.MarkerView
                       key={index}
