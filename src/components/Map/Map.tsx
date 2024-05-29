@@ -111,6 +111,9 @@ export const Map = () => {
               onCameraChanged={(e) => {
                 setCurrentZoom(e.properties.zoom);
               }}
+              onPress={() => {
+                setSelectedMarker(null);
+              }}
             >
               <Mapbox.ShapeSource
                 id={`heatmap`}
