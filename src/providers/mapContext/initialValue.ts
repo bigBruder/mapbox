@@ -2,20 +2,23 @@ import { SetStateAction } from "react";
 import { CameraBound } from "../../types/CameraBound";
 import { MapContextType } from "../../types/mapContextType";
 import { VibesItem } from "../../types/searchResponse";
+import { DateType } from "react-native-ui-datepicker";
 
 const initialValue: MapContextType = {
-  totalResultsAmount: 0,
-  setTotalResultsAmount: (totalResultsAmount: number) => {},
+  totalResultsAmount: {
+    total: 0,
+    visible: 0,
+  },
+  setTotalResultsAmount: (totalResultsAmount: {
+    total: number;
+    visible: number;
+  }) => {},
   customDate: {
     startDate: new Date(),
     endDate: new Date(),
   },
-  setCustomDate: (date: { startDate: Date; endDate: Date }) => {},
+  setCustomDate: (date: { startDate: DateType; endDate: DateType }) => {},
   cameraBound: null,
-  myLocation: null,
-  setMyLocation: (
-    location: { latitude: number; longitude: number; source: string } | null
-  ) => {},
   loading: false,
   setLoading: (loading: boolean) => {},
   selectedMarker: null,

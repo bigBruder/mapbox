@@ -8,6 +8,10 @@ export type MapContextType = {
     total: number;
     visible: number;
   };
+  setTotalResultsAmount: (totalResultsAmount: {
+    total: number;
+    visible: number;
+  }) => void;
   setCameraBound: (cameraBound: CameraBound | null) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;

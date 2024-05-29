@@ -1,21 +1,24 @@
-import { StatusBar } from "expo-status-bar";
-import { Text, View, TouchableOpacity, Image } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 
-import { styles } from "./styles";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LocationIcon, PlusIcon } from "../../assets/icons";
-import { ModalDataMarker } from "../BottomSheet/BottomSheet";
-import { useContext, useEffect, useRef, useState } from "react";
-import MapContext from "../../providers/mapContext/MapContext";
-import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
-import { CameraBound } from "../../types/CameraBound";
-import { Marker } from "../marker/Marker";
-import mapboxStyleUrl from "../../constants/mapStyleUrl";
+import { View } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
+import { useContext, useEffect, useRef, useState } from "react";
+
+import MAPBOX_STYLE_URL from "../../constants/mapStyleUrl";
+import MapContext from "../../providers/mapContext/MapContext";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
-import { MapTopContainer } from "./MapTopContainer";
+import { CameraBound } from "../../types/CameraBound";
+import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
+
+import { Marker } from "../marker/Marker";
+import { ModalDataMarker } from "../BottomSheet/BottomSheet";
+import { MapTopContainer } from "../mapTopContainer/MapTopContainer";
+import { MapBottomContainer } from "../mapBottomContainer/MapBottomContainer";
+import { MapLoading } from "./MapLoading";
+
+import styles from "./styles";
 
 export const Map = () => {
   const {
@@ -81,16 +84,7 @@ export const Map = () => {
   };
 
   if (loading || isLoading) {
-    return (
-      <View style={styles.page}>
-        <Image
-          source={require("../../assets/loading_screen_map.png")}
-          style={styles.absoluteFillObject}
-          resizeMode="cover"
-        />
-        <StatusBar translucent backgroundColor="transparent" style="light" />
-      </View>
-    );
+    return <MapLoading />;
   }
 
   return (
@@ -103,7 +97,7 @@ export const Map = () => {
               scaleBarEnabled={false}
               ref={map}
               rotateEnabled={false}
-              styleURL={mapboxStyleUrl}
+              styleURL={MAPBOX_STYLE_URL}
               regionDidChangeDebounceTime={0}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
@@ -151,10 +145,10 @@ export const Map = () => {
                       pin.venue.geo.longitude,
                       pin.venue.geo.latitude,
                     ]}
-                    allowOverlap={false}
+                    allowOverlap={pin.id === selectedMarker?.id}
                   >
                     <Marker
-                      isSelected={false}
+                      isSelected={pin.id === selectedMarker?.id}
                       key={index}
                       setSelectedMarker={setSelectedMarker}
                       zoom={currentZoom}
@@ -162,23 +156,6 @@ export const Map = () => {
                     />
                   </Mapbox.MarkerView>
                 ))}
-
-              {selectedMarker && (
-                <Mapbox.MarkerView
-                  coordinate={[
-                    selectedMarker.venue.geo.longitude,
-                    selectedMarker.venue.geo.latitude,
-                  ]}
-                  allowOverlap={true}
-                >
-                  <Marker
-                    isSelected={true}
-                    setSelectedMarker={setSelectedMarker}
-                    zoom={currentZoom}
-                    pin={selectedMarker}
-                  />
-                </Mapbox.MarkerView>
-              )}
 
               {location && location.source === "gps" && (
                 <Mapbox.UserLocation
@@ -201,20 +178,7 @@ export const Map = () => {
               showModal={showModal}
               setShowModal={setShowModal}
             />
-            <View style={styles.bottomContainer} pointerEvents="box-none">
-              <TouchableOpacity
-                style={styles.searchButton}
-                onPress={() => handleCenterCamera()}
-              >
-                <LocationIcon />
-              </TouchableOpacity>
-              <View style={styles.regionContainer} pointerEvents="box-none">
-                <Text style={styles.pointText}>Some point</Text>
-              </View>
-              <TouchableOpacity style={styles.addButton} onPress={() => {}}>
-                <PlusIcon />
-              </TouchableOpacity>
-            </View>
+            <MapBottomContainer handleCenterCamera={handleCenterCamera} />
           </View>
         </View>
         {selectedMarker && (

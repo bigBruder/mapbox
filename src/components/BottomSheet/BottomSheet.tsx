@@ -1,9 +1,8 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Image, SafeAreaView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { ScrollView } from "react-native-gesture-handler";
 
-import { getVibeDetails, getWebPageMeta } from "../../api/client";
+import { getVibeDetails } from "../../api/client";
 import { formatDate } from "../../utils/formatDate";
 import { formatTagsInText } from "../../utils/formatTagsInText";
 import { getIconUrl } from "../../utils/getIconUrl";
@@ -12,12 +11,10 @@ import {
   PorstDetailsValue,
   PostDetailsResponse,
 } from "../../types/responses/PostDetailsResponse";
-import ContentLoader, { Facebook } from "react-content-loader/native";
+import { Facebook } from "react-content-loader/native";
 
 import styles from "./styles";
 import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
-import axios from "axios";
-import cheerio from "cheerio";
 import { LinkPreview } from "../linkPreview/LinkPreview";
 import { removeLinkFromString } from "../../helpers/removeLinkFromString";
 
@@ -67,7 +64,6 @@ export const ModalDataMarker: FC<Props> = ({
 
   return (
     <BottomSheet
-      // enableDynamicSizing
       ref={bottomSheetRef}
       onChange={handleSheetChanges}
       snapPoints={snapPoints}

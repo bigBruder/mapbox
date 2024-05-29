@@ -69,14 +69,15 @@ export const MapContextProvider = ({
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
     const queryParams: queryParams = {
-      "NE.Latitude": sw[1],
-      "NE.Longitude": sw[0],
-      "SW.Latitude": ne[1],
-      "SW.Longitude": ne[0],
+      "NE.Latitude": ne[1],
+      "NE.Longitude": ne[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": sw[0],
       OrderBy: "Points",
       PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
+      SingleItemPerVenue: true,
     };
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;

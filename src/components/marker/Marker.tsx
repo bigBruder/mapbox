@@ -1,16 +1,15 @@
 import {
-  StyleSheet,
   Image,
   TouchableOpacity,
   ImageBackground,
-  View,
   Animated,
 } from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
 import { useEffect, useRef, useState } from "react";
+
+import styles from "./styles";
 
 export const Marker = ({
   pin,
@@ -103,34 +102,3 @@ export const Marker = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  pinContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 10,
-    borderWidth: 0,
-    borderColor: "white",
-    borderStyle: "solid",
-    padding: 5,
-  },
-  activePinContainer: {
-    width: 100,
-    height: 70,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 5,
-    transform: [{ translateY: -10 }],
-  },
-  activePinImage: {
-    height: 20,
-    width: 20,
-    transform: [{ translateY: -3 }],
-    objectFit: "cover",
-  },
-  annotationText: {
-    fontSize: 24,
-  },
-});

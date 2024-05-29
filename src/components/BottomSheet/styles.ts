@@ -1,6 +1,4 @@
-import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
-import { NativeModules, StyleSheet } from "react-native";
-const { StatusBarManager } = NativeModules;
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   bottomSheet: {
