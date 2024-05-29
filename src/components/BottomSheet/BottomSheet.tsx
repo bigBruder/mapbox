@@ -30,7 +30,7 @@ export const ModalDataMarker: FC<Props> = ({
   selectedMarker,
   setSelectedMarker,
 }) => {
-  const snapPoints = ["30%", "60%"];
+  const snapPoints = ["45%", "93%"];
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handleSheetChanges = useCallback(
@@ -67,7 +67,7 @@ export const ModalDataMarker: FC<Props> = ({
 
   return (
     <BottomSheet
-      enableDynamicSizing
+      // enableDynamicSizing
       ref={bottomSheetRef}
       onChange={handleSheetChanges}
       snapPoints={snapPoints}
