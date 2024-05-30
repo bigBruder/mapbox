@@ -65,6 +65,10 @@ export const MapContextProvider = ({
   );
 
   useEffect(() => {
+    setPinsForBound([]);
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+
+  useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
     const queryParams: queryParams = {
