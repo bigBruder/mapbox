@@ -22,6 +22,7 @@ import styles from "./styles";
 
 export const Map = () => {
   const {
+    cameraBound,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -31,7 +32,6 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
-  const [currentZoom, setCurrentZoom] = useState(0);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
@@ -102,9 +102,6 @@ export const Map = () => {
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
-              onCameraChanged={(e) => {
-                setCurrentZoom(e.properties.zoom);
-              }}
               onPress={() => {
                 setSelectedMarker(null);
               }}
@@ -129,8 +126,7 @@ export const Map = () => {
                       heatmapRadius:
                         data.cellRadius > 60 ? 60 : data.cellRadius,
                       heatmapOpacity: 0.1,
-                      heatmapIntensity:
-                        0.3 + ((currentZoom - 1) / (15 - 1)) * (1 - 0.3),
+                      heatmapIntensity: 0.6,
                     }}
                   />
                 );
@@ -154,7 +150,7 @@ export const Map = () => {
                         isSelected={pin.id === selectedMarker?.id}
                         key={index}
                         setSelectedMarker={setSelectedMarker}
-                        zoom={currentZoom}
+                        zoom={cameraBound?.properties.zoom || 1}
                         isTop={isTop}
                         pin={pin}
                       />

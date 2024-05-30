@@ -35,7 +35,6 @@ export const MapContextProvider = ({
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [currentCamera, setCurrentCamera] = useState<CameraBound | null>(null);
 
   useEffect(() => {
     const queryParams: Partial<queryParams> = {
@@ -73,7 +72,7 @@ export const MapContextProvider = ({
       "SW.Latitude": sw[1],
       "SW.Longitude": sw[0],
       OrderBy: "Points",
-      PageSize: 25,
+      PageSize: 50,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
       SingleItemPerVenue: true,
@@ -81,10 +80,16 @@ export const MapContextProvider = ({
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
-    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      if (!pinsForBound?.value) return;
-      setPinsForBound(pinsForBound.value.vibes.reverse());
-      setTags(Object.keys(pinsForBound.value.tags));
+    getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
+      if (!response?.value) return;
+
+      const newVibesString = response.value.vibes.toString();
+      const prevVibesString = pinsForBound.toString();
+      console.log(newVibesString === prevVibesString);
+
+      if (newVibesString === prevVibesString) return;
+      setPinsForBound(response.value.vibes.reverse());
+      setTags(Object.keys(response.value.tags));
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
@@ -121,8 +126,6 @@ export const MapContextProvider = ({
   ]);
 
   const value = {
-    currentCamera,
-    setCurrentCamera,
     totalResultsAmount,
     setTotalResultsAmount,
     customDate,
