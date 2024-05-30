@@ -85,7 +85,7 @@ export const MapContextProvider = ({
 
       const newVibesString = response.value.vibes.toString();
       const prevVibesString = pinsForBound.toString();
-      console.log(newVibesString === prevVibesString);
+      // console.log(newVibesString === prevVibesString);
       const isIncludesAllPrevVibes = pinsForBound.every((prevVibe) =>
         response.value.vibes.includes(prevVibe)
       );
@@ -112,7 +112,7 @@ export const MapContextProvider = ({
 
   useEffect(() => {
     if (pinsForBound.length > 200) {
-      console.log("slice");
+      // console.log("slice");
       setPinsForBound((prev) => prev.slice(50, prev.length));
     }
   }, [pinsForBound.length]);
@@ -143,7 +143,7 @@ export const MapContextProvider = ({
     cameraBound?.properties.bounds.ne[0],
   ]);
 
-  console.log("pinsForBound", pinsForBound.length);
+  // console.log("pinsForBound", pinsForBound.length);
 
   const value = {
     totalResultsAmount,

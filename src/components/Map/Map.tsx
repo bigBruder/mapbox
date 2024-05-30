@@ -32,6 +32,7 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
+  const [realtimeZoom, setRealtimeZoom] = useState(0);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
@@ -102,6 +103,10 @@ export const Map = () => {
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
+              onCameraChanged={(e) => {
+                if (Math.round(e.properties.zoom) === realtimeZoom) return;
+                setRealtimeZoom(Math.round(e.properties.zoom));
+              }}
               onPress={() => {
                 setSelectedMarker(null);
               }}
@@ -150,7 +155,7 @@ export const Map = () => {
                         isSelected={pin.id === selectedMarker?.id}
                         key={index}
                         setSelectedMarker={setSelectedMarker}
-                        zoom={cameraBound?.properties.zoom || 1}
+                        zoom={realtimeZoom}
                         isTop={isTop}
                         pin={pin}
                       />
