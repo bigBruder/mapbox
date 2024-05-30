@@ -83,9 +83,6 @@ export const MapContextProvider = ({
     }
     getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
       if (!response?.value) return;
-      const isIncludesAllPrevVibes = pinsForBound.every((prevVibe) =>
-        response.value.vibes.includes(prevVibe)
-      );
       const prevIds = pinsForBound.map((pin) => pin.id);
       const filteredPins = response.value.vibes
         .filter((vibe) => !prevIds.includes(vibe.id))
@@ -103,8 +100,6 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
-
-  console.log(pinsForBound.length);
 
   useEffect(() => {
     if (pinsForBound.length > 200) {
@@ -128,6 +123,7 @@ export const MapContextProvider = ({
 
       ...dateParams,
     }).then((heatmap) => {
+      if (!heatmap.value) return;
       setHeatMap(heatmap.value.heatmap);
     });
   }, [

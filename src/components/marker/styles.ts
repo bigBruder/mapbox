@@ -5,12 +5,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "white",
     borderRadius: 10,
-    borderWidth: 0,
-    borderColor: "white",
-    borderStyle: "solid",
-    padding: 5,
   },
   activePinContainer: {
     width: 100,
