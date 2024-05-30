@@ -166,7 +166,7 @@ export const Map = () => {
                         9,
                         0.5, // At zoom level 9, the weight is 1
                         15,
-                        1, // At zoom level 15, the weight is 2
+                        2, // At zoom level 15, the weight is 2
                       ],
                       heatmapIntensity: [
                         "interpolate",
