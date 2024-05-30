@@ -6,6 +6,7 @@ import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import { getDateParams } from "../../helpers/getDateParams";
+import { sortPinsByWeightAndDate } from "../../utils/sortPinsByWeightAndDate";
 
 const MyContext = createContext(initialValue);
 
@@ -72,7 +73,7 @@ export const MapContextProvider = ({
       "SW.Latitude": sw[1],
       "SW.Longitude": sw[0],
       OrderBy: "Points",
-      PageSize: 100,
+      PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
       SingleItemPerVenue: true,
@@ -82,10 +83,6 @@ export const MapContextProvider = ({
     }
     getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
       if (!response?.value) return;
-
-      const newVibesString = response.value.vibes.toString();
-      const prevVibesString = pinsForBound.toString();
-      // console.log(newVibesString === prevVibesString);
       const isIncludesAllPrevVibes = pinsForBound.every((prevVibe) =>
         response.value.vibes.includes(prevVibe)
       );
@@ -94,12 +91,10 @@ export const MapContextProvider = ({
         .filter((vibe) => !prevIds.includes(vibe.id))
         .reverse();
 
-      if (
-        newVibesString === prevVibesString ||
-        (isIncludesAllPrevVibes && pinsForBound.length > 0)
-      )
-        return;
-      setPinsForBound((prev) => [...prev, ...filteredPins]);
+      // if (isIncludesAllPrevVibes && pinsForBound.length > 0) return;
+      setPinsForBound((prev) =>
+        sortPinsByWeightAndDate([...prev, ...filteredPins])
+      );
       setTags(Object.keys(response.value.tags));
     });
   }, [
@@ -109,6 +104,8 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
+
+  console.log(pinsForBound.length);
 
   useEffect(() => {
     if (pinsForBound.length > 200) {
@@ -142,8 +139,6 @@ export const MapContextProvider = ({
     customDate.endDate,
     cameraBound?.properties.bounds.ne[0],
   ]);
-
-  // console.log("pinsForBound", pinsForBound.length);
 
   const value = {
     totalResultsAmount,

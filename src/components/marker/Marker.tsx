@@ -52,7 +52,6 @@ export const Marker = ({
     }).start();
 
     return () => {
-      console.log("unmount");
       Animated.timing(opacity, {
         toValue: 0,
         duration: 1000,
