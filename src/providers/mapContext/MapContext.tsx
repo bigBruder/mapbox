@@ -91,7 +91,6 @@ export const MapContextProvider = ({
         .filter((vibe) => !prevIds.includes(vibe.id))
         .reverse();
 
-      // if (isIncludesAllPrevVibes && pinsForBound.length > 0) return;
       setPinsForBound((prev) =>
         sortPinsByWeightAndDate([...prev, ...filteredPins])
       );
@@ -109,7 +108,6 @@ export const MapContextProvider = ({
 
   useEffect(() => {
     if (pinsForBound.length > 200) {
-      // console.log("slice");
       setPinsForBound((prev) => prev.slice(50, prev.length));
     }
   }, [pinsForBound.length]);

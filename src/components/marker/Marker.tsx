@@ -50,14 +50,6 @@ export const Marker = ({
       duration: 1000,
       useNativeDriver: true,
     }).start();
-
-    return () => {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
-    };
   }, [opacity, pin.id]);
 
   return (
