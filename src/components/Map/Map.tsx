@@ -128,60 +128,53 @@ export const Map = () => {
                     minZoomLevel={0}
                     maxZoomLevel={14}
                     style={{
-                      // heatmapRadius:
-                      //   data.cellRadius > 60 ? 60 : data.cellRadius,
-                      // heatmapRadius: [
-                      //   "interpolate",
-                      //   ["linear"],
-                      //   ["zoom"],
-                      //   0,
-                      //   data.cellRadius / 75, // At zoom level 0, the radius is 2
-                      //   5,
-                      //   data.cellRadius / 60, // At zoom level 0, the radius is 2
-                      //   10,
-                      //   data.cellRadius / 50, // At zoom level 9, the radius is 20
-                      //   15,
-                      //   data.cellRadius / 40, // At zoom level 9, the radius is 20
-                      //   20,
-                      //   data.cellRadius * 100, // At zoom level 15, the radius is 50
-                      // ],
-
                       heatmapRadius: [
                         "interpolate",
                         ["linear"],
                         ["zoom"],
                         0,
-                        data.cellRadius > 100 ? 100 : data.cellRadius || 125, // At zoom level 0, the radius is 2
+                        125,
                         9,
-                        data.cellRadius > 75 ? 75 : data.cellRadius || 75, // At zoom level 9, the radius is 20
+                        75,
                         15,
-                        data.cellRadius > 50 ? 50 : data.cellRadius || 50, // At zoom level 15, the radius is 50
+                        50,
                       ],
+                      heatmapRadiusTransition: { duration: 2000 },
                       heatmapWeight: [
                         "interpolate",
                         ["linear"],
                         ["zoom"],
                         0,
-                        0.3, // At zoom level 0, the weight is 0.5
+                        0.3,
                         9,
-                        0.5, // At zoom level 9, the weight is 1
+                        0.4,
                         15,
-                        2, // At zoom level 15, the weight is 2
+                        0.6,
                       ],
+                      heatmapIntensityTransition: { duration: 2000 },
                       heatmapIntensity: [
                         "interpolate",
                         ["linear"],
                         ["zoom"],
                         0,
-                        0.8, // At zoom level 0, the intensity is 1
+                        0.8,
                         9,
-                        1, // At zoom level 9, the intensity is 3
+                        1,
                         15,
-                        1, // At zoom level 15, the intensity is 5
+                        1,
                       ],
-                      heatmapRadiusTransition: { duration: 2000 },
-                      heatmapOpacity: 0.1,
-                      // heatmapIntensity: 0.9,
+                      heatmapOpacityTransition: { duration: 2000 },
+                      heatmapOpacity: [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        0,
+                        0.1,
+                        9,
+                        0.15,
+                        15,
+                        0.175,
+                      ],
                     }}
                   />
                 );
