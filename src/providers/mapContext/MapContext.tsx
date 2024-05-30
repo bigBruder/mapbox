@@ -72,7 +72,7 @@ export const MapContextProvider = ({
       "SW.Latitude": sw[1],
       "SW.Longitude": sw[0],
       OrderBy: "Points",
-      PageSize: 50,
+      PageSize: 100,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
       SingleItemPerVenue: true,
@@ -86,9 +86,20 @@ export const MapContextProvider = ({
       const newVibesString = response.value.vibes.toString();
       const prevVibesString = pinsForBound.toString();
       console.log(newVibesString === prevVibesString);
+      const isIncludesAllPrevVibes = pinsForBound.every((prevVibe) =>
+        response.value.vibes.includes(prevVibe)
+      );
+      const prevIds = pinsForBound.map((pin) => pin.id);
+      const filteredPins = response.value.vibes
+        .filter((vibe) => !prevIds.includes(vibe.id))
+        .reverse();
 
-      if (newVibesString === prevVibesString) return;
-      setPinsForBound(response.value.vibes.reverse());
+      if (
+        newVibesString === prevVibesString ||
+        (isIncludesAllPrevVibes && pinsForBound.length > 0)
+      )
+        return;
+      setPinsForBound((prev) => [...prev, ...filteredPins]);
       setTags(Object.keys(response.value.tags));
     });
   }, [
@@ -98,6 +109,13 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
   ]);
+
+  useEffect(() => {
+    if (pinsForBound.length > 200) {
+      console.log("slice");
+      setPinsForBound((prev) => prev.slice(50, prev.length));
+    }
+  }, [pinsForBound.length]);
 
   useEffect(() => {
     if (!cameraBound) return;
@@ -124,6 +142,8 @@ export const MapContextProvider = ({
     customDate.endDate,
     cameraBound?.properties.bounds.ne[0],
   ]);
+
+  console.log("pinsForBound", pinsForBound.length);
 
   const value = {
     totalResultsAmount,

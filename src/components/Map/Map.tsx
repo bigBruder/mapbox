@@ -126,7 +126,7 @@ export const Map = () => {
                       heatmapRadius:
                         data.cellRadius > 60 ? 60 : data.cellRadius,
                       heatmapOpacity: 0.1,
-                      heatmapIntensity: 0.6,
+                      heatmapIntensity: 0.9,
                     }}
                   />
                 );

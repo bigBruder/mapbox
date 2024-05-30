@@ -26,6 +26,7 @@ export const Marker = ({
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -42,6 +43,23 @@ export const Marker = ({
       }).start();
     };
   }, [fadeAnim, isSelected, pin.id]);
+
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+
+    return () => {
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start();
+    };
+  }, [opacity, pin.id]);
+
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
@@ -90,16 +108,28 @@ export const Marker = ({
           </Animated.View>
         </>
       ) : (
-        <Image
-          source={{
-            uri: getIconUrl(pin.icon.split(":")[1]),
-          }}
+        <Animated.View
           style={{
+            opacity: opacity,
             width: getMarkerSizeByPoints(pin.points, zoom, isTop),
             height: getMarkerSizeByPoints(pin.points, zoom, isTop),
-            objectFit: "cover",
+            backgroundColor: "white",
+            padding: 5,
+            borderRadius: 10,
           }}
-        />
+        >
+          <Image
+            source={{
+              uri: getIconUrl(pin.icon.split(":")[1]),
+            }}
+            style={{
+              flex: 1,
+              // width: getMarkerSizeByPoints(pin.points, zoom, isTop),
+              // height: getMarkerSizeByPoints(pin.points, zoom, isTop),
+              objectFit: "cover",
+            }}
+          />
+        </Animated.View>
       )}
     </TouchableOpacity>
   );

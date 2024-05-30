@@ -1,4 +1,4 @@
 export const PIN = {
-  MAX_SIZE: 25,
-  MIN_SIZE: 20,
+  MAX_SIZE: 35,
+  MIN_SIZE: 30,
 };
