@@ -50,6 +50,16 @@ export const Marker = ({
       duration: 1000,
       useNativeDriver: true,
     }).start();
+
+    if (isSelected) {
+      return () => {
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: true,
+        }).start();
+      };
+    }
   }, [opacity, pin.id]);
 
   return (
@@ -70,6 +80,7 @@ export const Marker = ({
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
+              opacity: opacity,
               transform: [
                 {
                   translateY: fadeAnim,
