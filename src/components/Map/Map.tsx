@@ -19,6 +19,7 @@ import { MapBottomContainer } from "../mapBottomContainer/MapBottomContainer";
 import { MapLoading } from "./MapLoading";
 
 import styles from "./styles";
+import { HEATMAP_CONFIG } from "../../constants/heatmapConfig";
 
 export const Map = () => {
   const {
@@ -127,55 +128,7 @@ export const Map = () => {
                     filter={[]}
                     minZoomLevel={0}
                     maxZoomLevel={14}
-                    style={{
-                      heatmapRadius: [
-                        "interpolate",
-                        ["linear"],
-                        ["zoom"],
-                        0,
-                        125,
-                        9,
-                        75,
-                        15,
-                        50,
-                      ],
-                      heatmapRadiusTransition: { duration: 2000 },
-                      heatmapWeight: [
-                        "interpolate",
-                        ["linear"],
-                        ["zoom"],
-                        0,
-                        0.3,
-                        9,
-                        0.4,
-                        15,
-                        0.6,
-                      ],
-                      heatmapIntensityTransition: { duration: 2000 },
-                      heatmapIntensity: [
-                        "interpolate",
-                        ["linear"],
-                        ["zoom"],
-                        0,
-                        0.8,
-                        9,
-                        1,
-                        15,
-                        1,
-                      ],
-                      heatmapOpacityTransition: { duration: 2000 },
-                      heatmapOpacity: [
-                        "interpolate",
-                        ["linear"],
-                        ["zoom"],
-                        0,
-                        0.1,
-                        9,
-                        0.15,
-                        15,
-                        0.175,
-                      ],
-                    }}
+                    style={HEATMAP_CONFIG}
                   />
                 );
               })}
