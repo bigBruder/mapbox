@@ -95,6 +95,8 @@ export const Map = () => {
         <View style={styles.container}>
           <View style={styles.container}>
             <Mapbox.MapView
+              attributionEnabled={false}
+              logoEnabled={false}
               pitchEnabled={false}
               style={styles.map}
               scaleBarEnabled={false}
