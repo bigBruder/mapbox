@@ -34,6 +34,9 @@ export const Map = () => {
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
   const [realtimeZoom, setRealtimeZoom] = useState(0);
+  const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
+    null
+  );
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
@@ -64,6 +67,16 @@ export const Map = () => {
       ],
     });
   }, [selectedMarker?.id]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCameraBound(realtimeCamera);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [realtimeCamera]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -109,6 +122,7 @@ export const Map = () => {
               }}
               onCameraChanged={(e) => {
                 if (Math.round(e.properties.zoom) === realtimeZoom) return;
+                setRealtimeCamera(e as CameraBound);
                 setRealtimeZoom(Math.round(e.properties.zoom));
               }}
               onPress={() => {
