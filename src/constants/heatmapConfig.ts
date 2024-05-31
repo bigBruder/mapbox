@@ -1,5 +1,5 @@
 export const HEATMAP_CONFIG = {
-  heatmapRadius: ["interpolate", ["linear"], ["zoom"], 0, 75, 9, 75, 15, 50],
+  // heatmapRadius: ["interpolate", ["linear"], ["zoom"], 0, 75, 9, 75, 15, 50],
   heatmapRadiusTransition: { duration: 2000 },
   heatmapWeight: ["interpolate", ["linear"], ["zoom"], 0, 0.3, 9, 0.5, 15, 0.6],
   heatmapIntensityTransition: { duration: 2000 },

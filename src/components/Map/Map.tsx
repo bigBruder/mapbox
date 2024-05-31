@@ -131,7 +131,22 @@ export const Map = () => {
                 filter={[]}
                 minZoomLevel={0}
                 // maxZoomLevel={14}
-                style={HEATMAP_CONFIG}
+                style={{
+                  ...HEATMAP_CONFIG,
+                  heatmapRadius: [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    realtimeZoom * 40,
+                    5,
+                    realtimeZoom * 20,
+                    9,
+                    realtimeZoom * 10,
+                    15,
+                    realtimeZoom * 5,
+                  ],
+                }}
               />
 
               {pinsForBound &&
