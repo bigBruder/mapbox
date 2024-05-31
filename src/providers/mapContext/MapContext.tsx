@@ -120,6 +120,11 @@ export const MapContextProvider = ({
         .filter((vibe) => !prevIds.includes(vibe.id))
         .reverse();
 
+      setTotalResultsAmount((prev) => ({
+        ...prev,
+        visible: response.value.totalResults,
+      }));
+
       setPinsForBound((prev) =>
         sortPinsByWeightAndDate([...prev, ...filteredPins])
       );
