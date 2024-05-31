@@ -15,14 +15,12 @@ export const Marker = ({
   pin,
   setSelectedMarker,
   zoom,
-  isTop,
   isSelected = false,
 }: {
   pin: VibesItem;
   setSelectedMarker: (pin: VibesItem | null) => void;
   zoom: number;
   isSelected: boolean;
-  isTop: boolean;
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
@@ -114,8 +112,8 @@ export const Marker = ({
         <Animated.View
           style={{
             opacity: opacity,
-            width: getMarkerSizeByPoints(pin.points, zoom, isTop),
-            height: getMarkerSizeByPoints(pin.points, zoom, isTop),
+            width: getMarkerSizeByPoints(pin.points, zoom),
+            height: getMarkerSizeByPoints(pin.points, zoom),
             backgroundColor: "white",
             padding: 5,
             borderRadius: 10,

@@ -134,8 +134,6 @@ export const Map = () => {
 
               {pinsForBound &&
                 pinsForBound.map((pin, index) => {
-                  const isTop =
-                    pinsForBound.length - pinsForBound.length * 0.05 < index;
                   return (
                     <Mapbox.MarkerView
                       key={index}
@@ -151,7 +149,6 @@ export const Map = () => {
                         key={index}
                         setSelectedMarker={setSelectedMarker}
                         zoom={realtimeZoom}
-                        isTop={isTop}
                         pin={pin}
                       />
                     </Mapbox.MarkerView>

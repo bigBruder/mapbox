@@ -7,23 +7,23 @@ const interpolateSize = (
   maxZoom = CAMERA.MAX_ZOOM,
   minSize = PIN.MIN_SIZE,
   maxSize = PIN.MAX_SIZE,
-  inTop = false
+  sizeAdjustment = 0
 ) => {
-  zoom = Math.max(minZoom, Math.min(zoom, maxZoom));
-  const adjustedMaxSize = inTop ? maxSize * 2 : maxSize;
+  if (zoom < minZoom) {
+    zoom = minZoom;
+  } else if (zoom > maxZoom) {
+    zoom = maxZoom;
+  }
 
   const size =
     minSize +
-    ((adjustedMaxSize - minSize) * (zoom - minZoom)) / (maxZoom - minZoom);
+    ((maxSize - minSize) * (zoom - minZoom)) / (maxZoom - minZoom) +
+    sizeAdjustment;
   return size;
 };
 
-export const getMarkerSizeByPoints = (
-  points: number,
-  zoom: number,
-  inTop: boolean
-) => {
-  let sizeAdjustment = 0;
+export const getMarkerSizeByPoints = (points: number, zoom: number) => {
+  let sizeAdjustment;
 
   if (points < 5) {
     sizeAdjustment = 0;
@@ -33,6 +33,8 @@ export const getMarkerSizeByPoints = (
     sizeAdjustment = 10;
   } else if (points >= 10) {
     sizeAdjustment = 15;
+  } else {
+    sizeAdjustment = 0;
   }
 
   return interpolateSize(
@@ -41,6 +43,6 @@ export const getMarkerSizeByPoints = (
     CAMERA.MAX_ZOOM,
     PIN.MIN_SIZE,
     PIN.MAX_SIZE,
-    inTop
+    sizeAdjustment
   );
 };
