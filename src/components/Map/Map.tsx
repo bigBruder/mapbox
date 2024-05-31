@@ -10,7 +10,7 @@ import MAPBOX_STYLE_URL from "../../constants/mapStyleUrl";
 import MapContext from "../../providers/mapContext/MapContext";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { CameraBound } from "../../types/CameraBound";
-import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
+import { transformToGeoJSON } from "../../utils/transformDataToHeatData";
 
 import { Marker } from "../marker/Marker";
 import { ModalDataMarker } from "../BottomSheet/BottomSheet";
@@ -115,24 +115,22 @@ export const Map = () => {
             >
               <Mapbox.ShapeSource
                 id={`heatmap`}
-                shape={transformDataToHeatmap(heatMap)[0]}
+                shape={{
+                  type: "FeatureCollection",
+                  features: transformToGeoJSON(heatMap.data),
+                }}
               />
-              {transformDataToHeatmap(heatMap).map((data, index) => {
-                return (
-                  <Mapbox.HeatmapLayer
-                    key={data.features.toString() + index.toString()}
-                    id={`my-heatmap-source-1`}
-                    sourceID={`heatmap`}
-                    aboveLayerID="waterway-label"
-                    sourceLayerID=""
-                    layerIndex={5}
-                    filter={[]}
-                    minZoomLevel={0}
-                    maxZoomLevel={14}
-                    style={HEATMAP_CONFIG}
-                  />
-                );
-              })}
+              <Mapbox.HeatmapLayer
+                id={`my-heatmap-source-1`}
+                sourceID={`heatmap`}
+                aboveLayerID="waterway-label"
+                sourceLayerID=""
+                layerIndex={5}
+                filter={[]}
+                minZoomLevel={0}
+                maxZoomLevel={14}
+                style={HEATMAP_CONFIG}
+              />
 
               {pinsForBound &&
                 pinsForBound.map((pin, index) => {

@@ -34,3 +34,27 @@ export function transformDataToHeatmap(data: Heatmap) {
 
   return heatmapData;
 }
+
+export function transformToGeoJSON(data: {
+  [key: string]: number;
+}): Array<Feature<PointGeometry, Properties>> {
+  const features: Array<Feature<PointGeometry, Properties>> = [];
+
+  for (const [coords, count] of Object.entries(data)) {
+    const [lon, lat] = coords.split(",").map(Number);
+    const feature: Feature<PointGeometry, Properties> = {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [lon, lat],
+      },
+      properties: {
+        count: count,
+        cellRadius: 10000,
+      },
+    };
+    features.push(feature);
+  }
+
+  return features;
+}
