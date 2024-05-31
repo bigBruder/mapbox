@@ -71,6 +71,34 @@ export const MapContextProvider = ({
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
+
+    getHeatmap({
+      "NE.Latitude": ne[1],
+      "NE.Longitude": ne[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": sw[0],
+      "Heatmap.Resolution": getHeatmapResolutionByZoom(
+        cameraBound.properties.zoom
+      ),
+      SingleItemPerVenue: true,
+      Tags: tag || undefined,
+
+      ...dateParams,
+    }).then((heatmap) => {
+      if (!heatmap.value) return;
+      setHeatMap(heatmap.value.heatmap);
+    });
+  }, [
+    selectedTag,
+    selectedDate,
+    customDate.startDate,
+    customDate.endDate,
+    cameraBound?.properties.bounds.ne[0],
+  ]);
+
+  useEffect(() => {
+    if (!cameraBound) return;
+    const { ne, sw } = cameraBound.properties.bounds;
     const queryParams: queryParams = {
       "NE.Latitude": ne[1],
       "NE.Longitude": ne[0],
@@ -110,33 +138,6 @@ export const MapContextProvider = ({
       setPinsForBound((prev) => prev.slice(50, prev.length));
     }
   }, [pinsForBound.length]);
-
-  useEffect(() => {
-    if (!cameraBound) return;
-    const { ne, sw } = cameraBound.properties.bounds;
-
-    getHeatmap({
-      "NE.Latitude": ne[1],
-      "NE.Longitude": ne[0],
-      "SW.Latitude": sw[1],
-      "SW.Longitude": sw[0],
-      "Heatmap.Resolution": getHeatmapResolutionByZoom(
-        cameraBound.properties.zoom
-      ),
-      Tags: tag || undefined,
-
-      ...dateParams,
-    }).then((heatmap) => {
-      if (!heatmap.value) return;
-      setHeatMap(heatmap.value.heatmap);
-    });
-  }, [
-    selectedTag,
-    selectedDate,
-    customDate.startDate,
-    customDate.endDate,
-    cameraBound?.properties.bounds.ne[0],
-  ]);
 
   const value = {
     totalResultsAmount,
