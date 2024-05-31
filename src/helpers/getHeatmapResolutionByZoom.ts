@@ -8,9 +8,7 @@ export const getHeatmapResolutionByZoom = (zoom: number) => {
       return 7;
     case zoom >= 6 && zoom < 10:
       return 8;
-    case zoom >= 10 && zoom < 15:
-      return 9;
-    case zoom >= 15:
+    case zoom >= 10:
       return 10;
     default:
       return 10;

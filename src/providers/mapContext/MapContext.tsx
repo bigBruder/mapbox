@@ -89,6 +89,7 @@ export const MapContextProvider = ({
       setHeatMap(heatmap.value.heatmap);
     });
   }, [
+    cameraBound?.properties.zoom,
     selectedTag,
     selectedDate,
     customDate.startDate,
