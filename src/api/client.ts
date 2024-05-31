@@ -20,17 +20,35 @@ const getAccessTokenFromStore = async () => {
 };
 
 const fetchWithAuth = async (url: string, params: any = null) => {
-  const access_token = await getAccessTokenFromStore();
-  const headers = {
+  let access_token = await getAccessTokenFromStore();
+  let headers = {
     Authorization: `Bearer ${access_token}`,
   };
 
-  const { data } = await axios.get(url, {
-    params,
-    headers,
-  });
-
-  return data;
+  try {
+    const { data } = await axios.get(url, {
+      params,
+      headers,
+    });
+    return data;
+  } catch (error) {
+    // @ts-ignore
+    if (error.response && error.response.status === 401) {
+      access_token = await getAccessToken();
+      if (access_token) {
+        headers.Authorization = `Bearer ${access_token}`;
+        const { data } = await axios.get(url, {
+          params,
+          headers,
+        });
+        return data;
+      } else {
+        throw new Error("Unable to refresh access token");
+      }
+    } else {
+      throw error;
+    }
+  }
 };
 
 export const getPoints = async () => {
