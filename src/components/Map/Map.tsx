@@ -128,7 +128,7 @@ export const Map = () => {
                 layerIndex={5}
                 filter={[]}
                 minZoomLevel={0}
-                maxZoomLevel={14}
+                // maxZoomLevel={14}
                 style={HEATMAP_CONFIG}
               />
 
