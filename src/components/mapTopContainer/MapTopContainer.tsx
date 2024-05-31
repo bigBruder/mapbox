@@ -71,7 +71,7 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
             style={styles.calendarContainer}
             onPress={() => setShowModal(true)}
           >
-            <CalendarIcon style={styles.calendarIcon} />
+            <CalendarIcon />
             <Text>
               {selectedDate === "Custom"
                 ? DateToShortFormat(customDate.startDate) +
