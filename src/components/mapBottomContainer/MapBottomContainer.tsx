@@ -29,6 +29,7 @@ export const MapBottomContainer: FC<Props> = ({
           regionInfo.features,
           cameraBound.properties.zoom
         );
+        if (!featureName || featureName === regionName) return;
         setRegionName(featureName);
       });
     } catch (error) {
