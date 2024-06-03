@@ -140,7 +140,7 @@ export const MapContextProvider = ({
   ]);
 
   useEffect(() => {
-    if (pinsForBound.length > 200) {
+    if (pinsForBound.length > 100) {
       setPinsForBound((prev) => prev.slice(50, prev.length));
     }
   }, [pinsForBound.length]);
