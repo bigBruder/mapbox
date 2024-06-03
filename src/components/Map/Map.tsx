@@ -207,7 +207,10 @@ export const Map = () => {
               showModal={showModal}
               setShowModal={setShowModal}
             />
-            <MapBottomContainer handleCenterCamera={handleCenterCamera} />
+            <MapBottomContainer
+              handleCenterCamera={handleCenterCamera}
+              cameraBound={cameraBound}
+            />
           </View>
         </View>
         {selectedMarker && (

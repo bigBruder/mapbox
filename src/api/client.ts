@@ -3,6 +3,7 @@ import { parseCSV } from "../utils/parseCsv";
 import * as SecureStore from "expo-secure-store";
 import { queryParams } from "../types/queryParams";
 import cheerio from "cheerio";
+import { getFeatureTypeByZoom } from "../helpers/getFeatureTypeByZoom";
 
 const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
@@ -158,6 +159,27 @@ export const getHeatmap = async (
     });
   } catch (error) {
     console.error("Error fetching heatmap:", error);
+    return null;
+  }
+};
+
+export const getRegionInfo = async (area: number[], zoom: number) => {
+  console.log("work");
+  const baseUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places";
+  const coords = area.reverse().join(",");
+
+  try {
+    const field = getFeatureTypeByZoom(zoom);
+
+    const response = await axios.get(
+      `${baseUrl}/${coords}.json?access_token=${process.env.EXPO_PUBLIC_API_KEY}&types=country,region,district,place,locality,neighborhood`
+    );
+
+    console.log(response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching region info:", error);
     return null;
   }
 };
