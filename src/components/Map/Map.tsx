@@ -71,7 +71,7 @@ export const Map = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setCameraBound(realtimeCamera);
-    }, 500);
+    }, 100);
 
     return () => {
       clearTimeout(timer);
