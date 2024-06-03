@@ -45,7 +45,7 @@ export const Map = () => {
     if (!location) return;
 
     camera.current?.setCamera({
-      zoomLevel: 10,
+      zoomLevel: location?.source === "gps" ? 10 : 6,
       animationDuration: 0,
       animationMode: "flyTo",
       centerCoordinate: [location.longitude, location.latitude],
