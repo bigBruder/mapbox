@@ -14,7 +14,7 @@ interface Context {
   text: string;
 }
 
-interface Feature {
+export interface RegionInfoFeature {
   bbox: number[];
   center: number[];
   context: Context[];
@@ -28,9 +28,9 @@ interface Feature {
   type: string;
 }
 
-interface RegionInfoResponse {
+export interface RegionInfoResponse {
   attribution: string;
-  features: Feature[];
+  features: RegionInfoFeature[];
   query: number[];
   type: string;
 }

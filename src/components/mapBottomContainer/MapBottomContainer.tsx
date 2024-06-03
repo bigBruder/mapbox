@@ -1,10 +1,11 @@
 import { TouchableOpacity, View, Text } from "react-native";
 import { LocationIcon, PlusIcon } from "../../assets/icons";
-import { styles } from "./styles";
 import { FC, useEffect, useState } from "react";
 import { CameraBound } from "../../types/CameraBound";
 import { getRegionInfo } from "../../api/client";
-import { getFeatureTypeByZoom } from "../../helpers/getFeatureTypeByZoom";
+import { getRegionName } from "../../helpers/getRegionName";
+
+import { styles } from "./styles";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
@@ -19,27 +20,16 @@ export const MapBottomContainer: FC<Props> = ({
 
   useEffect(() => {
     if (!cameraBound) return;
-    console.log("effect");
     try {
       getRegionInfo(
-        cameraBound.properties.center.reverse(),
+        cameraBound.properties.center,
         cameraBound.properties.zoom
       ).then((regionInfo) => {
-        console.log(
-          regionInfo.features.map((feat) => `type ==> ${feat.place_type}`)
+        const featureName = getRegionName(
+          regionInfo.features,
+          cameraBound.properties.zoom
         );
-        console.log(getFeatureTypeByZoom(cameraBound.properties.zoom));
-        console.log(regionInfo.features.map((feat) => feat.place_type));
-        setRegionName(
-          regionInfo.features
-            .find((feature) =>
-              feature.place_type.some(
-                (type) =>
-                  type === getFeatureTypeByZoom(cameraBound.properties.zoom)
-              )
-            )
-            .place_name.split(",")[0] || "World"
-        );
+        setRegionName(featureName);
       });
     } catch (error) {
       console.error("Error fetching region info:", error);
