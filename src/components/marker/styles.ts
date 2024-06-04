@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -10 }],
   },
   activePinImage: {
-    height: 20,
-    width: 20,
+    height: 30,
+    width: 30,
     transform: [{ translateY: -3 }],
     objectFit: "cover",
   },
