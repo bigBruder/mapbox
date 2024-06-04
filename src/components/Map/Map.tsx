@@ -45,7 +45,7 @@ export const Map = () => {
     if (!location) return;
 
     camera.current?.setCamera({
-      zoomLevel: location?.source === "gps" ? 10 : 6,
+      zoomLevel: 5,
       animationDuration: 0,
       animationMode: "flyTo",
       centerCoordinate: [location.longitude, location.latitude],
@@ -90,7 +90,7 @@ export const Map = () => {
     if (!location) return;
     if (!isLoading) {
       camera.current?.setCamera({
-        zoomLevel: 10,
+        zoomLevel: 6,
         animationDuration: 2000,
         animationMode: "flyTo",
         centerCoordinate: [location.longitude, location.latitude],
