@@ -29,7 +29,7 @@ export const MapBottomContainer: FC<Props> = ({
           regionInfo.features,
           cameraBound.properties.zoom
         );
-        if (!featureName || featureName === regionName) return;
+        if (featureName === regionName) return;
         setRegionName(featureName);
       });
     } catch (error) {
@@ -47,7 +47,9 @@ export const MapBottomContainer: FC<Props> = ({
       </TouchableOpacity>
       <View style={styles.regionContainer} pointerEvents="box-none">
         <Text style={styles.pointText}>
-          {regionName && cameraBound && cameraBound?.properties.zoom > 5
+          {cameraBound?.properties?.zoom < 2 || !regionName
+            ? "World"
+            : regionName
             ? regionName
             : "World"}
         </Text>

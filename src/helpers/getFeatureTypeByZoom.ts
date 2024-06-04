@@ -1,5 +1,5 @@
 export const getFeatureTypeByZoom = (zoom: number) => {
-  if (zoom < 8) {
+  if (zoom < 5) {
     return "country";
   } else if (zoom < 12) {
     return "region";
