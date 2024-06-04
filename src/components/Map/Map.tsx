@@ -173,7 +173,7 @@ export const Map = () => {
                         pin.venue.geo.longitude,
                         pin.venue.geo.latitude,
                       ]}
-                      allowOverlap={pin.id === selectedMarker?.id}
+                      isSelected={pin.id === selectedMarker?.id}
                     >
                       <Marker
                         isSelected={pin.id === selectedMarker?.id}
