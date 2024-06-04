@@ -174,6 +174,7 @@ export const Map = () => {
                         pin.venue.geo.latitude,
                       ]}
                       isSelected={pin.id === selectedMarker?.id}
+                      allowOverlap={true}
                     >
                       <Marker
                         isSelected={pin.id === selectedMarker?.id}
