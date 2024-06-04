@@ -8,11 +8,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   activePinContainer: {
-    width: 100,
-    height: 70,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 5,
     transform: [{ translateY: -10 }],
   },
   activePinImage: {

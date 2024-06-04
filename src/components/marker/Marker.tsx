@@ -75,7 +75,6 @@ export const Marker = ({
         <>
           <Animated.View
             style={{
-              flex: 1,
               justifyContent: "center",
               alignItems: "center",
               opacity: opacity,
