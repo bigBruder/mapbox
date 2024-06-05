@@ -198,7 +198,7 @@ export const Map = () => {
 
               {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
-                  zoomLevel={10}
+                  zoomLevel={5}
                   centerCoordinate={[location.longitude, location.latitude]}
                   animationDuration={0}
                 />
