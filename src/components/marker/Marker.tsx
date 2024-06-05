@@ -3,6 +3,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Animated,
+  View,
 } from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
@@ -25,41 +26,6 @@ export const Marker = ({
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
   const opacity = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: -5,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-
-    return () => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
-    };
-  }, [fadeAnim, isSelected, pin.id]);
-
-  useEffect(() => {
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-
-    if (isSelected) {
-      return () => {
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-        }).start();
-      };
-    }
-  }, [opacity, pin.id]);
-
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
@@ -72,45 +38,35 @@ export const Marker = ({
       }}
     >
       {isSelected ? (
-        <>
-          <Animated.View
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ImageBackground
+            source={require("../../assets/selected_pin_background.png")}
             style={{
-              justifyContent: "center",
+              width: 55,
+              height: 60,
               alignItems: "center",
-              opacity: opacity,
-              transform: [
-                {
-                  translateY: fadeAnim,
-                },
-              ],
-              display: isImageLoading && !isSelected ? "none" : "flex",
+              justifyContent: "center",
             }}
           >
-            <ImageBackground
-              source={require("../../assets/selected_pin_background.png")}
-              style={{
-                width: 55,
-                height: 60,
-                alignItems: "center",
-                justifyContent: "center",
+            <Image
+              source={{
+                uri: getIconUrl(pin.icon.split(":")[1]),
               }}
-            >
-              <Image
-                source={{
-                  uri: getIconUrl(pin.icon.split(":")[1]),
-                }}
-                style={[styles.activePinImage]}
-                onLoadEnd={() => {
-                  setIsImageLoading(false);
-                }}
-              />
-            </ImageBackground>
-          </Animated.View>
-        </>
+              style={[styles.activePinImage]}
+              onLoadEnd={() => {
+                setIsImageLoading(false);
+              }}
+            />
+          </ImageBackground>
+        </View>
       ) : (
-        <Animated.View
+        <View
           style={{
-            opacity: opacity,
             width: getMarkerSizeByPoints(pin.points, zoom),
             height: getMarkerSizeByPoints(pin.points, zoom),
             backgroundColor: "white",
@@ -129,7 +85,7 @@ export const Marker = ({
               objectFit: "cover",
             }}
           />
-        </Animated.View>
+        </View>
       )}
     </TouchableOpacity>
   );

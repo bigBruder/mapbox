@@ -1,4 +1,4 @@
-import Mapbox from "@rnmapbox/maps";
+import Mapbox, { MarkerView } from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View } from "react-native";
@@ -166,8 +166,8 @@ export const Map = () => {
               {pinsForBound &&
                 pinsForBound.map((pin, index) => {
                   return (
-                    <Mapbox.MarkerView
-                      key={index}
+                    <MarkerView
+                      key={pin.id}
                       id={index.toString()}
                       coordinate={[
                         pin.venue.geo.longitude,
@@ -175,6 +175,17 @@ export const Map = () => {
                       ]}
                       isSelected={pin.id === selectedMarker?.id}
                       allowOverlap={true}
+                      anchor={{
+                        x: pin.id === selectedMarker?.id ? 0.5 : 0.5,
+                        y: pin.id === selectedMarker?.id ? 1 : 0.5,
+                      }}
+                      style={{
+                        transform: [
+                          {
+                            translateY: pin.id === selectedMarker?.id ? 15 : 0,
+                          },
+                        ],
+                      }}
                     >
                       <Marker
                         isSelected={pin.id === selectedMarker?.id}
@@ -183,7 +194,7 @@ export const Map = () => {
                         zoom={realtimeZoom}
                         pin={pin}
                       />
-                    </Mapbox.MarkerView>
+                    </MarkerView>
                   );
                 })}
 

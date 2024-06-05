@@ -116,19 +116,17 @@ export const MapContextProvider = ({
     }
     getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
       if (!response?.value) return;
-      const prevIds = pinsForBound.map((pin) => pin.id);
-      const filteredPins = response.value.vibes
-        .filter((vibe) => !prevIds.includes(vibe.id))
-        .reverse();
+      // const prevIds = pinsForBound.map((pin) => pin.id);
+      // const filteredPins = response.value.vibes
+      //   .filter((vibe) => !prevIds.includes(vibe.id))
+      //   .reverse();
 
       setTotalResultsAmount((prev) => ({
         ...prev,
         visible: response.value.totalResults,
       }));
 
-      setPinsForBound((prev) =>
-        sortPinsByWeightAndDate([...prev, ...filteredPins])
-      );
+      setPinsForBound((prev) => sortPinsByWeightAndDate(response.value.vibes));
       setTags(Object.keys(response.value.tags));
     });
   }, [
@@ -139,11 +137,11 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  useEffect(() => {
-    if (pinsForBound.length > 100) {
-      setPinsForBound((prev) => prev.slice(50, prev.length));
-    }
-  }, [pinsForBound.length]);
+  // useEffect(() => {
+  //   if (pinsForBound.length > 100) {
+  //     setPinsForBound((prev) => prev.slice(50, prev.length));
+  //   }
+  // }, [pinsForBound.length]);
 
   const value = {
     totalResultsAmount,
