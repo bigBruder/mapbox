@@ -167,8 +167,8 @@ export const Map = () => {
                 pinsForBound.map((pin, index) => {
                   return (
                     <MarkerView
-                      key={pin.id}
-                      id={index.toString()}
+                      key={index}
+                      id={pin.id}
                       coordinate={[
                         pin.venue.geo.longitude,
                         pin.venue.geo.latitude,
