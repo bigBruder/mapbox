@@ -21,6 +21,7 @@ import { MarkerList } from "./markerList/MarkerList";
 import { MAP_PROPS } from "../../constants/map";
 
 import styles from "./styles";
+import { filterMarkersByPoints } from "../../helpers/filterMarkersByPoints";
 
 export const Map = () => {
   const {
@@ -103,18 +104,7 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  const filteredPinsByPointsDependsOfZoom = pinsForBound?.filter((pin) => {
-    if (realtimeZoom < 5) {
-      return pin.points >= 15;
-    }
-    if (realtimeZoom < 7) {
-      return pin.points >= 10;
-    }
-    if (realtimeZoom < 9) {
-      return pin.points >= 5;
-    }
-    return true;
-  });
+  const filteredPins = filterMarkersByPoints(pinsForBound, realtimeZoom);
 
   return (
     <View style={styles.page}>
@@ -171,7 +161,7 @@ export const Map = () => {
               />
 
               <MarkerList
-                pins={pinsForBound}
+                pins={filteredPins}
                 setSelectedMarker={setSelectedMarker}
                 selectedMarker={selectedMarker}
                 realtimeZoom={realtimeZoom}

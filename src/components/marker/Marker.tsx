@@ -26,7 +26,6 @@ export const Marker = ({
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
   const opacity = useRef(new Animated.Value(0)).current;
-  console.log(getMarkerSizeByPoints(pin.points, zoom));
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
