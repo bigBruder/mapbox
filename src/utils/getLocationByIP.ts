@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Platform } from "react-native";
-import * as Network from "expo-network";
+
+axios.defaults.timeout = 5000;
 
 export const getLocationByIP = async () => {
   try {

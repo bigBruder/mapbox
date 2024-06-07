@@ -102,6 +102,21 @@ export const Map = () => {
     return <MapLoading />;
   }
 
+  const filteredPinsByPointsDependsOfZoom = pinsForBound?.filter((pin) => {
+    if (realtimeZoom < 5) {
+      return pin.points >= 15;
+    }
+    if (realtimeZoom < 7) {
+      return pin.points >= 10;
+    }
+    if (realtimeZoom < 9) {
+      return pin.points >= 5;
+    }
+    return true;
+  });
+
+  console.log(realtimeCamera?.properties.zoom);
+
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -163,8 +178,8 @@ export const Map = () => {
                 }}
               />
 
-              {pinsForBound &&
-                pinsForBound.map((pin, index) => {
+              {filteredPinsByPointsDependsOfZoom &&
+                filteredPinsByPointsDependsOfZoom.map((pin, index) => {
                   return (
                     <MarkerView
                       key={index}
