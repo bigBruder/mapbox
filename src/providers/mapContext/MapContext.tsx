@@ -124,7 +124,7 @@ export const MapContextProvider = ({
       if (!response?.value) return;
       const prevIds = pinsForBound.map((pin) => pin.id);
       const filteredPins = response.value.vibes
-        .filter((vibe) => !prevIds.includes(vibe.id))
+        .filter((vibe: VibesItem) => !prevIds.includes(vibe.id))
         .reverse();
       setTags(Object.keys(response.value.tags));
 
@@ -148,8 +148,8 @@ export const MapContextProvider = ({
   ]);
 
   useEffect(() => {
-    if (pinsForBound.length > 150) {
-      setPinsForBound((prev) => prev.slice(50, prev.length));
+    if (pinsForBound.length > 100) {
+      setPinsForBound((prev) => prev.slice(30, prev.length));
     }
   }, [pinsForBound.length]);
 

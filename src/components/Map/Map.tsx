@@ -170,19 +170,12 @@ export const Map = () => {
                 }}
               />
 
-              {filteredPinsByPointsDependsOfZoom &&
-                filteredPinsByPointsDependsOfZoom.map((pin, index) => {
-                  return (
-                    <MarkerList
-                      key={index}
-                      index={index}
-                      pin={pin}
-                      setSelectedMarker={setSelectedMarker}
-                      selectedMarker={selectedMarker}
-                      realtimeZoom={realtimeZoom}
-                    />
-                  );
-                })}
+              <MarkerList
+                pins={pinsForBound}
+                setSelectedMarker={setSelectedMarker}
+                selectedMarker={selectedMarker}
+                realtimeZoom={realtimeZoom}
+              />
 
               {location && location.source === "gps" && (
                 <Mapbox.UserLocation
