@@ -95,6 +95,7 @@ export const MapContextProvider = ({
     customDate.startDate,
     customDate.endDate,
     cameraBound?.properties.bounds.ne[0],
+    cameraBound?.properties.bounds.ne[1],
   ]);
 
   useEffect(() => {
