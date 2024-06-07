@@ -71,12 +71,13 @@ export const MapContextProvider = ({
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
-
+    const center = cameraBound.properties.center;
+    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
     getHeatmap({
       "NE.Latitude": ne[1],
-      "NE.Longitude": ne[0],
+      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
       "SW.Latitude": sw[1],
-      "SW.Longitude": sw[0],
+      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
       "Heatmap.Resolution": getHeatmapResolutionByZoom(
         cameraBound.properties.zoom
       ),
@@ -100,35 +101,43 @@ export const MapContextProvider = ({
 
   useEffect(() => {
     if (!cameraBound) return;
+
     const { ne, sw } = cameraBound.properties.bounds;
+    const center = cameraBound.properties.center;
+    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
     const queryParams: queryParams = {
       "NE.Latitude": ne[1],
-      "NE.Longitude": ne[0],
+      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
       "SW.Latitude": sw[1],
-      "SW.Longitude": sw[0],
+      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
       OrderBy: "Points",
       PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
       SingleItemPerVenue: true,
     };
+
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
     getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
       if (!response?.value) return;
-      // const prevIds = pinsForBound.map((pin) => pin.id);
-      // const filteredPins = response.value.vibes
-      //   .filter((vibe) => !prevIds.includes(vibe.id))
-      //   .reverse();
+      const prevIds = pinsForBound.map((pin) => pin.id);
+      const filteredPins = response.value.vibes
+        .filter((vibe) => !prevIds.includes(vibe.id))
+        .reverse();
+      setTags(Object.keys(response.value.tags));
 
       setTotalResultsAmount((prev) => ({
         ...prev,
         visible: response.value.totalResults,
       }));
 
-      setPinsForBound((prev) => sortPinsByWeightAndDate(response.value.vibes));
-      setTags(Object.keys(response.value.tags));
+      if (filteredPins.length === 0) return;
+
+      setPinsForBound((prev) =>
+        sortPinsByWeightAndDate([...prev, ...filteredPins])
+      );
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
@@ -138,11 +147,11 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  // useEffect(() => {
-  //   if (pinsForBound.length > 100) {
-  //     setPinsForBound((prev) => prev.slice(50, prev.length));
-  //   }
-  // }, [pinsForBound.length]);
+  useEffect(() => {
+    if (pinsForBound.length > 150) {
+      setPinsForBound((prev) => prev.slice(50, prev.length));
+    }
+  }, [pinsForBound.length]);
 
   const value = {
     totalResultsAmount,

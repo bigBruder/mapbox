@@ -115,8 +115,6 @@ export const Map = () => {
     return true;
   });
 
-  console.log(realtimeCamera?.properties.zoom);
-
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -183,13 +181,13 @@ export const Map = () => {
                   return (
                     <MarkerView
                       key={index}
-                      id={pin.id}
+                      id={index.toString()}
                       coordinate={[
                         pin.venue.geo.longitude,
                         pin.venue.geo.latitude,
                       ]}
                       isSelected={pin.id === selectedMarker?.id}
-                      allowOverlap={true}
+                      allowOverlap={false}
                       anchor={{
                         x: pin.id === selectedMarker?.id ? 0.5 : 0.5,
                         y: pin.id === selectedMarker?.id ? 1 : 0.5,
