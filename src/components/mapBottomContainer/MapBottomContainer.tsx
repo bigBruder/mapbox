@@ -7,6 +7,8 @@ import { getRegionName } from "../../helpers/getRegionName";
 
 import { styles } from "./styles";
 import MapContext from "../../providers/mapContext/MapContext";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { getPointsThreshold } from "../../helpers/filterMarkersByPoints";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
@@ -53,16 +55,30 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
             : "World"}
         </Text>
       </View>
-      <View>
+      <View
+        style={{
+          opacity: 0.9,
+        }}
+      >
         <Text
           style={{
             color: "white",
-            fontSize: 20,
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "left",
+          }}
+        >
+          Zoom:{Math.round(cameraBound?.properties.zoom || 0)}{" "}
+        </Text>
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
             fontWeight: "bold",
             textAlign: "center",
           }}
         >
-          Zoom:{Math.round(cameraBound?.properties.zoom || 0)}
+          Points: {`>=${getPointsThreshold(cameraBound?.properties.zoom || 0)}`}
         </Text>
       </View>
       <TouchableOpacity style={styles.addButton} onPress={() => {}}>
