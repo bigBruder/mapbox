@@ -1,25 +1,26 @@
-import Mapbox, { MarkerView } from "@rnmapbox/maps";
+import Mapbox from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
 import { useContext, useEffect, useRef, useState } from "react";
 
-import MAPBOX_STYLE_URL from "../../constants/mapStyleUrl";
 import MapContext from "../../providers/mapContext/MapContext";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
 import { CameraBound } from "../../types/CameraBound";
 import { transformToGeoJSON } from "../../utils/transformDataToHeatData";
 
-import { Marker } from "../marker/Marker";
 import { ModalDataMarker } from "../BottomSheet/BottomSheet";
 import { MapTopContainer } from "../mapTopContainer/MapTopContainer";
 import { MapBottomContainer } from "../mapBottomContainer/MapBottomContainer";
 import { MapLoading } from "./MapLoading";
 
-import styles from "./styles";
 import { HEATMAP_CONFIG } from "../../constants/heatmapConfig";
+import { MarkerList } from "./markerList/MarkerList";
+import { MAP_PROPS } from "../../constants/map";
+
+import styles from "./styles";
 
 export const Map = () => {
   const {
@@ -121,15 +122,9 @@ export const Map = () => {
         <View style={styles.container}>
           <View style={styles.container}>
             <Mapbox.MapView
-              attributionEnabled={false}
-              logoEnabled={false}
-              pitchEnabled={false}
               style={styles.map}
-              scaleBarEnabled={false}
               ref={map}
-              rotateEnabled={false}
-              styleURL={MAPBOX_STYLE_URL}
-              regionDidChangeDebounceTime={0}
+              {...MAP_PROPS}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
@@ -157,7 +152,6 @@ export const Map = () => {
                 layerIndex={5}
                 filter={[]}
                 minZoomLevel={0}
-                // maxZoomLevel={14}
                 style={{
                   ...HEATMAP_CONFIG,
                   heatmapRadius: [
@@ -179,35 +173,14 @@ export const Map = () => {
               {filteredPinsByPointsDependsOfZoom &&
                 filteredPinsByPointsDependsOfZoom.map((pin, index) => {
                   return (
-                    <MarkerView
+                    <MarkerList
                       key={index}
-                      id={index.toString()}
-                      coordinate={[
-                        pin.venue.geo.longitude,
-                        pin.venue.geo.latitude,
-                      ]}
-                      isSelected={pin.id === selectedMarker?.id}
-                      allowOverlap={false}
-                      anchor={{
-                        x: pin.id === selectedMarker?.id ? 0.5 : 0.5,
-                        y: pin.id === selectedMarker?.id ? 1 : 0.5,
-                      }}
-                      style={{
-                        transform: [
-                          {
-                            translateY: pin.id === selectedMarker?.id ? 15 : 0,
-                          },
-                        ],
-                      }}
-                    >
-                      <Marker
-                        isSelected={pin.id === selectedMarker?.id}
-                        key={index}
-                        setSelectedMarker={setSelectedMarker}
-                        zoom={realtimeZoom}
-                        pin={pin}
-                      />
-                    </MarkerView>
+                      index={index}
+                      pin={pin}
+                      setSelectedMarker={setSelectedMarker}
+                      selectedMarker={selectedMarker}
+                      realtimeZoom={realtimeZoom}
+                    />
                   );
                 })}
 
