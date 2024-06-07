@@ -1,7 +1,7 @@
 import Mapbox, { MarkerView } from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
 import { useContext, useEffect, useRef, useState } from "react";

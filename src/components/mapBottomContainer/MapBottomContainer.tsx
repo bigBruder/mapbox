@@ -1,22 +1,21 @@
 import { TouchableOpacity, View, Text } from "react-native";
 import { LocationIcon, PlusIcon } from "../../assets/icons";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { CameraBound } from "../../types/CameraBound";
 import { getRegionInfo } from "../../api/client";
 import { getRegionName } from "../../helpers/getRegionName";
 
 import { styles } from "./styles";
+import MapContext from "../../providers/mapContext/MapContext";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
   cameraBound: CameraBound | null;
 }
 
-export const MapBottomContainer: FC<Props> = ({
-  handleCenterCamera,
-  cameraBound,
-}) => {
+export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
   const [regionName, setRegionName] = useState<String>("");
+  const { cameraBound } = useContext(MapContext);
 
   useEffect(() => {
     if (!cameraBound) return;
@@ -30,7 +29,7 @@ export const MapBottomContainer: FC<Props> = ({
           cameraBound.properties.zoom
         );
         if (featureName === regionName) return;
-        setRegionName(featureName);
+        setRegionName(featureName || "");
       });
     } catch (error) {
       console.error("Error fetching region info:", error);
@@ -52,6 +51,18 @@ export const MapBottomContainer: FC<Props> = ({
             : regionName
             ? regionName
             : "World"}
+        </Text>
+      </View>
+      <View>
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          Zoom:{Math.round(cameraBound?.properties.zoom || 0)}
         </Text>
       </View>
       <TouchableOpacity style={styles.addButton} onPress={() => {}}>
