@@ -8,7 +8,7 @@ import {
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import styles from "./styles";
 
@@ -26,6 +26,17 @@ export const Marker = ({
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
   const opacity = useRef(new Animated.Value(0)).current;
+  const [isShow, setIsShow] = useState(false);
+
+  const imageUrl = useMemo(() => {
+    return getIconUrl(pin.icon.split(":")[1]);
+  }, [pin.id]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsShow(true);
+    }, 1000);
+  }, [pin.id]);
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
@@ -76,7 +87,7 @@ export const Marker = ({
         >
           <Image
             source={{
-              uri: getIconUrl(pin.icon.split(":")[1]),
+              uri: imageUrl,
             }}
             style={{
               flex: 1,

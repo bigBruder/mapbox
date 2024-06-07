@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
-    padding: 5,
   },
   activePinContainer: {
     padding: 5,
