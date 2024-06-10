@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../constants/colors";
 
 const styles = StyleSheet.create({
   tagContainer: {
@@ -7,10 +8,10 @@ const styles = StyleSheet.create({
     height: 28,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#D9DBEB",
+    borderColor: colors.secondary,
     borderStyle: "solid",
     opacity: 0.8,
     paddingTop: 4,
@@ -21,16 +22,16 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 16,
     lineHeight: 20,
-    color: "black",
+    color: colors.black,
     fontWeight: "400",
   },
   active: {
-    backgroundColor: "#005DF2",
-    color: "white",
+    backgroundColor: colors.primary,
+    color: colors.white,
     opacity: 1,
   },
   activeText: {
-    color: "white",
+    color: colors.white,
   },
 });
 

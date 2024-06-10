@@ -20,6 +20,20 @@ const styles = StyleSheet.create({
   annotationText: {
     fontSize: 24,
   },
+  activePinBackground: {
+    width: 55,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pinImage: {
+    flex: 1,
+    objectFit: "cover",
+  },
+  imageContainer: {
+    padding: 5,
+    borderRadius: 10,
+  },
 });
 
 export default styles;

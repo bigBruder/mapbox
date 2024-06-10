@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../constants/colors";
 
 export const styles = StyleSheet.create({
   bottomContainer: {
@@ -15,13 +16,13 @@ export const styles = StyleSheet.create({
   pointText: {
     fontSize: 18,
     lineHeight: 22,
-    color: "white",
+    color: colors.white,
   },
 
   searchButton: {
     width: 40,
     height: 40,
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     borderRadius: 40,
     display: "flex",
     justifyContent: "center",
@@ -31,7 +32,7 @@ export const styles = StyleSheet.create({
   addButton: {
     width: 48,
     height: 48,
-    backgroundColor: "#005DF2",
+    backgroundColor: colors.primary,
     borderRadius: 40,
     display: "flex",
     justifyContent: "center",

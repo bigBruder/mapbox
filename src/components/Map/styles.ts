@@ -1,4 +1,5 @@
 import { NativeModules, StyleSheet } from "react-native";
+import { colors } from "../../constants/colors";
 const { StatusBarManager } = NativeModules;
 
 const styles = StyleSheet.create({
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   pointText: {
     fontSize: 18,
     lineHeight: 22,
-    color: "white",
+    color: colors.white,
   },
   annotationContainer: {
     width: 30,
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
   addButton: {
     width: 48,
     height: 48,
-    backgroundColor: "#005DF2",
+    backgroundColor: colors.primary,
     borderRadius: 40,
     display: "flex",
     justifyContent: "center",

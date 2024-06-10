@@ -1,16 +1,11 @@
-import {
-  Image,
-  TouchableOpacity,
-  ImageBackground,
-  Animated,
-  View,
-} from "react-native";
+import { Image, TouchableOpacity, ImageBackground, View } from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 import styles from "./styles";
+import { colors } from "../../constants/colors";
 
 export const Marker = ({
   pin,
@@ -23,15 +18,17 @@ export const Marker = ({
   zoom: number;
   isSelected: boolean;
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
-  const opacity = useRef(new Animated.Value(0)).current;
 
   const isAlreadyStarted = new Date(pin.startsAt) < new Date();
 
   const imageUrl = useMemo(() => {
     return getIconUrl(pin.icon.split(":")[1]);
   }, [pin.id]);
+
+  const borderWidth = !isImageLoading ? (isAlreadyStarted ? 0.5 : 1) : 0;
+  const borderColor = isAlreadyStarted ? colors.primary : colors.secondary;
+  const size = getMarkerSizeByPoints(pin.points, zoom);
 
   return (
     <TouchableOpacity
@@ -57,18 +54,13 @@ export const Marker = ({
                 ? require("../../assets/selected_pin_background_started.png")
                 : require("../../assets/selected_pin_background.png")
             }
-            style={{
-              width: 55,
-              height: 60,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            style={styles.activePinBackground}
           >
             <Image
               source={{
                 uri: getIconUrl(pin.icon.split(":")[1]),
               }}
-              style={[styles.activePinImage]}
+              style={styles.activePinImage}
               onLoadEnd={() => {
                 setIsImageLoading(false);
               }}
@@ -78,14 +70,12 @@ export const Marker = ({
       ) : (
         <View
           style={{
-            width: getMarkerSizeByPoints(pin.points, zoom),
-            height: getMarkerSizeByPoints(pin.points, zoom),
-            backgroundColor: isImageLoading ? "transparent" : "white",
-            // display: isImageLoading ? "none" : "flex",
-            borderWidth: isAlreadyStarted && !isImageLoading ? 1 : 0,
-            borderColor: "rgb(0, 93, 242)",
-            padding: 5,
-            borderRadius: 10,
+            width: size,
+            height: size,
+            backgroundColor: isImageLoading ? "transparent" : colors.white,
+            borderWidth: borderWidth,
+            borderColor: borderColor,
+            ...styles.imageContainer,
           }}
         >
           <Image
@@ -95,10 +85,7 @@ export const Marker = ({
             onLoadEnd={() => {
               setIsImageLoading(false);
             }}
-            style={{
-              flex: 1,
-              objectFit: "cover",
-            }}
+            style={[styles.pinImage]}
           />
         </View>
       )}

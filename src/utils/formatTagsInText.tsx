@@ -1,4 +1,5 @@
 import { Text } from "react-native";
+import { colors } from "../constants/colors";
 
 export const formatTagsInText = (text: string) => {
   return (
@@ -6,7 +7,7 @@ export const formatTagsInText = (text: string) => {
       {text.split(/(#\S+)/).map((part, index) => {
         if (part.startsWith("#")) {
           return (
-            <Text key={index} style={{ color: "#005DF2" }}>
+            <Text key={index} style={{ color: colors.primary }}>
               {part}
             </Text>
           );

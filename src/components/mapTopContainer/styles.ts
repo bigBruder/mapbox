@@ -1,4 +1,5 @@
 import { NativeModules, StyleSheet } from "react-native";
+import { colors } from "../../constants/colors";
 const { StatusBarManager } = NativeModules;
 
 export const styles = StyleSheet.create({
@@ -25,7 +26,7 @@ export const styles = StyleSheet.create({
   searchButton: {
     width: 40,
     height: 40,
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     borderRadius: 40,
     display: "flex",
     justifyContent: "center",
@@ -38,11 +39,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchContainer: {
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     height: 40,
     borderColor: "gray",
     borderRadius: 40,
@@ -60,8 +60,7 @@ export const styles = StyleSheet.create({
   },
   calendarContainer: {
     height: 28,
-    backgroundColor: "white",
-    display: "flex",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
@@ -84,7 +83,7 @@ export const styles = StyleSheet.create({
   line: {
     width: 1,
     height: 20,
-    backgroundColor: "grey",
+    backgroundColor: colors.greyAccent,
   },
   resultContainer: {
     alignItems: "center",

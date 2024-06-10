@@ -9,6 +9,7 @@ import { styles } from "./styles";
 import MapContext from "../../providers/mapContext/MapContext";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getPointsThreshold } from "../../helpers/filterMarkersByPoints";
+import { colors } from "../../constants/colors";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
@@ -62,7 +63,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
       >
         <Text
           style={{
-            color: "white",
+            color: colors.white,
             fontSize: 16,
             fontWeight: "bold",
             textAlign: "left",
@@ -72,7 +73,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
         </Text>
         <Text
           style={{
-            color: "white",
+            color: colors.white,
             fontSize: 16,
             fontWeight: "bold",
             textAlign: "center",
