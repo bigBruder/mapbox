@@ -8,18 +8,18 @@ import {
 } from "react-native";
 import {
   CalendarIcon,
-  EyeHiddenIcon,
-  EyeIcon,
   ProfileIcon,
   SearchIcon,
   ShareIcon,
 } from "../../assets/icons";
-import { styles } from "./styles";
+
 import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
 import { Tag } from "../tag/Tag";
 import { DateToShortFormat } from "../../utils/DateToShortFormat";
 import { FC, useContext } from "react";
 import MapContext from "../../providers/mapContext/MapContext";
+import { styles } from "./styles";
+import { TotalResults } from "./TotalResults";
 
 interface Props {
   showModal: boolean;
@@ -49,29 +49,10 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
           <SearchIcon />
           <TextInput placeholder="Search" style={styles.search} />
         </View>
-        {totalResultsAmount.total > 0 ? (
-          <View style={[styles.searchButton, styles.totalResults]}>
-            <View style={styles.resultContainer}>
-              <EyeHiddenIcon />
-              <Text style={styles.resultText}>
-                {totalResultsAmount.total - totalResultsAmount.visible >= 0
-                  ? totalResultsAmount.total - totalResultsAmount.visible
-                  : "-"}
-              </Text>
-            </View>
-            <View style={styles.line} />
-            <View>
-              <EyeIcon />
-              <Text style={styles.resultText}>
-                {totalResultsAmount.visible}
-              </Text>
-            </View>
-          </View>
-        ) : (
-          <View style={[styles.searchButton, styles.totalResults]}>
-            <Text>No results</Text>
-          </View>
-        )}
+        <TotalResults
+          total={totalResultsAmount.total}
+          visible={totalResultsAmount.visible}
+        />
         <TouchableOpacity style={styles.searchButton}>
           <ShareIcon />
         </TouchableOpacity>
@@ -90,7 +71,7 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
             style={styles.calendarContainer}
             onPress={() => setShowModal(true)}
           >
-            <CalendarIcon style={styles.calendarIcon} />
+            <CalendarIcon />
             <Text>
               {selectedDate === "Custom"
                 ? DateToShortFormat(customDate.startDate) +

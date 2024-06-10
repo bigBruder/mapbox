@@ -1,16 +1,16 @@
 import {
-  StyleSheet,
   Image,
   TouchableOpacity,
   ImageBackground,
-  View,
   Animated,
+  View,
 } from "react-native";
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import styles from "./styles";
 
 export const Marker = ({
   pin,
@@ -25,22 +25,18 @@ export const Marker = ({
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const [isShow, setIsShow] = useState(false);
+
+  const imageUrl = useMemo(() => {
+    return getIconUrl(pin.icon.split(":")[1]);
+  }, [pin.id]);
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: -5,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-
-    return () => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
-    };
-  }, [fadeAnim, isSelected, pin.id]);
+    setTimeout(() => {
+      setIsShow(true);
+    }, 1000);
+  }, [pin.id]);
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
@@ -53,84 +49,55 @@ export const Marker = ({
       }}
     >
       {isSelected ? (
-        <>
-          <Animated.View
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ImageBackground
+            source={require("../../assets/selected_pin_background.png")}
             style={{
-              flex: 1,
-              justifyContent: "center",
+              width: 55,
+              height: 60,
               alignItems: "center",
-              transform: [
-                {
-                  translateY: fadeAnim,
-                },
-              ],
-              display: isImageLoading && !isSelected ? "none" : "flex",
+              justifyContent: "center",
             }}
           >
-            <ImageBackground
-              source={require("../../assets/selected_pin_background.png")}
-              style={{
-                width: 55,
-                height: 60,
-                alignItems: "center",
-                justifyContent: "center",
+            <Image
+              source={{
+                uri: getIconUrl(pin.icon.split(":")[1]),
               }}
-            >
-              <Image
-                source={{
-                  uri: getIconUrl(pin.icon.split(":")[1]),
-                }}
-                style={[styles.activePinImage]}
-                onLoadEnd={() => {
-                  setIsImageLoading(false);
-                }}
-              />
-            </ImageBackground>
-          </Animated.View>
-        </>
+              style={[styles.activePinImage]}
+              onLoadEnd={() => {
+                setIsImageLoading(false);
+              }}
+            />
+          </ImageBackground>
+        </View>
       ) : (
-        <Image
-          source={{
-            uri: getIconUrl(pin.icon.split(":")[1]),
-          }}
+        <View
           style={{
             width: getMarkerSizeByPoints(pin.points, zoom),
             height: getMarkerSizeByPoints(pin.points, zoom),
-            objectFit: "cover",
+            backgroundColor: "white",
+            padding: 5,
+            borderRadius: 10,
           }}
-        />
+        >
+          <Image
+            source={{
+              uri: imageUrl,
+            }}
+            style={{
+              flex: 1,
+              // width: getMarkerSizeByPoints(pin.points, zoom, isTop),
+              // height: getMarkerSizeByPoints(pin.points, zoom, isTop),
+              objectFit: "cover",
+            }}
+          />
+        </View>
       )}
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  pinContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 10,
-    borderWidth: 0,
-    borderColor: "white",
-    borderStyle: "solid",
-    padding: 5,
-  },
-  activePinContainer: {
-    width: 100,
-    height: 70,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 5,
-    transform: [{ translateY: -10 }],
-  },
-  activePinImage: {
-    height: 20,
-    width: 20,
-    transform: [{ translateY: -3 }],
-    objectFit: "cover",
-  },
-  annotationText: {
-    fontSize: 24,
-  },
-});

@@ -1,19 +1,7 @@
 import { NativeModules, StyleSheet } from "react-native";
 const { StatusBarManager } = NativeModules;
 
-const styles = StyleSheet.create({
-  page: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    height: "100%",
-    width: "100%",
-    position: "relative",
-  },
-  map: {
-    flex: 1,
-  },
+export const styles = StyleSheet.create({
   topContainer: {
     position: "absolute",
     width: "100%",
@@ -34,37 +22,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  bottomContainer: {
-    position: "absolute",
-    width: "100%",
-    bottom: 40,
-    padding: 24,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 10,
-  },
-  pointText: {
-    fontSize: 18,
-    lineHeight: 22,
-    color: "white",
-  },
-  annotationContainer: {
-    width: 30,
-    height: 30,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 10,
-    borderWidth: 0,
-    borderColor: "white",
-    borderStyle: "solid",
-  },
-  annotationText: {
-    fontSize: 24,
-  },
   searchButton: {
     width: 40,
     height: 40,
@@ -78,15 +35,6 @@ const styles = StyleSheet.create({
     gap: 10,
     width: 100,
     flexDirection: "row",
-    alignItems: "center",
-  },
-  addButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: "#005DF2",
-    borderRadius: 40,
-    display: "flex",
-    justifyContent: "center",
     alignItems: "center",
   },
   searchContainer: {
@@ -128,27 +76,10 @@ const styles = StyleSheet.create({
     height: 16,
     objectFit: "contain",
   },
-  modal: {
-    backgroundColor: "red",
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  absoluteFillObject: {
-    width: "100%",
-    height: "100%",
-  },
+
   resultText: {
     alignSelf: "center",
     fontSize: 12,
-  },
-  regionContainer: {
-    alignItems: "flex-start",
-    justifyContent: "center",
-    flex: 1,
   },
   line: {
     width: 1,

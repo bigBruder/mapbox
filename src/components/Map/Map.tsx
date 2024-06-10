@@ -1,24 +1,31 @@
-import { StatusBar } from "expo-status-bar";
-import { Text, View, TouchableOpacity, Image } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 
-import { styles } from "./styles";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LocationIcon, PlusIcon } from "../../assets/icons";
-import { ModalDataMarker } from "../BottomSheet/BottomSheet";
-import { useContext, useEffect, useRef, useState } from "react";
-import MapContext from "../../providers/mapContext/MapContext";
-import { transformDataToHeatmap } from "../../utils/transformDataToHeatData";
-import { CameraBound } from "../../types/CameraBound";
-import { Marker } from "../marker/Marker";
-import mapboxStyleUrl from "../../constants/mapStyleUrl";
+import { View } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
+import { useContext, useEffect, useRef, useState } from "react";
+
+import MapContext from "../../providers/mapContext/MapContext";
 import useRealTimeLocation from "../../hooks/useRealTimeLocation";
-import { MapTopContainer } from "./MapTopContainer";
+import { CameraBound } from "../../types/CameraBound";
+import { transformToGeoJSON } from "../../utils/transformDataToHeatData";
+
+import { ModalDataMarker } from "../BottomSheet/BottomSheet";
+import { MapTopContainer } from "../mapTopContainer/MapTopContainer";
+import { MapBottomContainer } from "../mapBottomContainer/MapBottomContainer";
+import { MapLoading } from "./MapLoading";
+
+import { HEATMAP_CONFIG } from "../../constants/heatmapConfig";
+import { MarkerList } from "./markerList/MarkerList";
+import { MAP_PROPS } from "../../constants/map";
+
+import styles from "./styles";
+import { filterMarkersByPoints } from "../../helpers/filterMarkersByPoints";
 
 export const Map = () => {
   const {
+    cameraBound,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
@@ -28,7 +35,10 @@ export const Map = () => {
   } = useContext(MapContext);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
-  const [currentZoom, setCurrentZoom] = useState(0);
+  const [realtimeZoom, setRealtimeZoom] = useState(0);
+  const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
+    null
+  );
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
@@ -37,7 +47,7 @@ export const Map = () => {
     if (!location) return;
 
     camera.current?.setCamera({
-      zoomLevel: 10,
+      zoomLevel: 5,
       animationDuration: 0,
       animationMode: "flyTo",
       centerCoordinate: [location.longitude, location.latitude],
@@ -60,6 +70,16 @@ export const Map = () => {
     });
   }, [selectedMarker?.id]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCameraBound(realtimeCamera);
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [realtimeCamera]);
+
   const [showModal, setShowModal] = useState(false);
 
   const map = useRef<Mapbox.MapView | null>(null);
@@ -72,7 +92,7 @@ export const Map = () => {
     if (!location) return;
     if (!isLoading) {
       camera.current?.setCamera({
-        zoomLevel: 10,
+        zoomLevel: 6,
         animationDuration: 2000,
         animationMode: "flyTo",
         centerCoordinate: [location.longitude, location.latitude],
@@ -81,17 +101,10 @@ export const Map = () => {
   };
 
   if (loading || isLoading) {
-    return (
-      <View style={styles.page}>
-        <Image
-          source={require("../../assets/loading_screen_map.png")}
-          style={styles.absoluteFillObject}
-          resizeMode="cover"
-        />
-        <StatusBar translucent backgroundColor="transparent" style="light" />
-      </View>
-    );
+    return <MapLoading />;
   }
+
+  const filteredPins = filterMarkersByPoints(pinsForBound, realtimeZoom);
 
   return (
     <View style={styles.page}>
@@ -100,16 +113,15 @@ export const Map = () => {
           <View style={styles.container}>
             <Mapbox.MapView
               style={styles.map}
-              scaleBarEnabled={false}
               ref={map}
-              rotateEnabled={false}
-              styleURL={mapboxStyleUrl}
-              regionDidChangeDebounceTime={0}
+              {...MAP_PROPS}
               onMapIdle={(e) => {
                 setCameraBound(e as CameraBound);
               }}
               onCameraChanged={(e) => {
-                setCurrentZoom(e.properties.zoom);
+                if (Math.round(e.properties.zoom) === realtimeZoom) return;
+                setRealtimeCamera(e as CameraBound);
+                setRealtimeZoom(Math.round(e.properties.zoom));
               }}
               onPress={() => {
                 setSelectedMarker(null);
@@ -117,68 +129,43 @@ export const Map = () => {
             >
               <Mapbox.ShapeSource
                 id={`heatmap`}
-                shape={transformDataToHeatmap(heatMap)[0]}
+                shape={{
+                  type: "FeatureCollection",
+                  features: transformToGeoJSON(heatMap.data),
+                }}
               />
-              {transformDataToHeatmap(heatMap).map((data, index) => {
-                return (
-                  <Mapbox.HeatmapLayer
-                    key={data.features.toString() + index.toString()}
-                    id={`my-heatmap-source-1`}
-                    sourceID={`heatmap`}
-                    aboveLayerID="waterway-label"
-                    sourceLayerID=""
-                    layerIndex={5}
-                    filter={[]}
-                    minZoomLevel={0}
-                    maxZoomLevel={14}
-                    style={{
-                      heatmapRadius:
-                        data.cellRadius > 60 ? 60 : data.cellRadius,
-                      heatmapOpacity: 0.1,
-                      heatmapIntensity:
-                        0.3 + ((currentZoom - 1) / (15 - 1)) * (1 - 0.3),
-                    }}
-                  />
-                );
-              })}
+              <Mapbox.HeatmapLayer
+                id={`my-heatmap-source-1`}
+                sourceID={`heatmap`}
+                aboveLayerID="waterway-label"
+                sourceLayerID=""
+                layerIndex={5}
+                filter={[]}
+                minZoomLevel={0}
+                style={{
+                  ...HEATMAP_CONFIG,
+                  heatmapRadius: [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    realtimeZoom * 40,
+                    5,
+                    realtimeZoom * 20,
+                    9,
+                    realtimeZoom * 10,
+                    15,
+                    realtimeZoom * 5,
+                  ],
+                }}
+              />
 
-              {pinsForBound &&
-                pinsForBound.map((pin, index) => (
-                  <Mapbox.MarkerView
-                    key={index}
-                    id={index.toString()}
-                    coordinate={[
-                      pin.venue.geo.longitude,
-                      pin.venue.geo.latitude,
-                    ]}
-                    allowOverlap={false}
-                  >
-                    <Marker
-                      isSelected={false}
-                      key={index}
-                      setSelectedMarker={setSelectedMarker}
-                      zoom={currentZoom}
-                      pin={pin}
-                    />
-                  </Mapbox.MarkerView>
-                ))}
-
-              {selectedMarker && (
-                <Mapbox.MarkerView
-                  coordinate={[
-                    selectedMarker.venue.geo.longitude,
-                    selectedMarker.venue.geo.latitude,
-                  ]}
-                  allowOverlap={true}
-                >
-                  <Marker
-                    isSelected={true}
-                    setSelectedMarker={setSelectedMarker}
-                    zoom={currentZoom}
-                    pin={selectedMarker}
-                  />
-                </Mapbox.MarkerView>
-              )}
+              <MarkerList
+                pins={filteredPins}
+                setSelectedMarker={setSelectedMarker}
+                selectedMarker={selectedMarker}
+                realtimeZoom={realtimeZoom}
+              />
 
               {location && location.source === "gps" && (
                 <Mapbox.UserLocation
@@ -191,7 +178,7 @@ export const Map = () => {
 
               {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
-                  zoomLevel={10}
+                  zoomLevel={5}
                   centerCoordinate={[location.longitude, location.latitude]}
                   animationDuration={0}
                 />
@@ -201,20 +188,10 @@ export const Map = () => {
               showModal={showModal}
               setShowModal={setShowModal}
             />
-            <View style={styles.bottomContainer} pointerEvents="box-none">
-              <TouchableOpacity
-                style={styles.searchButton}
-                onPress={() => handleCenterCamera()}
-              >
-                <LocationIcon />
-              </TouchableOpacity>
-              <View style={styles.regionContainer} pointerEvents="box-none">
-                <Text style={styles.pointText}>Some point</Text>
-              </View>
-              <TouchableOpacity style={styles.addButton} onPress={() => {}}>
-                <PlusIcon />
-              </TouchableOpacity>
-            </View>
+            <MapBottomContainer
+              handleCenterCamera={handleCenterCamera}
+              cameraBound={cameraBound}
+            />
           </View>
         </View>
         {selectedMarker && (

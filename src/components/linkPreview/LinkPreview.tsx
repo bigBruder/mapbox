@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from "react";
-import { View, Text, Image } from "react-native";
+import { Text, Image } from "react-native";
 import { getWebPageMeta } from "../../api/client";
-import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Linking } from "react-native";
 
+import styles from "./styles";
 interface Props {
   message: string;
 }
@@ -24,11 +24,7 @@ export const LinkPreview: FC<Props> = ({ message }) => {
           message.indexOf("https://"),
           message.indexOf(" ", message.indexOf("https://"))
         );
-        // setUrl(url);
-        const meta = await getWebPageMeta(
-          // "https://www.instagram.com/reel/C7O4bPytH09/?utm_source=ig_web_copy_link"
-          url
-        );
+        const meta = await getWebPageMeta(url);
         if (!meta) return;
         setMetaData(meta);
       } catch (error) {
@@ -50,14 +46,9 @@ export const LinkPreview: FC<Props> = ({ message }) => {
     );
   };
 
-  // return null if message does not contain a link
-
-  const editedMessage = url ? message.replace(url, "") : message;
-
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       {metaData && <Text style={styles.title}>{metaData["og:title"]}</Text>}
-      {/* <Text>{editedMessage}</Text> */}
       {metaData && metaData["og:image"] && (
         <Image source={{ uri: metaData["og:image"] }} style={styles.image} />
       )}
@@ -65,24 +56,3 @@ export const LinkPreview: FC<Props> = ({ message }) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    gap: 10,
-    padding: 10,
-    borderRadius: 10,
-    shadowColor: "#000",
-    backgroundColor: "rgba(5, 89, 227, 0.05)",
-  },
-  title: {
-    fontWeight: "bold",
-  },
-  image: {
-    height: 150,
-    objectFit: "cover",
-  },
-  link: {
-    color: "#005DF2",
-  },
-});

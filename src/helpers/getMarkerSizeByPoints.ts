@@ -1,12 +1,12 @@
-const MAX_SIZE = 25;
-const MIN_SIZE = 15;
+import { CAMERA } from "../constants/camera";
+import { PIN } from "../constants/pin";
 
 const interpolateSize = (
   zoom: number,
-  minZoom = 1,
-  maxZoom = 25,
-  minSize: number,
-  maxSize: number,
+  minZoom = CAMERA.MIN_ZOOM,
+  maxZoom = CAMERA.MAX_ZOOM,
+  minSize = PIN.MIN_SIZE,
+  maxSize = PIN.MAX_SIZE,
   sizeAdjustment = 0
 ) => {
   if (zoom < minZoom) {
@@ -37,5 +37,12 @@ export const getMarkerSizeByPoints = (points: number, zoom: number) => {
     sizeAdjustment = 0;
   }
 
-  return interpolateSize(zoom, 1, 20, MIN_SIZE, MAX_SIZE, sizeAdjustment);
+  return interpolateSize(
+    zoom,
+    CAMERA.MIN_ZOOM,
+    CAMERA.MAX_ZOOM,
+    PIN.MIN_SIZE,
+    PIN.MAX_SIZE,
+    sizeAdjustment
+  );
 };

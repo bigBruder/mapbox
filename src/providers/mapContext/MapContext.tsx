@@ -6,7 +6,7 @@ import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import { getDateParams } from "../../helpers/getDateParams";
-import { sortPinsByWeightAndDate } from "../../helpers/sortPins";
+import { sortPinsByWeightAndDate } from "../../utils/sortPinsByWeightAndDate";
 
 const MyContext = createContext(initialValue);
 
@@ -36,7 +36,6 @@ export const MapContextProvider = ({
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [currentCamera, setCurrentCamera] = useState<CameraBound | null>(null);
 
   useEffect(() => {
     const queryParams: Partial<queryParams> = {
@@ -66,30 +65,79 @@ export const MapContextProvider = ({
   );
 
   useEffect(() => {
+    setPinsForBound([]);
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+
+  useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
+    const center = cameraBound.properties.center;
+    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
+    getHeatmap({
+      "NE.Latitude": ne[1],
+      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
+      "Heatmap.Resolution": getHeatmapResolutionByZoom(
+        cameraBound.properties.zoom
+      ),
+      SingleItemPerVenue: true,
+      Tags: tag || undefined,
+
+      ...dateParams,
+    }).then((heatmap) => {
+      if (!heatmap.value) return;
+      setHeatMap(heatmap.value.heatmap);
+    });
+  }, [
+    cameraBound?.properties.zoom,
+    selectedTag,
+    selectedDate,
+    customDate.startDate,
+    customDate.endDate,
+    cameraBound?.properties.bounds.ne[0],
+    cameraBound?.properties.bounds.ne[1],
+  ]);
+
+  useEffect(() => {
+    if (!cameraBound) return;
+
+    const { ne, sw } = cameraBound.properties.bounds;
+    const center = cameraBound.properties.center;
+    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
     const queryParams: queryParams = {
-      "NE.Latitude": sw[1],
-      "NE.Longitude": sw[0],
-      "SW.Latitude": ne[1],
-      "SW.Longitude": ne[0],
+      "NE.Latitude": ne[1],
+      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
       OrderBy: "Points",
       PageSize: 25,
       "TopTags.Enable": true,
       IncludeTotalCount: true,
+      SingleItemPerVenue: true,
     };
+
     if (selectedTag) {
       queryParams["Tags"] = selectedTag;
     }
-    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      if (!pinsForBound?.value) return;
-      const sortedPins = sortPinsByWeightAndDate(pinsForBound.value.vibes);
+    getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
+      if (!response?.value) return;
+      const prevIds = pinsForBound.map((pin) => pin.id);
+      const filteredPins = response.value.vibes
+        .filter((vibe: VibesItem) => !prevIds.includes(vibe.id))
+        .reverse();
+      setTags(Object.keys(response.value.tags));
+
       setTotalResultsAmount((prev) => ({
         ...prev,
-        visible: pinsForBound.value.totalResults,
+        visible: response.value.totalResults,
       }));
-      setPinsForBound(sortedPins);
-      setTags(Object.keys(pinsForBound.value.tags));
+
+      if (filteredPins.length === 0) return;
+
+      setPinsForBound((prev) =>
+        sortPinsByWeightAndDate([...prev, ...filteredPins])
+      );
     });
   }, [
     cameraBound?.properties.bounds.ne[0],
@@ -100,34 +148,12 @@ export const MapContextProvider = ({
   ]);
 
   useEffect(() => {
-    if (!cameraBound) return;
-    const { ne, sw } = cameraBound.properties.bounds;
-
-    getHeatmap({
-      "NE.Latitude": ne[1],
-      "NE.Longitude": ne[0],
-      "SW.Latitude": sw[1],
-      "SW.Longitude": sw[0],
-      "Heatmap.Resolution": getHeatmapResolutionByZoom(
-        cameraBound.properties.zoom
-      ),
-      Tags: tag || undefined,
-
-      ...dateParams,
-    }).then((heatmap) => {
-      setHeatMap(heatmap.value.heatmap);
-    });
-  }, [
-    selectedTag,
-    selectedDate,
-    customDate.startDate,
-    customDate.endDate,
-    cameraBound?.properties.bounds.ne[0],
-  ]);
+    if (pinsForBound.length > 100) {
+      setPinsForBound((prev) => prev.slice(30, prev.length));
+    }
+  }, [pinsForBound.length]);
 
   const value = {
-    currentCamera,
-    setCurrentCamera,
     totalResultsAmount,
     setTotalResultsAmount,
     customDate,
