@@ -1,4 +1,10 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from "react";
 import { getHeatmap, getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
@@ -7,6 +13,8 @@ import initialValue from "./initialValue";
 import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import { getDateParams } from "../../helpers/getDateParams";
 import { sortPinsByWeightAndDate } from "../../utils/sortPinsByWeightAndDate";
+import { updateHeatmap } from "../../services/updateHeatmap";
+import { updatePinsForBound } from "../../services/updatePinsForBound";
 
 const MyContext = createContext(initialValue);
 
@@ -37,121 +45,77 @@ export const MapContextProvider = ({
     endDate: new Date(),
   });
 
-  useEffect(() => {
-    const queryParams: Partial<queryParams> = {
-      PageSize: 1,
-      IncludeTotalCount: true,
-    };
-    if (selectedTag) {
-      queryParams["Tags"] = selectedTag;
-    }
-
-    const dateParams = getDateParams(selectedDate, customDate);
-
-    getPinsForBound({ ...queryParams, ...dateParams }).then((pinsForBound) => {
-      if (!pinsForBound.value) return;
-      setTotalResultsAmount((prev) => {
-        return {
-          ...prev,
-          total: pinsForBound.value.totalResults,
-        };
-      });
-    });
-  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
-  const tag = selectedTag ? selectedTag : "";
   const dateParams = useMemo(
     () => getDateParams(selectedDate, customDate),
-    [selectedDate, customDate.startDate, customDate.endDate]
+    [selectedDate, customDate]
   );
 
   useEffect(() => {
-    setPinsForBound([]);
+    updatePinsForBound(
+      cameraBound,
+      selectedTag,
+      dateParams,
+      setPinsForBound,
+      setTags,
+      setTotalResultsAmount,
+      [],
+      true
+    );
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   useEffect(() => {
-    if (!cameraBound) return;
-    const { ne, sw } = cameraBound.properties.bounds;
-    const center = cameraBound.properties.center;
-    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
-    getHeatmap({
-      "NE.Latitude": ne[1],
-      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
-      "SW.Latitude": sw[1],
-      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
-      "Heatmap.Resolution": getHeatmapResolutionByZoom(
-        cameraBound.properties.zoom
-      ),
-      SingleItemPerVenue: true,
-      Tags: tag || undefined,
+    updatePinsForBound(
+      cameraBound,
+      selectedTag,
+      dateParams,
+      setPinsForBound,
+      setTags,
+      setTotalResultsAmount,
+      pinsForBound
+    );
+  }, [
+    cameraBound?.properties.bounds.ne[0],
+    selectedTag,
+    selectedDate,
+    customDate.startDate,
+    customDate.endDate,
+  ]);
 
-      ...dateParams,
-    }).then((heatmap) => {
-      if (!heatmap.value) return;
-      setHeatMap(heatmap.value.heatmap);
-    });
+  useEffect(() => {
+    updateHeatmap(cameraBound, selectedTag, dateParams, setHeatMap);
   }, [
     cameraBound?.properties.zoom,
     selectedTag,
     selectedDate,
     customDate.startDate,
     customDate.endDate,
-    cameraBound?.properties.bounds.ne[0],
-    cameraBound?.properties.bounds.ne[1],
   ]);
 
-  useEffect(() => {
-    if (!cameraBound) return;
-
-    const { ne, sw } = cameraBound.properties.bounds;
-    const center = cameraBound.properties.center;
-    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
-    const queryParams: queryParams = {
-      "NE.Latitude": ne[1],
-      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
-      "SW.Latitude": sw[1],
-      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
-      OrderBy: "Points",
-      PageSize: 25,
-      "TopTags.Enable": true,
-      IncludeTotalCount: true,
-      SingleItemPerVenue: true,
-    };
-
-    if (selectedTag) {
-      queryParams["Tags"] = selectedTag;
-    }
-    getPinsForBound({ ...queryParams, ...dateParams }).then((response) => {
-      if (!response?.value) return;
-      const prevIds = pinsForBound.map((pin) => pin.id);
-      const filteredPins = response.value.vibes
-        .filter((vibe: VibesItem) => !prevIds.includes(vibe.id))
-        .reverse();
-      setTags(Object.keys(response.value.tags));
-
-      setTotalResultsAmount((prev) => ({
-        ...prev,
-        visible: response.value.totalResults,
-      }));
-
-      if (filteredPins.length === 0) return;
-
-      setPinsForBound((prev) =>
-        sortPinsByWeightAndDate([...prev, ...filteredPins])
-      );
-    });
-  }, [
-    cameraBound?.properties.bounds.ne[0],
-    selectedTag,
-    selectedDate,
-    customDate.startDate,
-    customDate.endDate,
-  ]);
+  console.log(pinsForBound);
 
   useEffect(() => {
     if (pinsForBound.length > 100) {
-      setPinsForBound((prev) => prev.slice(30, prev.length));
+      setPinsForBound((prev) => prev.slice(30));
     }
   }, [pinsForBound.length]);
+
+  useEffect(() => {
+    const queryParams: Partial<queryParams> = {
+      PageSize: 1,
+      IncludeTotalCount: true,
+      Tags: selectedTag || undefined,
+      ...dateParams,
+    };
+
+    getPinsForBound(queryParams).then((response) => {
+      if (response?.value) {
+        setTotalResultsAmount((prev) => ({
+          ...prev,
+          total: response.value.totalResults,
+        }));
+      }
+    });
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const value = {
     totalResultsAmount,
@@ -159,12 +123,15 @@ export const MapContextProvider = ({
     customDate,
     setCustomDate,
     selectedDate,
+    setSelectedDate,
     selectedTag,
     setSelectedTag,
     pinsForBound,
+    setPinsForBound,
     cameraBound,
     setCameraBound,
     heatMap,
+    setHeatMap,
     tags,
     setTags,
     loading,
@@ -173,8 +140,8 @@ export const MapContextProvider = ({
     setSelectedMarker,
     showModal,
     setShowModal,
-    setSelectedDate,
   };
+
   return <MyContext.Provider value={value}>{children}</MyContext.Provider>;
 };
 
