@@ -28,7 +28,7 @@ export const updateHeatmap = (
   };
 
   getHeatmap(params).then((heatmap) => {
-    if (heatmap.value) {
+    if (heatmap?.value) {
       setHeatMap(heatmap.value.heatmap);
     }
   });

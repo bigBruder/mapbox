@@ -8,7 +8,7 @@ import {
 import { getIconUrl } from "../../utils/getIconUrl";
 import { VibesItem } from "../../types/searchResponse";
 import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import styles from "./styles";
 
@@ -53,7 +53,11 @@ export const Marker = ({
           }}
         >
           <ImageBackground
-            source={require("../../assets/selected_pin_background.png")}
+            source={
+              isAlreadyStarted
+                ? require("../../assets/selected_pin_background_started.png")
+                : require("../../assets/selected_pin_background.png")
+            }
             style={{
               width: 55,
               height: 60,
@@ -79,6 +83,8 @@ export const Marker = ({
             height: getMarkerSizeByPoints(pin.points, zoom),
             backgroundColor: isImageLoading ? "transparent" : "white",
             // display: isImageLoading ? "none" : "flex",
+            borderWidth: isAlreadyStarted && !isImageLoading ? 1 : 0,
+            borderColor: "rgb(0, 93, 242)",
             padding: 5,
             borderRadius: 10,
           }}
@@ -92,8 +98,6 @@ export const Marker = ({
             }}
             style={{
               flex: 1,
-              // width: getMarkerSizeByPoints(pin.points, zoom, isTop),
-              // height: getMarkerSizeByPoints(pin.points, zoom, isTop),
               objectFit: "cover",
             }}
           />
