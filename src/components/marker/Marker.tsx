@@ -28,7 +28,6 @@ export const Marker = ({
   const opacity = useRef(new Animated.Value(0)).current;
 
   const isAlreadyStarted = new Date(pin.startsAt) < new Date();
-  console.log("isAlreadyStarted", isAlreadyStarted, " ------", pin.startsAt);
 
   const imageUrl = useMemo(() => {
     return getIconUrl(pin.icon.split(":")[1]);

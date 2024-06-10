@@ -91,8 +91,6 @@ export const MapContextProvider = ({
     customDate.endDate,
   ]);
 
-  console.log(pinsForBound);
-
   useEffect(() => {
     if (pinsForBound.length > 100) {
       setPinsForBound((prev) => prev.slice(30));
