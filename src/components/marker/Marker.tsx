@@ -26,17 +26,14 @@ export const Marker = ({
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isImageLoading, setIsImageLoading] = useState(true);
   const opacity = useRef(new Animated.Value(0)).current;
-  const [isShow, setIsShow] = useState(false);
+
+  const isAlreadyStarted = new Date(pin.startsAt) < new Date();
+  console.log("isAlreadyStarted", isAlreadyStarted, " ------", pin.startsAt);
 
   const imageUrl = useMemo(() => {
     return getIconUrl(pin.icon.split(":")[1]);
   }, [pin.id]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsShow(true);
-    }, 1000);
-  }, [pin.id]);
   return (
     <TouchableOpacity
       style={isSelected ? styles.activePinContainer : styles.pinContainer}
@@ -80,7 +77,8 @@ export const Marker = ({
           style={{
             width: getMarkerSizeByPoints(pin.points, zoom),
             height: getMarkerSizeByPoints(pin.points, zoom),
-            backgroundColor: "white",
+            backgroundColor: isImageLoading ? "transparent" : "white",
+            // display: isImageLoading ? "none" : "flex",
             padding: 5,
             borderRadius: 10,
           }}
@@ -88,6 +86,9 @@ export const Marker = ({
           <Image
             source={{
               uri: imageUrl,
+            }}
+            onLoadEnd={() => {
+              setIsImageLoading(false);
             }}
             style={{
               flex: 1,
