@@ -1,18 +1,10 @@
-import {
-  createContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-} from "react";
-import { getHeatmap, getPinsForBound } from "../../api/client";
+import { createContext, useEffect, useMemo, useState } from "react";
+import { getPinsForBound } from "../../api/client";
 import { Heatmap, VibesItem } from "../../types/searchResponse";
 import { CameraBound } from "../../types/CameraBound";
 import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
-import { getHeatmapResolutionByZoom } from "../../helpers/getHeatmapResolutionByZoom";
 import { getDateParams } from "../../helpers/getDateParams";
-import { sortPinsByWeightAndDate } from "../../utils/sortPinsByWeightAndDate";
 import { updateHeatmap } from "../../services/updateHeatmap";
 import { updatePinsForBound } from "../../services/updatePinsForBound";
 
@@ -92,7 +84,7 @@ export const MapContextProvider = ({
   ]);
 
   useEffect(() => {
-    if (pinsForBound.length > 100) {
+    if (pinsForBound.length > 300) {
       setPinsForBound((prev) => prev.slice(30));
     }
   }, [pinsForBound.length]);

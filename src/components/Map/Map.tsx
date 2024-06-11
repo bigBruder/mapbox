@@ -1,7 +1,7 @@
 import Mapbox from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -104,7 +104,11 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  const filteredPins = filterMarkersByPoints(pinsForBound, realtimeZoom);
+  const filteredPins = filterMarkersByPoints(
+    pinsForBound,
+    realtimeZoom,
+    cameraBound
+  );
 
   return (
     <View style={styles.page}>

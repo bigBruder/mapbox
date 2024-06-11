@@ -1,7 +1,24 @@
+import { CameraBound } from "../types/CameraBound";
 import { VibesItem } from "../types/searchResponse";
+import { getDistanceBetweenPoints } from "./getDistanceBetween";
 
-export const filterMarkersByPoints = (markers: VibesItem[], zoom: number) => {
+export const filterMarkersByPoints = (
+  markers: VibesItem[],
+  zoom: number,
+  cameraBound: CameraBound | null
+) => {
+  if (!cameraBound) return markers;
+  const distanceFromCenterToNe = getDistanceBetweenPoints(
+    cameraBound?.properties.center,
+    cameraBound?.properties.bounds.ne
+  );
+
   return markers?.filter((marker) => {
+    const distanceToCenter = getDistanceBetweenPoints(
+      cameraBound?.properties.center,
+      [marker.venue.geo.longitude, marker.venue.geo.latitude]
+    );
+    if (distanceToCenter > distanceFromCenterToNe) return false;
     switch (true) {
       case zoom < 5:
         return marker.points >= 15;
