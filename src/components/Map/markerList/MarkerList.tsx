@@ -26,7 +26,7 @@ export const MarkerList: FC<Props> = ({
         id={index.toString()}
         coordinate={[longitude, latitude]}
         isSelected={pin.id === selectedMarker?.id}
-        allowOverlap={false}
+        allowOverlap={index > Math.max(pins.length - realtimeZoom, 5)}
         anchor={{
           x: pin.id === selectedMarker?.id ? 0.5 : 0.5,
           y: pin.id === selectedMarker?.id ? 1 : 0.5,
