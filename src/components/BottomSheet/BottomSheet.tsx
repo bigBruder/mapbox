@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Image, SafeAreaView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
@@ -17,6 +24,7 @@ import styles from "./styles";
 import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
 import { LinkPreview } from "../linkPreview/LinkPreview";
 import { removeLinkFromString } from "../../helpers/removeLinkFromString";
+import { colors } from "../../constants/colors";
 
 interface Props {
   selectedMarker: VibesItem;
@@ -30,15 +38,11 @@ export const ModalDataMarker: FC<Props> = ({
   const snapPoints = ["45%", "93%"];
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const handleSheetChanges = useCallback(
-    (index: number) => {},
-    [selectedMarker]
-  );
-
   const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isIconLoaded, setisIconLoaded] = useState(false);
 
   useEffect(() => {
     if (selectedMarker.id) {
@@ -62,10 +66,13 @@ export const ModalDataMarker: FC<Props> = ({
     })();
   }, [selectedMarker.id]);
 
+  const isAlreadyStarted = useMemo(() => {
+    return new Date(selectedMarker?.startsAt) < new Date();
+  }, [selectedMarker?.id]);
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      onChange={handleSheetChanges}
       snapPoints={snapPoints}
       enablePanDownToClose={true}
       onClose={() => {
@@ -79,21 +86,35 @@ export const ModalDataMarker: FC<Props> = ({
       style={styles.bottomSheet}
     >
       <BottomSheetView style={styles.bottomsheetView}>
-        <SafeAreaView>
+        <SafeAreaView style={styles.safeBottomSheetContainer}>
           <View style={styles.topBox}>
             {isLoading ? (
               <Facebook />
             ) : (
               <>
-                <Image
-                  source={{
-                    uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
-                  }}
-                  style={styles.icon}
-                />
+                <View
+                  style={[
+                    styles.imageContainer,
+                    {
+                      borderColor: isAlreadyStarted
+                        ? colors.primary
+                        : colors.greyAccent,
+                    },
+                  ]}
+                >
+                  <Image
+                    source={{
+                      uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
+                    }}
+                    onLoadEnd={() => console.log("loaded")}
+                    style={[styles.icon]}
+                  />
+                </View>
                 <View style={styles.topRightContainer}>
-                  <Text>{vibeDetails?.author["userName"]}</Text>
-                  <Text>{vibeDetails?.venue.name}</Text>
+                  <Text style={styles.userName}>
+                    {vibeDetails?.author.userName}
+                  </Text>
+                  <Text style={styles.text}>{vibeDetails?.venue.name}</Text>
                 </View>
               </>
             )}
@@ -101,7 +122,7 @@ export const ModalDataMarker: FC<Props> = ({
           {!isLoading && (
             <View style={styles.dateContainer}>
               {vibeDetails?.startsAt && (
-                <Text style={{ color: "#005DF2" }}>
+                <Text style={styles.date}>
                   {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
                 </Text>
               )}
@@ -112,7 +133,7 @@ export const ModalDataMarker: FC<Props> = ({
               <Text>Points: {vibeDetails?.points}</Text>
               <Text>Starts at: {vibeDetails?.startsAt}</Text>
               {vibeDetails?.message && (
-                <Text>
+                <Text style={styles.message}>
                   {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
                 </Text>
               )}

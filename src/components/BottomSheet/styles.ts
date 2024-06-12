@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../constants/colors";
 
 const styles = StyleSheet.create({
   bottomSheet: {
@@ -11,6 +12,10 @@ const styles = StyleSheet.create({
     height: "100%",
     flexDirection: "column",
     marginBottom: 100,
+    gap: 10,
+  },
+  safeBottomSheetContainer: {
+    flexDirection: "column",
     gap: 10,
   },
   line: {
@@ -58,12 +63,37 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     alignSelf: "flex-start",
   },
+  message: {
+    fontWeight: "400",
+    fontSize: 16,
+  },
   icon: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
   },
   topRightContainer: {
+    flex: 1,
     gap: 5,
+    justifyContent: "center",
+  },
+  date: {
+    color: colors.primary,
+    fontSize: 14,
+    lineHeight: 18.2,
+    paddingVertical: 2,
+  },
+  userName: {
+    flexWrap: "wrap",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  imageContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+  },
+  text: {
+    flexWrap: "wrap",
   },
 });
 

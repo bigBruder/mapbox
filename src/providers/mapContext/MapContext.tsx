@@ -97,6 +97,8 @@ export const MapContextProvider = ({
       ...dateParams,
     };
 
+    console.log(pinsForBound[0]);
+
     getPinsForBound(queryParams).then((response) => {
       if (response?.value) {
         setTotalResultsAmount((prev) => ({
