@@ -9,6 +9,13 @@ const styles = StyleSheet.create({
   bottomsheetView: {
     gap: 10,
   },
+  bottomSheetHandle: {
+    width: 32,
+    height: 4,
+    alignSelf: "center",
+    backgroundColor: colors.greyAccent,
+    borderRadius: 10,
+  },
   sheetContainer: {
     height: "100%",
     flexDirection: "column",

@@ -88,6 +88,9 @@ export const ModalDataMarker: FC<Props> = ({
       footerComponent={(props) => (
         <BottomSheetFooterCustom vibeDetails={vibeDetails} props={props} />
       )}
+      handleComponent={() => {
+        return <View style={styles.bottomSheetHandle} />;
+      }}
       style={styles.bottomSheet}
     >
       <BottomSheetView style={styles.bottomsheetView}>
