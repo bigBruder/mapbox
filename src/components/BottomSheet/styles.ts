@@ -3,7 +3,8 @@ import { colors } from "../../constants/colors";
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    padding: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
   },
   bottomsheetView: {
     gap: 10,
@@ -18,19 +19,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 10,
   },
-  line: {
-    width: 75,
-    height: 4,
-    backgroundColor: "grey",
-    borderRadius: 20,
-    alignSelf: "center",
-    marginVertical: 10,
-  },
   topBox: {
     width: "100%",
     height: "auto",
     flexDirection: "row",
     justifyContent: "flex-start",
+    marginTop: 10,
     gap: 10,
   },
   bottomContainer: {
@@ -63,6 +57,10 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     alignSelf: "flex-start",
   },
+  dateContainerStarted: {
+    paddingHorizontal: 0,
+    backgroundColor: "none",
+  },
   message: {
     fontWeight: "400",
     fontSize: 16,
@@ -81,6 +79,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18.2,
     paddingVertical: 2,
+  },
+  dateStarted: {
+    color: "#8386A5",
   },
   userName: {
     flexWrap: "wrap",

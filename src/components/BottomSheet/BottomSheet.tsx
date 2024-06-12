@@ -72,6 +72,11 @@ export const ModalDataMarker: FC<Props> = ({
 
   return (
     <BottomSheet
+      animationConfigs={{
+        animationEasing: "ease-in-out",
+        initialIndex: 0,
+        springConfig: { mass: 1, damping: 500, stiffness: 100 },
+      }}
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       enablePanDownToClose={true}
@@ -121,9 +126,16 @@ export const ModalDataMarker: FC<Props> = ({
             )}
           </View>
           {!isLoading && (
-            <View style={styles.dateContainer}>
+            <View
+              style={[
+                styles.dateContainer,
+                !isAlreadyStarted && styles.dateContainerStarted,
+              ]}
+            >
               {vibeDetails?.startsAt && (
-                <Text style={styles.date}>
+                <Text
+                  style={[styles.date, !isAlreadyStarted && styles.dateStarted]}
+                >
                   {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
                 </Text>
               )}
@@ -132,7 +144,6 @@ export const ModalDataMarker: FC<Props> = ({
           {!isLoading && (
             <View style={[styles.sheetContainer]}>
               <Text>Points: {vibeDetails?.points}</Text>
-              <Text>Starts at: {vibeDetails?.startsAt}</Text>
               {vibeDetails?.message && (
                 <Text style={styles.message}>
                   {formatTagsInText(removeLinkFromString(vibeDetails?.message))}
