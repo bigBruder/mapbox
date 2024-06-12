@@ -72,11 +72,6 @@ export const ModalDataMarker: FC<Props> = ({
 
   return (
     <BottomSheet
-      animationConfigs={{
-        animationEasing: "ease-in-out",
-        initialIndex: 0,
-        springConfig: { mass: 1, damping: 500, stiffness: 100 },
-      }}
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       enablePanDownToClose={true}
