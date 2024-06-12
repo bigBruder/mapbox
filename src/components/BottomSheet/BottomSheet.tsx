@@ -42,7 +42,7 @@ export const ModalDataMarker: FC<Props> = ({
     null
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isIconLoaded, setisIconLoaded] = useState(false);
+  const [isIconLoading, setisIconLoading] = useState(true);
 
   useEffect(() => {
     if (selectedMarker.id) {
@@ -88,7 +88,7 @@ export const ModalDataMarker: FC<Props> = ({
       <BottomSheetView style={styles.bottomsheetView}>
         <SafeAreaView style={styles.safeBottomSheetContainer}>
           <View style={styles.topBox}>
-            {isLoading ? (
+            {isLoading && !isIconLoading ? (
               <Facebook />
             ) : (
               <>
@@ -106,7 +106,8 @@ export const ModalDataMarker: FC<Props> = ({
                     source={{
                       uri: getIconUrl(selectedMarker.icon.split(":")[1], true),
                     }}
-                    onLoadEnd={() => console.log("loaded")}
+                    onLoadStart={() => setisIconLoading(true)}
+                    onLoadEnd={() => setisIconLoading(false)}
                     style={[styles.icon]}
                   />
                 </View>
