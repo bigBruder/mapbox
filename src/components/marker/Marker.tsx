@@ -42,12 +42,7 @@ export const Marker = ({
       }}
     >
       {isSelected ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <View>
           <ImageBackground
             source={
               isAlreadyStarted

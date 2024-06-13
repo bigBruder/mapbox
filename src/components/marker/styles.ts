@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
   },
   activePinContainer: {
     padding: 5,
-    transform: [{ translateY: -10 }],
   },
   activePinImage: {
     height: 30,
