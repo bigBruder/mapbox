@@ -1,8 +1,7 @@
-import { View, Text } from "react-native";
-import styles from "./styles";
-import { EyeHiddenIcon, EyeIcon } from "../../assets/icons";
 import { FC } from "react";
-
+import { View, Text } from "react-native";
+import { EyeHiddenIcon, EyeIcon } from "@/assets/icons";
+import styles from "./styles";
 interface Props {
   total: number;
   visible: number;

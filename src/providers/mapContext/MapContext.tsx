@@ -1,12 +1,12 @@
 import { createContext, useEffect, useMemo, useState } from "react";
-import { getPinsForBound } from "../../api/client";
-import { Heatmap, VibesItem } from "../../types/searchResponse";
-import { CameraBound } from "../../types/CameraBound";
-import { queryParams } from "../../types/queryParams";
 import initialValue from "./initialValue";
-import { getDateParams } from "../../helpers/getDateParams";
-import { updateHeatmap } from "../../services/updateHeatmap";
-import { updatePinsForBound } from "../../services/updatePinsForBound";
+import { getPinsForBound } from "@/api/client";
+import { updateHeatmap } from "@/services/updateHeatmap";
+import { updatePinsForBound } from "@/services/updatePinsForBound";
+import { Heatmap, VibesItem } from "@/types/searchResponse";
+import { CameraBound } from "@/types/CameraBound";
+import { QueryParams } from "@/types/QueryParams";
+import { getDateParams } from "@/helpers/getDateParams";
 
 const MyContext = createContext(initialValue);
 
@@ -15,7 +15,6 @@ export const MapContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [loading, setLoading] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Now");
@@ -90,14 +89,12 @@ export const MapContextProvider = ({
   }, [pinsForBound.length]);
 
   useEffect(() => {
-    const queryParams: Partial<queryParams> = {
+    const queryParams: Partial<QueryParams> = {
       PageSize: 1,
       IncludeTotalCount: true,
       Tags: selectedTag || undefined,
       ...dateParams,
     };
-
-    console.log(pinsForBound[0]);
 
     getPinsForBound(queryParams).then((response) => {
       if (response?.value) {
@@ -126,8 +123,6 @@ export const MapContextProvider = ({
     setHeatMap,
     tags,
     setTags,
-    loading,
-    setLoading,
     selectedMarker,
     setSelectedMarker,
     showModal,

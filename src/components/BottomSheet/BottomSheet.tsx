@@ -1,30 +1,23 @@
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Image, SafeAreaView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
-import { getVibeDetails } from "../../api/client";
-import { formatDate } from "../../utils/formatDate";
-import { formatTagsInText } from "../../utils/formatTagsInText";
-import { getIconUrl } from "../../utils/getIconUrl";
-import { VibesItem } from "../../types/searchResponse";
+import { getVibeDetails } from "@/api/client";
+import { formatDate } from "@/utils/formatDate";
+import { formatTagsInText } from "@/utils/formatTagsInText";
+import { getIconUrl } from "@/utils/getIconUrl";
+import { VibesItem } from "@/types/searchResponse";
 import {
   PorstDetailsValue,
   PostDetailsResponse,
-} from "../../types/responses/PostDetailsResponse";
+} from "@/types/responses/PostDetailsResponse";
 import { Facebook } from "react-content-loader/native";
 
 import styles from "./styles";
 import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
-import { LinkPreview } from "../linkPreview/LinkPreview";
-import { removeLinkFromString } from "../../helpers/removeLinkFromString";
-import { colors } from "../../constants/colors";
+import { LinkPreview } from "@/components/linkPreview/LinkPreview";
+import { removeLinkFromString } from "@/helpers/removeLinkFromString";
+import { colors } from "@/constants/colors";
 
 interface Props {
   selectedMarker: VibesItem;

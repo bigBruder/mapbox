@@ -1,12 +1,12 @@
-import { getHeatmap } from "../api/client";
-import { getHeatmapResolutionByZoom } from "../helpers/getHeatmapResolutionByZoom";
-import { CameraBound } from "../types/CameraBound";
-import { queryParams } from "../types/queryParams";
+import { getHeatmap } from "@/api/client";
+import { getHeatmapResolutionByZoom } from "@/helpers/getHeatmapResolutionByZoom";
+import { CameraBound } from "@/types/CameraBound";
+import { QueryParams } from "@/types/QueryParams";
 
 export const updateHeatmap = (
   cameraBound: CameraBound | null,
   selectedTag: string | null,
-  dateParams: Partial<queryParams>,
+  dateParams: Partial<QueryParams>,
   setHeatMap: (heatmap: any) => void
 ) => {
   if (!cameraBound) return;

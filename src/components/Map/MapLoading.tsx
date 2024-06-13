@@ -1,5 +1,6 @@
 import { View, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
+
 import styles from "./styles";
 
 export const MapLoading = () => {

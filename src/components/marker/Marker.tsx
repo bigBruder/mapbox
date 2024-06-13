@@ -1,11 +1,11 @@
 import { Image, TouchableOpacity, ImageBackground, View } from "react-native";
-import { getIconUrl } from "../../utils/getIconUrl";
-import { VibesItem } from "../../types/searchResponse";
-import { getMarkerSizeByPoints } from "../../helpers/getMarkerSizeByPoints";
+import { getIconUrl } from "@/utils/getIconUrl";
+import { VibesItem } from "@/types/searchResponse";
+import { getMarkerSizeByPoints } from "@/helpers/getMarkerSizeByPoints";
 import { useMemo, useState } from "react";
 
+import { colors } from "@/constants/colors";
 import styles from "./styles";
-import { colors } from "../../constants/colors";
 
 export const Marker = ({
   pin,

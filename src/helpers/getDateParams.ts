@@ -1,5 +1,5 @@
-import { TransformToIsoDate } from "../utils/TransformToIsoDate";
-import { queryParams } from "../types/queryParams";
+import { TransformToIsoDate } from "@/utils/TransformToIsoDate";
+import { QueryParams } from "@/types/QueryParams";
 
 export function getDateParams(
   selectedDate: string,
@@ -7,8 +7,8 @@ export function getDateParams(
     startDate: Date;
     endDate: Date;
   }
-): Partial<queryParams> {
-  const params: Partial<queryParams> = {};
+): Partial<QueryParams> {
+  const params: Partial<QueryParams> = {};
   if (selectedDate === "Custom") {
     if (customDate.startDate && customDate.endDate) {
       params.Before = customDate.endDate.toISOString();

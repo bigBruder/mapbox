@@ -21,7 +21,7 @@ export const useErrorStore = create<ToastState>()((set) => ({
     type: ToastType.INFO,
   },
   setError: (props) =>
-    set((state) => ({
+    set(() => ({
       toast: {
         message: props.message,
         type: props.type,

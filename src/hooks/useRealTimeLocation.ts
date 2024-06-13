@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { getLocationByIP } from "../utils/getLocationByIP";
+import { getLocationByIP } from "@/utils/getLocationByIP";
+import { ToastType, useErrorStore } from "@/store/ErrorStore";
 
 const useRealTimeLocation = () => {
+  const setToast = useErrorStore((state) => state.setError);
   const [location, setLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -43,10 +45,14 @@ const useRealTimeLocation = () => {
           );
         } else {
           const ipLocation = await getLocationByIP();
+
           setLocation(ipLocation || null);
         }
       } catch (err) {
-        console.error("Error fetching location:", err);
+        setToast({
+          message: "Unfornately, we couldn't get your location.",
+          type: ToastType.ERROR,
+        });
       } finally {
         setIsLoading(false);
       }

@@ -1,7 +1,7 @@
+import { CameraBound } from "@/types/CameraBound";
+import { MapContextType } from "@/types/mapContextType";
+import { VibesItem } from "@/types/searchResponse";
 import { SetStateAction } from "react";
-import { CameraBound } from "../../types/CameraBound";
-import { MapContextType } from "../../types/mapContextType";
-import { VibesItem } from "../../types/searchResponse";
 import { DateType } from "react-native-ui-datepicker";
 
 const initialValue: MapContextType = {
@@ -17,10 +17,10 @@ const initialValue: MapContextType = {
     startDate: new Date(),
     endDate: new Date(),
   },
-  setCustomDate: (date: { startDate: DateType; endDate: DateType }) => {},
+  setCustomDate: function (
+    value: SetStateAction<{ startDate: DateType; endDate: DateType }>
+  ): void {},
   cameraBound: null,
-  loading: false,
-  setLoading: (loading: boolean) => {},
   selectedMarker: null,
   setSelectedMarker: (marker: VibesItem | null) => {},
   showModal: false,

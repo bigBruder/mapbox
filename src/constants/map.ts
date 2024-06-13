@@ -18,3 +18,13 @@ export const MAP_PROPS = {
   styleURL: MAPBOX_STYLE_URL,
   regionDidChangeDebounceTime: 0,
 };
+
+export const HEATMAP_CONFIG = {
+  id: `my-heatmap-source-1`,
+  sourceID: `heatmap`,
+  aboveLayerID: "waterway-label",
+  sourceLayerID: "",
+  layerIndex: 5,
+  filter: [],
+  minZoomLevel: 0,
+};

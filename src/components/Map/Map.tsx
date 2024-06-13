@@ -1,37 +1,36 @@
 import Mapbox from "@rnmapbox/maps";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
 import { useContext, useEffect, useRef, useState } from "react";
 
-import MapContext from "../../providers/mapContext/MapContext";
-import useRealTimeLocation from "../../hooks/useRealTimeLocation";
-import { CameraBound } from "../../types/CameraBound";
-import { transformToGeoJSON } from "../../utils/transformDataToHeatData";
+import MapContext from "@/providers/mapContext/MapContext";
+import useRealTimeLocation from "@/hooks/useRealTimeLocation";
+import { CameraBound } from "@/types/CameraBound";
+import { transformToGeoJSON } from "@/utils/transformDataToHeatData";
 
-import { ModalDataMarker } from "../BottomSheet/BottomSheet";
-import { MapTopContainer } from "../mapTopContainer/MapTopContainer";
-import { MapBottomContainer } from "../mapBottomContainer/MapBottomContainer";
+import { ModalDataMarker } from "@/components/BottomSheet/BottomSheet";
+import { MapTopContainer } from "@/components/mapTopContainer/MapTopContainer";
+import { MapBottomContainer } from "@/components/mapBottomContainer/MapBottomContainer";
 import { MapLoading } from "./MapLoading";
+import { MarkerList } from "@/components/markerList/MarkerList";
+import { MAP_PROPS } from "@/constants/map";
 
-import { HEATMAP_CONFIG } from "../../constants/heatmapConfig";
-import { MarkerList } from "./markerList/MarkerList";
-import { MAP_PROPS } from "../../constants/map";
+import { filterMarkersByPoints } from "@/helpers/filterMarkersByPoints";
+import { Toaster } from "@/components/toaster/Toaster";
+import { colors } from "@/constants/colors";
+import { HeatmapLayer } from "./HeatmapLayer";
 
 import styles from "./styles";
-import { filterMarkersByPoints } from "../../helpers/filterMarkersByPoints";
-import { ToastType, useErrorStore } from "../../store/ErrorStore";
 
 export const Map = () => {
-  const setToast = useErrorStore((state) => state.setError);
   const {
     cameraBound,
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
-    loading,
     heatMap,
     setCameraBound,
   } = useContext(MapContext);
@@ -41,6 +40,7 @@ export const Map = () => {
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
     null
   );
+  const [showModal, setShowModal] = useState(false);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
@@ -82,9 +82,8 @@ export const Map = () => {
     };
   }, [realtimeCamera]);
 
-  const [showModal, setShowModal] = useState(false);
-
   const map = useRef<Mapbox.MapView | null>(null);
+
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
     if (isGpsGranted.status !== "granted") {
@@ -102,7 +101,7 @@ export const Map = () => {
     }
   };
 
-  if (loading || isLoading) {
+  if (isLoading) {
     return <MapLoading />;
   }
 
@@ -111,7 +110,6 @@ export const Map = () => {
     realtimeZoom,
     cameraBound
   );
-
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -140,31 +138,7 @@ export const Map = () => {
                   features: transformToGeoJSON(heatMap.data),
                 }}
               />
-              <Mapbox.HeatmapLayer
-                id={`my-heatmap-source-1`}
-                sourceID={`heatmap`}
-                aboveLayerID="waterway-label"
-                sourceLayerID=""
-                layerIndex={5}
-                filter={[]}
-                minZoomLevel={0}
-                style={{
-                  ...HEATMAP_CONFIG,
-                  heatmapRadius: [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    realtimeZoom * 40,
-                    5,
-                    realtimeZoom * 20,
-                    9,
-                    realtimeZoom * 10,
-                    15,
-                    realtimeZoom * 5,
-                  ],
-                }}
-              />
+              <HeatmapLayer realtimeZoom={realtimeZoom} />
 
               <MarkerList
                 pins={filteredPins}
@@ -173,7 +147,7 @@ export const Map = () => {
                 realtimeZoom={realtimeZoom}
               />
 
-              {location && location.source === "gps" && (
+              {location?.source === "gps" && (
                 <Mapbox.UserLocation
                   visible
                   animated
@@ -207,7 +181,10 @@ export const Map = () => {
           />
         )}
       </GestureHandlerRootView>
-      <StatusBar backgroundColor={showModal ? "white" : "transparent"} />
+      <StatusBar
+        backgroundColor={showModal ? colors.white : colors.transparent}
+      />
+      <Toaster />
     </View>
   );
 };

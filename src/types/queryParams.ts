@@ -1,4 +1,4 @@
-export type queryParams = {
+export type QueryParams = {
   "NE.Latitude": number;
   "NE.Longitude": number;
   "SW.Latitude": number;

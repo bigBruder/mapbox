@@ -1,15 +1,13 @@
-import { TouchableOpacity, View, Text } from "react-native";
-import { LocationIcon, PlusIcon } from "../../assets/icons";
 import { FC, useContext, useEffect, useState } from "react";
-import { CameraBound } from "../../types/CameraBound";
-import { getRegionInfo } from "../../api/client";
-import { getRegionName } from "../../helpers/getRegionName";
-
+import { TouchableOpacity, View, Text } from "react-native";
+import MapContext from "@/providers/mapContext/MapContext";
+import { CameraBound } from "@/types/CameraBound";
+import { getRegionInfo } from "@/api/client";
+import { getRegionName } from "@/helpers/getRegionName";
+import { getPointsThreshold } from "@/helpers/filterMarkersByPoints";
+import { LocationIcon, PlusIcon } from "@/assets/icons";
+import { colors } from "@/constants/colors";
 import { styles } from "./styles";
-import MapContext from "../../providers/mapContext/MapContext";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import { getPointsThreshold } from "../../helpers/filterMarkersByPoints";
-import { colors } from "../../constants/colors";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;

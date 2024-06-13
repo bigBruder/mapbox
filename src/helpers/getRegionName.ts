@@ -1,4 +1,4 @@
-import { RegionInfoFeature } from "../types/responses/RegionInfoResponse";
+import { RegionInfoFeature } from "@/types/responses/RegionInfoResponse";
 import { getFeatureTypeByZoom } from "./getFeatureTypeByZoom";
 
 export const getRegionName = (features: RegionInfoFeature[], zoom: number) => {

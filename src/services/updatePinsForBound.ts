@@ -1,6 +1,6 @@
 import { getPinsForBound } from "../api/client";
 import { CameraBound } from "../types/CameraBound";
-import { queryParams } from "../types/queryParams";
+import { queryParams } from "../types/QueryParams";
 import { VibesItem } from "../types/searchResponse";
 import { sortPinsByWeightAndDate } from "../utils/sortPinsByWeightAndDate";
 

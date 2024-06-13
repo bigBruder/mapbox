@@ -1,5 +1,5 @@
 import { NativeModules, StyleSheet } from "react-native";
-import { colors } from "../../constants/colors";
+import { colors } from "@/constants/colors";
 const { StatusBarManager } = NativeModules;
 
 const styles = StyleSheet.create({

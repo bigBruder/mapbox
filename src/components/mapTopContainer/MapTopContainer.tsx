@@ -1,3 +1,4 @@
+import { FC, useContext } from "react";
 import {
   Modal,
   TextInput,
@@ -6,20 +7,18 @@ import {
   Text,
   ScrollView,
 } from "react-native";
+import { DateSelectionModal } from "@/components/DateSelectionModal/DateSelectionModal";
+import { Tag } from "@/components/tag/Tag";
+import { DateToShortFormat } from "@/utils/DateToShortFormat";
+import MapContext from "@/providers/mapContext/MapContext";
+import { TotalResults } from "./TotalResults";
 import {
   CalendarIcon,
   ProfileIcon,
   SearchIcon,
   ShareIcon,
-} from "../../assets/icons";
-
-import { DateSelectionModal } from "../DateSelectionModal/DateSelectionModal";
-import { Tag } from "../tag/Tag";
-import { DateToShortFormat } from "../../utils/DateToShortFormat";
-import { FC, useContext } from "react";
-import MapContext from "../../providers/mapContext/MapContext";
+} from "@/assets/icons";
 import { styles } from "./styles";
-import { TotalResults } from "./TotalResults";
 
 interface Props {
   showModal: boolean;

@@ -1,5 +1,5 @@
-import { CAMERA } from "../constants/camera";
-import { PIN } from "../constants/pin";
+import { CAMERA } from "@/constants/camera";
+import { PIN } from "@/constants/pin";
 
 const interpolateSize = (
   zoom: number,

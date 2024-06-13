@@ -1,7 +1,7 @@
 import axios from "axios";
 import { parseCSV } from "../utils/parseCsv";
 import * as SecureStore from "expo-secure-store";
-import { queryParams } from "../types/queryParams";
+import { queryParams } from "../types/QueryParams";
 import cheerio from "cheerio";
 import { getFeatureTypeByZoom } from "../helpers/getFeatureTypeByZoom";
 import { MAP_FEATURES_TYPES } from "../constants/map";

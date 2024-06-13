@@ -13,8 +13,6 @@ export type MapContextType = {
     visible: number;
   }) => void;
   setCameraBound: (cameraBound: CameraBound | null) => void;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
   selectedMarker: VibesItem | null;
   setSelectedMarker: (marker: VibesItem | null) => void;
   showModal: boolean;
@@ -32,5 +30,7 @@ export type MapContextType = {
     startDate: Date;
     endDate: Date;
   };
-  setCustomDate: (date: { startDate: DateType; endDate: DateType }) => void;
+  setCustomDate: Dispatch<
+    React.SetStateAction<{ startDate: DateType; endDate: DateType }>
+  >;
 };

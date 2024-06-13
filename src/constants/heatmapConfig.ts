@@ -1,4 +1,4 @@
-export const HEATMAP_CONFIG = {
+export const HEATMAP_CONFIG_STYLE = {
   // heatmapRadius: ["interpolate", ["linear"], ["zoom"], 0, 75, 9, 75, 15, 50],
   heatmapRadiusTransition: { duration: 2000 },
   heatmapWeight: ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 1, 15, 0.6],
@@ -26,4 +26,14 @@ export const HEATMAP_CONFIG = {
     15,
     0.03,
   ],
+};
+
+export const HEATMAP_CONFIG = {
+  id: `my-heatmap-source-1`,
+  sourceID: `heatmap`,
+  aboveLayerID: "waterway-label",
+  sourceLayerID: "",
+  layerIndex: 5,
+  filter: [],
+  minZoomLevel: 0,
 };
