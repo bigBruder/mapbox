@@ -1,10 +1,8 @@
 import axios from "axios";
-import { parseCSV } from "../utils/parseCsv";
 import * as SecureStore from "expo-secure-store";
-import { queryParams } from "../types/QueryParams";
 import cheerio from "cheerio";
-import { getFeatureTypeByZoom } from "../helpers/getFeatureTypeByZoom";
-import { MAP_FEATURES_TYPES } from "../constants/map";
+import { MAP_FEATURES_TYPES } from "@/constants/map";
+import { QueryParams } from "@/types/QueryParams";
 
 const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
@@ -53,13 +51,6 @@ const fetchWithAuth = async (url: string, params: any = null) => {
   }
 };
 
-export const getPoints = async () => {
-  const { data } = await axios.get(
-    process.env.EXPO_PUBLIC_SHEET_POINTS_LINK || ""
-  );
-  return parseCSV(data);
-};
-
 export const getAccessToken = async () => {
   try {
     const device_id = await SecureStore.getItemAsync("mapbox_secure_deviceid");
@@ -91,7 +82,7 @@ export const getAccessToken = async () => {
   }
 };
 
-export const searchPosts = async (queryParams: queryParams) => {
+export const searchPosts = async (queryParams: QueryParams) => {
   try {
     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
   } catch (error) {
@@ -109,7 +100,7 @@ export const getVibeDetails = async (id: string) => {
   }
 };
 
-export const getPinsForBound = async (queryParams: Partial<queryParams>) => {
+export const getPinsForBound = async (queryParams: Partial<QueryParams>) => {
   try {
     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
   } catch (error) {
@@ -140,7 +131,7 @@ export const getWebPageMeta = async (url: string) => {
 
 export const getHeatmap = async (
   queryParams: Pick<
-    queryParams,
+    QueryParams,
     | "NE.Latitude"
     | "NE.Longitude"
     | "SW.Latitude"

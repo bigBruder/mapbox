@@ -1,13 +1,13 @@
 import { getPinsForBound } from "../api/client";
-import { CameraBound } from "../types/CameraBound";
-import { queryParams } from "../types/QueryParams";
-import { VibesItem } from "../types/searchResponse";
+import { CameraBound } from "@/types/CameraBound";
+import { QueryParams } from "@/types/QueryParams";
+import { VibesItem } from "@/types/searchResponse";
 import { sortPinsByWeightAndDate } from "../utils/sortPinsByWeightAndDate";
 
 export const updatePinsForBound = (
   cameraBound: CameraBound | null,
   selectedTag: string | null,
-  dateParams: Partial<queryParams>,
+  dateParams: Partial<QueryParams>,
   setPinsForBound: React.Dispatch<React.SetStateAction<VibesItem[]>>,
   setTags: React.Dispatch<React.SetStateAction<string[]>>,
   setTotalResultsAmount: React.Dispatch<
@@ -21,7 +21,7 @@ export const updatePinsForBound = (
   const center = cameraBound.properties.center;
   const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
 
-  const queryParams: queryParams = {
+  const queryParams: QueryParams = {
     "NE.Latitude": ne[1],
     "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
     "SW.Latitude": sw[1],
