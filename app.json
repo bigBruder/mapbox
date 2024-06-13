@@ -6,9 +6,11 @@
     "orientation": "portrait",
     "icon": "./assets/play_store_512.png",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#0059ec",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "cover"
+      "resizeMode": "cover",
+      "backgroundColor": "#0059ec"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -18,14 +20,7 @@
       "bundleIdentifier": "com.qnowing"
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#fff"
-      },
-      "splash": {
-        "image": "./assets/splash.png",
-        "resizeMode": "cover",
-        "splashscreenBackground": "#ffffff"
-      },
+
       "package": "android.com"
     },
     "web": {

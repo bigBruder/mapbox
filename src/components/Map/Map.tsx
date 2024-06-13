@@ -22,8 +22,10 @@ import { MAP_PROPS } from "../../constants/map";
 
 import styles from "./styles";
 import { filterMarkersByPoints } from "../../helpers/filterMarkersByPoints";
+import { ToastType, useErrorStore } from "../../store/ErrorStore";
 
 export const Map = () => {
+  const setToast = useErrorStore((state) => state.setError);
   const {
     cameraBound,
     pinsForBound,

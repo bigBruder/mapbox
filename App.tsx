@@ -6,10 +6,23 @@ import { getAccessToken } from "./src/api/client";
 import { getDeviceUniqueId } from "./src/providers/DeviceUniqueId";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
+import ToastManager, { Toast } from "toastify-react-native";
+import { ToastType, useErrorStore } from "./src/store/ErrorStore";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
 export default function App() {
+  const toast = useErrorStore((state) => state.toast);
+  const setToast = useErrorStore((state) => state.setError);
+  useEffect(() => {
+    if (toast.message) {
+      Toast[toast.type](toast.message, "bottom");
+    }
+    return () => {
+      setToast({ message: "", type: ToastType.INFO });
+    };
+  }, [toast.message]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -27,6 +40,7 @@ export default function App() {
 
   return (
     <MapContextProvider>
+      <ToastManager />
       <Map />
     </MapContextProvider>
   );
