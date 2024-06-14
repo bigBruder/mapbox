@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { DateSelectionModal } from "@/components/DateSelectionModal/DateSelectionModal";
 import { Tag } from "@/components/tag/Tag";
-import { DateToShortFormat } from "@/utils/DateToShortFormat";
+import { DateToShortFormat } from "@/utils/dateToShortFormat";
 import MapContext from "@/providers/mapContext/MapContext";
 import { TotalResults } from "./TotalResults";
 import {

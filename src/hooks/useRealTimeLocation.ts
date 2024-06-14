@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { getLocationByIP } from "@/utils/getLocationByIP";
+import { getLocationByIP } from "@/utils/getLocationByIp";
 import { ToastType, useErrorStore } from "@/store/ErrorStore";
 
 const useRealTimeLocation = () => {

@@ -3,14 +3,14 @@ export type QueryParams = {
   "NE.Longitude": number;
   "SW.Latitude": number;
   "SW.Longitude": number;
+  "TopTags.Enable"?: boolean;
+  "Heatmap.Enable"?: boolean;
+  "Heatmap.Resolution"?: number;
   After?: string;
   Before?: string;
   OrderBy: string;
   PageSize: number;
   IncludeTotalCount?: boolean;
-  "TopTags.Enable"?: boolean;
-  "Heatmap.Enable"?: boolean;
-  "Heatmap.Resolution"?: number;
   Tags?: string;
   endsAfter?: string;
   SingleItemPerVenue?: boolean;

@@ -20,3 +20,5 @@ export type CameraBound = {
   properties: Properties;
   timestamp: number;
 };
+
+export default CameraBound;

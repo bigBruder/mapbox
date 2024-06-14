@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { View, Text } from "react-native";
 
-import { PorstDetailsValue } from "../../types/responses/PostDetailsResponse";
+import { PorstDetailsValue } from "@/types/responses/PostDetailsResponse";
 import { BottomSheetFooter } from "@gorhom/bottom-sheet";
-import { LikeIcon, MoreIcon, ShareIcon } from "../../assets/icons";
+import { LikeIcon, MoreIcon, ShareIcon } from "@/assets/icons";
 
 import styles from "./styles";
 

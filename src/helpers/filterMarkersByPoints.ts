@@ -1,5 +1,5 @@
 import { CameraBound } from "@/types/CameraBound";
-import { VibesItem } from "@/types/searchResponse";
+import { VibesItem } from "@/types/SearchResponse";
 import { getDistanceBetweenPoints } from "./getDistanceBetween";
 
 export const filterMarkersByPoints = (

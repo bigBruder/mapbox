@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 
 axios.defaults.timeout = 5000;
 
-export const getLocationByIP = async () => {
+export const getLocationByIp = async () => {
   try {
     if (Platform.OS === "ios") {
       const { data } = await axios.get("https://api.ipify.org?format=json");

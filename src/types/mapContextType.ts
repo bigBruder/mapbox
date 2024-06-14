@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 import { CameraBound } from "./CameraBound";
-import { Heatmap, VibesItem } from "./searchResponse";
+import { Heatmap, VibesItem } from "./SearchResponse";
 import { DateType } from "react-native-ui-datepicker";
 
 export type MapContextType = {

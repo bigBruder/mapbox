@@ -1,4 +1,7 @@
-export function formatDate(startDateString: string, expiredAtString: string) {
+export function formatDateForVibe(
+  startDateString: string,
+  expiredAtString: string
+) {
   const startDate = new Date(startDateString);
   const expiredAt = new Date(expiredAtString);
   const now = new Date();

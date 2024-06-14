@@ -50,7 +50,7 @@ export interface Value {
   heatmap: Heatmap;
 }
 
-export interface Response {
+export interface SearchResponse {
   value: Value;
   success: boolean;
   messages: any[];

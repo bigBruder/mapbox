@@ -1,6 +1,6 @@
 import { Image, TouchableOpacity, ImageBackground, View } from "react-native";
 import { getIconUrl } from "@/utils/getIconUrl";
-import { VibesItem } from "@/types/searchResponse";
+import { VibesItem } from "@/types/SearchResponse";
 import { getMarkerSizeByPoints } from "@/helpers/getMarkerSizeByPoints";
 import { useMemo, useState } from "react";
 

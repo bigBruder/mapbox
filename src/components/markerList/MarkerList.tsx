@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { MarkerView } from "@rnmapbox/maps";
-import { VibesItem } from "@/types/searchResponse";
+import { VibesItem } from "@/types/SearchResponse";
 import { Marker } from "@/components/marker/Marker";
 
 interface Props {

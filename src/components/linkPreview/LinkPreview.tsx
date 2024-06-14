@@ -1,8 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
-import { Text, Image } from "react-native";
-import { getWebPageMeta } from "../../api/client";
-import { TouchableOpacity } from "react-native";
-import { Linking } from "react-native";
+import { Text, Image, TouchableOpacity, Linking } from "react-native";
+import { getWebPageMeta } from "@/api/client";
 
 import styles from "./styles";
 interface Props {

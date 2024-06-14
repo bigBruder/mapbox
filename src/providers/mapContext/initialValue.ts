@@ -1,6 +1,4 @@
-import { CameraBound } from "@/types/CameraBound";
-import { MapContextType } from "@/types/mapContextType";
-import { VibesItem } from "@/types/searchResponse";
+import { CameraBound, MapContextType, VibesItem } from "@/types";
 import { SetStateAction } from "react";
 import { DateType } from "react-native-ui-datepicker";
 

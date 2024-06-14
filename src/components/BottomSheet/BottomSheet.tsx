@@ -3,21 +3,21 @@ import { Image, SafeAreaView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
 import { getVibeDetails } from "@/api/client";
-import { formatDate } from "@/utils/formatDate";
-import { formatTagsInText } from "@/utils/formatTagsInText";
+import { formatDateForVibe, formatTagsInText } from "@/utils";
 import { getIconUrl } from "@/utils/getIconUrl";
-import { VibesItem } from "@/types/searchResponse";
+import { VibesItem } from "@/types/SearchResponse";
 import {
   PorstDetailsValue,
   PostDetailsResponse,
 } from "@/types/responses/PostDetailsResponse";
 import { Facebook } from "react-content-loader/native";
 
-import styles from "./styles";
 import { BottomSheetFooterCustom } from "./BottomSheetFooterCustom";
 import { LinkPreview } from "@/components/linkPreview/LinkPreview";
 import { removeLinkFromString } from "@/helpers/removeLinkFromString";
 import { colors } from "@/constants/colors";
+
+import styles from "./styles";
 
 interface Props {
   selectedMarker: VibesItem;
@@ -127,7 +127,10 @@ export const ModalDataMarker: FC<Props> = ({
                 <Text
                   style={[styles.date, !isAlreadyStarted && styles.dateStarted]}
                 >
-                  {formatDate(vibeDetails?.startsAt, vibeDetails?.expiresAt)}
+                  {formatDateForVibe(
+                    vibeDetails?.startsAt,
+                    vibeDetails?.expiresAt
+                  )}
                 </Text>
               )}
             </View>

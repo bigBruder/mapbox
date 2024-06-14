@@ -1,9 +1,9 @@
+import { FC } from "react";
 import Mapbox from "@rnmapbox/maps";
 import {
   HEATMAP_CONFIG,
   HEATMAP_CONFIG_STYLE,
-} from "../../constants/heatmapConfig";
-import { FC } from "react";
+} from "@/constants/heatmapConfig";
 
 interface Props {
   realtimeZoom: number;

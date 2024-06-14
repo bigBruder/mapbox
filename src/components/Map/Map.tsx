@@ -1,27 +1,25 @@
-import Mapbox from "@rnmapbox/maps";
-
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useContext, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
+import Mapbox from "@rnmapbox/maps";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
-import { useContext, useEffect, useRef, useState } from "react";
 
 import MapContext from "@/providers/mapContext/MapContext";
 import useRealTimeLocation from "@/hooks/useRealTimeLocation";
-import { CameraBound } from "@/types/CameraBound";
-import { transformToGeoJSON } from "@/utils/transformDataToHeatData";
+import { transformDataToHeatData } from "@/utils/transformDataToHeatData";
 
 import { ModalDataMarker } from "@/components/BottomSheet/BottomSheet";
 import { MapTopContainer } from "@/components/mapTopContainer/MapTopContainer";
 import { MapBottomContainer } from "@/components/mapBottomContainer/MapBottomContainer";
-import { MapLoading } from "./MapLoading";
 import { MarkerList } from "@/components/markerList/MarkerList";
-import { MAP_PROPS } from "@/constants/map";
-
-import { filterMarkersByPoints } from "@/helpers/filterMarkersByPoints";
 import { Toaster } from "@/components/toaster/Toaster";
-import { colors } from "@/constants/colors";
+import { MapLoading } from "./MapLoading";
 import { HeatmapLayer } from "./HeatmapLayer";
+import { MAP_PROPS } from "@/constants/map";
+import { CameraBound } from "@/types";
+import { filterMarkersByPoints } from "@/helpers/filterMarkersByPoints";
+import { colors } from "@/constants/colors";
 
 import styles from "./styles";
 
@@ -44,6 +42,13 @@ export const Map = () => {
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
+  const map = useRef<Mapbox.MapView | null>(null);
+
+  const filteredPins = filterMarkersByPoints(
+    pinsForBound,
+    realtimeZoom,
+    cameraBound
+  );
 
   useEffect(() => {
     if (!location) return;
@@ -82,8 +87,6 @@ export const Map = () => {
     };
   }, [realtimeCamera]);
 
-  const map = useRef<Mapbox.MapView | null>(null);
-
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
     if (isGpsGranted.status !== "granted") {
@@ -105,11 +108,6 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  const filteredPins = filterMarkersByPoints(
-    pinsForBound,
-    realtimeZoom,
-    cameraBound
-  );
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -135,7 +133,7 @@ export const Map = () => {
                 id={`heatmap`}
                 shape={{
                   type: "FeatureCollection",
-                  features: transformToGeoJSON(heatMap.data),
+                  features: transformDataToHeatData(heatMap.data),
                 }}
               />
               <HeatmapLayer realtimeZoom={realtimeZoom} />

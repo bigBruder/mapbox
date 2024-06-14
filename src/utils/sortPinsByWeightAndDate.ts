@@ -1,4 +1,4 @@
-import { VibesItem } from "../types/searchResponse";
+import { VibesItem } from "../types/SearchResponse";
 
 export function sortPinsByWeightAndDate(pins: VibesItem[]) {
   return [...pins].sort((a, b) => {

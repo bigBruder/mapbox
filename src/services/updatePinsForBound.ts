@@ -1,7 +1,7 @@
 import { getPinsForBound } from "../api/client";
 import { CameraBound } from "@/types/CameraBound";
 import { QueryParams } from "@/types/QueryParams";
-import { VibesItem } from "@/types/searchResponse";
+import { VibesItem } from "@/types/SearchResponse";
 import { sortPinsByWeightAndDate } from "../utils/sortPinsByWeightAndDate";
 
 export const updatePinsForBound = (

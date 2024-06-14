@@ -3,7 +3,7 @@ import initialValue from "./initialValue";
 import { getPinsForBound } from "@/api/client";
 import { updateHeatmap } from "@/services/updateHeatmap";
 import { updatePinsForBound } from "@/services/updatePinsForBound";
-import { Heatmap, VibesItem } from "@/types/searchResponse";
+import { Heatmap, VibesItem } from "@/types/SearchResponse";
 import { CameraBound } from "@/types/CameraBound";
 import { QueryParams } from "@/types/QueryParams";
 import { getDateParams } from "@/helpers/getDateParams";
