@@ -12,15 +12,15 @@ interface ToastState {
     message: string;
     type: ToastType;
   };
-  setError: (props: { message: string; type: ToastType }) => void;
+  setMessage: (props: { message: string; type: ToastType }) => void;
 }
 
-export const useErrorStore = create<ToastState>()((set) => ({
+export const useToastStore = create<ToastState>()((set) => ({
   toast: {
     message: "",
     type: ToastType.INFO,
   },
-  setError: (props) =>
+  setMessage: (props) =>
     set(() => ({
       toast: {
         message: props.message,

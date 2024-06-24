@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLocationByIp } from "@/utils/getLocationByIp";
-import { ToastType, useErrorStore } from "@/store/ErrorStore";
+import { ToastType, useToastStore } from "@/store/ToastStore";
 
 const useRealTimeLocation = () => {
-  const setToast = useErrorStore((state) => state.setError);
+  const setToast = useToastStore((state) => state.setMessage);
   const [location, setLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -36,23 +37,42 @@ const useRealTimeLocation = () => {
               distanceInterval: 5, // Update every 5 meters
             },
             (newLocation) => {
-              setLocation({
+              const newLocationParsed = {
                 latitude: newLocation.coords.latitude,
                 longitude: newLocation.coords.longitude,
                 source: "gps",
-              });
+              };
+              const jsonNewLocationParsed = JSON.stringify(newLocationParsed);
+              AsyncStorage.setItem("lastKnownLocation", jsonNewLocationParsed);
+              setLocation(newLocationParsed);
             }
           );
         } else {
           const ipLocation = await getLocationByIp();
-
-          setLocation(ipLocation || null);
+          if (ipLocation) {
+            const jsonLastKnowLocation = JSON.stringify(ipLocation);
+            await AsyncStorage.setItem(
+              "lastKnownLocation",
+              jsonLastKnowLocation
+            );
+            setLocation(ipLocation);
+          } else {
+            throw new Error();
+          }
         }
       } catch (err) {
-        setToast({
-          message: "Unfornately, we couldn't get your location.",
-          type: ToastType.ERROR,
-        });
+        const jsonLastKnownLocation = await AsyncStorage.getItem(
+          "lastKnownLocation"
+        );
+        if (jsonLastKnownLocation) {
+          const lastKnownLocation = JSON.parse(jsonLastKnownLocation);
+          setLocation(lastKnownLocation);
+        } else {
+          setToast({
+            message: "Unfornately, we couldn't get your location.",
+            type: ToastType.ERROR,
+          });
+        }
       } finally {
         setIsLoading(false);
       }

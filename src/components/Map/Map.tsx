@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import Mapbox, { FillLayer, Images } from "@rnmapbox/maps";
+import Mapbox, { Images } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
@@ -21,10 +21,25 @@ import { CameraBound } from "@/types";
 import { filterMarkersByPoints } from "@/helpers/filterMarkersByPoints";
 import { colors } from "@/constants/colors";
 
+import ToastManager, { Toast } from "toastify-react-native";
+import { ToastType, useToastStore } from "@/store/ToastStore";
+
 import styles from "./styles";
-import { getIconUrl } from "@/utils";
+import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
 
 export const Map = () => {
+  const message = useToastStore((state) => state.toast);
+  const setMessage = useToastStore((state) => state.setMessage);
+
+  useEffect(() => {
+    if (message.message) {
+      Toast[message.type](message.message, "top");
+    }
+    setTimeout(() => {
+      setMessage({ message: "", type: ToastType.INFO });
+    });
+  }, [message]);
+
   const {
     cameraBound,
     pinsForBound,
@@ -33,7 +48,6 @@ export const Map = () => {
     heatMap,
     setCameraBound,
   } = useContext(MapContext);
-
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
   const [realtimeZoom, setRealtimeZoom] = useState(0);
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
@@ -109,15 +123,7 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  const pinsImages = filteredPins.reduce((acc, pin) => {
-    acc[pin.icon.replace("id:", "")] = {
-      uri: `https://app-vibecustomiconsapi-dev.azurewebsites.net/icons/download?id=${pin.icon.replace(
-        "id:",
-        ""
-      )}&width=64&height=64`,
-    };
-    return acc;
-  }, {});
+  const pinsImages = transformPinsToImagesForMap(pinsForBound);
 
   return (
     <View style={styles.page}>
@@ -132,9 +138,10 @@ export const Map = () => {
                 setCameraBound(e as CameraBound);
               }}
               onCameraChanged={(e) => {
-                if (Math.round(e.properties.zoom) === realtimeZoom) return;
+                const roundedZoom = Math.round(e.properties.zoom);
+                if (roundedZoom === realtimeZoom) return;
                 setRealtimeCamera(e as CameraBound);
-                setRealtimeZoom(Math.round(e.properties.zoom));
+                setRealtimeZoom(roundedZoom);
               }}
               onPress={() => {
                 setSelectedMarker(null);
@@ -148,14 +155,6 @@ export const Map = () => {
                 }}
               />
               <HeatmapLayer realtimeZoom={realtimeZoom} />
-
-              {/* <Images
-                images={{
-                  "76896e83-d042-4d30-8843-0991ef4fe9f2": {
-                    uri: "https://app-vibecustomiconsapi-dev.azurewebsites.net/icons/download?id=76896e83-d042-4d30-8843-0991ef4fe9f2&width=64&height=64",
-                  },
-                }}
-              /> */}
 
               <Images
                 images={{
@@ -207,6 +206,7 @@ export const Map = () => {
             setSelectedMarker={setSelectedMarker}
           />
         )}
+        <ToastManager />
       </GestureHandlerRootView>
       <StatusBar
         backgroundColor={showModal ? colors.white : colors.transparent}
