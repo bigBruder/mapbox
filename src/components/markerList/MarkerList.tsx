@@ -25,7 +25,7 @@ export const MarkerList: FC<Props> = ({
         coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
       },
       properties: {
-        priority: isSelected ? 1000 : index,
+        priority: isSelected ? 1000 : index * 10 + 1,
         icon: pin.icon.replace("id:", ""),
         iconSize: 0.3 + pin.points / 100,
       },
@@ -36,25 +36,23 @@ export const MarkerList: FC<Props> = ({
   const pinFrames = pins.map((pin, index) => {
     const isAlreadyStarted = new Date() > new Date(pin.startsAt);
     const isSelected = selectedMarker?.id === pin.id;
+    const { longitude, latitude } = pin.venue.geo;
 
     return {
       type: "Feature",
       geometry: {
         type: "Point",
-        coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
+        coordinates: [longitude, latitude],
       },
       properties: {
-        // ...pin,
-        priority: isSelected ? 1000 : index,
+        priority: isSelected ? 1000 : index * 10,
         icon: getFrameId(isAlreadyStarted, isSelected),
-        iconSize: 0.7,
-        textField: ["get", "icon"],
-        textCustomColor: "#FFFFFF",
+        iconSize: (0.3 + pin.points / 100) * 1.7,
       },
       style: {
         padding: 10,
       },
-      id: pin.id,
+      id: pin.id + "_frame",
     };
   });
 

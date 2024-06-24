@@ -27,7 +27,7 @@ export const updatePinsForBound = (
     "SW.Latitude": sw[1],
     "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
     OrderBy: "Points",
-    PageSize: 25,
+    PageSize: 40,
     "TopTags.Enable": true,
     IncludeTotalCount: true,
     SingleItemPerVenue: true,
