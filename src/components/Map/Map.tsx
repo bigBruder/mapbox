@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import Mapbox from "@rnmapbox/maps";
+import Mapbox, { FillLayer, Images } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
@@ -22,6 +22,7 @@ import { filterMarkersByPoints } from "@/helpers/filterMarkersByPoints";
 import { colors } from "@/constants/colors";
 
 import styles from "./styles";
+import { getIconUrl } from "@/utils";
 
 export const Map = () => {
   const {
@@ -80,7 +81,7 @@ export const Map = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setCameraBound(realtimeCamera);
-    }, 150);
+    }, 800);
 
     return () => {
       clearTimeout(timer);
@@ -107,6 +108,16 @@ export const Map = () => {
   if (isLoading) {
     return <MapLoading />;
   }
+
+  const pinsImages = filteredPins.reduce((acc, pin) => {
+    acc[pin.icon.replace("id:", "")] = {
+      uri: `https://app-vibecustomiconsapi-dev.azurewebsites.net/icons/download?id=${pin.icon.replace(
+        "id:",
+        ""
+      )}&width=64&height=64`,
+    };
+    return acc;
+  }, {});
 
   return (
     <View style={styles.page}>
@@ -137,6 +148,24 @@ export const Map = () => {
                 }}
               />
               <HeatmapLayer realtimeZoom={realtimeZoom} />
+
+              {/* <Images
+                images={{
+                  "76896e83-d042-4d30-8843-0991ef4fe9f2": {
+                    uri: "https://app-vibecustomiconsapi-dev.azurewebsites.net/icons/download?id=76896e83-d042-4d30-8843-0991ef4fe9f2&width=64&height=64",
+                  },
+                }}
+              /> */}
+
+              <Images
+                images={{
+                  ...pinsImages,
+                  frame: require("@/assets/frame.png"),
+                  frameStarted: require("@/assets/frame_started.png"),
+                  frameSelected: require("@/assets/frame_selected.png"),
+                  frameSelectedStarted: require("@/assets/frame_selected_started.png"),
+                }}
+              />
 
               <MarkerList
                 pins={filteredPins}

@@ -1,7 +1,8 @@
 import { FC } from "react";
-import { MarkerView } from "@rnmapbox/maps";
+import { ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import { VibesItem } from "@/types/SearchResponse";
-import { Marker } from "@/components/marker/Marker";
+import { HITBOX, PIN_SYMBOL_LAYER_STYLE } from "@/constants/pin";
+import { getFrameId } from "@/helpers/helpers";
 
 interface Props {
   pins: VibesItem[];
@@ -14,38 +15,73 @@ export const MarkerList: FC<Props> = ({
   pins,
   setSelectedMarker,
   selectedMarker,
-  realtimeZoom,
 }) => {
-  return pins.map((pin, index) => {
-    const longitude = pin.venue.geo.longitude;
-    const latitude = pin.venue.geo.latitude;
-
-    return (
-      <MarkerView
-        key={index}
-        id={index.toString()}
-        coordinate={[longitude, latitude]}
-        isSelected={pin.id === selectedMarker?.id}
-        allowOverlap={index > Math.max(pins.length - realtimeZoom, 5)}
-        anchor={{
-          x: pin.id === selectedMarker?.id ? 0.5 : 0.5,
-          y: pin.id === selectedMarker?.id ? 1 : 0.5,
-        }}
-        style={{
-          transform: [
-            {
-              translateY: pin.id === selectedMarker?.id ? 15 : 0,
-            },
-          ],
-        }}
-      >
-        <Marker
-          pin={pin}
-          setSelectedMarker={setSelectedMarker}
-          zoom={realtimeZoom}
-          isSelected={selectedMarker?.id === pin.id}
-        />
-      </MarkerView>
-    );
+  const pinsToDisplay = pins.map((pin, index) => {
+    const isSelected = selectedMarker?.id === pin.id;
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
+      },
+      properties: {
+        priority: isSelected ? 1000 : index,
+        icon: pin.icon.replace("id:", ""),
+        iconSize: 0.3 + pin.points / 100,
+      },
+      id: pin.id,
+    };
   });
+
+  const pinFrames = pins.map((pin, index) => {
+    const isAlreadyStarted = new Date() > new Date(pin.startsAt);
+    const isSelected = selectedMarker?.id === pin.id;
+
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
+      },
+      properties: {
+        // ...pin,
+        priority: isSelected ? 1000 : index,
+        icon: getFrameId(isAlreadyStarted, isSelected),
+        iconSize: 0.7,
+        textField: ["get", "icon"],
+        textCustomColor: "#FFFFFF",
+      },
+      style: {
+        padding: 10,
+      },
+      id: pin.id,
+    };
+  });
+
+  const shape = {
+    type: "FeatureCollection",
+    features: [...pinsToDisplay, ...pinFrames],
+  };
+
+  return (
+    <ShapeSource
+      id="freshPins_usual"
+      onPress={(e) => {
+        if (e.features[0].id === selectedMarker?.id) setSelectedMarker(null);
+        setSelectedMarker(
+          pins.find((pin) => pin.id === e.features[0].id) || null
+        );
+      }}
+      //@ts-ignore
+      shape={shape}
+      hitbox={HITBOX}
+      cluster={false}
+    >
+      <SymbolLayer
+        id={"freshPins_usual"}
+        layerIndex={85}
+        style={PIN_SYMBOL_LAYER_STYLE}
+      />
+    </ShapeSource>
+  );
 };
