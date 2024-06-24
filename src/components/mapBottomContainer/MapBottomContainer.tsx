@@ -4,7 +4,7 @@ import MapContext from "@/providers/mapContext/MapContext";
 import { CameraBound } from "@/types/CameraBound";
 import { getRegionInfo } from "@/api/client";
 import { getRegionName } from "@/helpers/getRegionName";
-import { getPointsThreshold } from "@/helpers/filterMarkersByPoints";
+import { getPointsThreshold } from "@/helpers/filterMarkers";
 import { LocationIcon, PlusIcon } from "@/assets/icons";
 import { colors } from "@/constants/colors";
 import { styles } from "./styles";

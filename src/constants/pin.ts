@@ -14,4 +14,5 @@ export const PIN_SYMBOL_LAYER_STYLE = {
     duration: 500,
     delay: 0,
   },
+  iconOffset: ["get", "iconOffset"],
 };

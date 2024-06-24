@@ -18,7 +18,6 @@ import { MapLoading } from "./MapLoading";
 import { HeatmapLayer } from "./HeatmapLayer";
 import { MAP_PROPS } from "@/constants/map";
 import { CameraBound } from "@/types";
-import { filterMarkersByPoints } from "@/helpers/filterMarkersByPoints";
 import { colors } from "@/constants/colors";
 
 import ToastManager, { Toast } from "toastify-react-native";
@@ -26,6 +25,7 @@ import { ToastType, useToastStore } from "@/store/ToastStore";
 
 import styles from "./styles";
 import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
+import { filterMarkers } from "@/helpers/filterMarkers";
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
@@ -59,11 +59,7 @@ export const Map = () => {
   const camera = useRef<Mapbox.Camera | null>(null);
   const map = useRef<Mapbox.MapView | null>(null);
 
-  const filteredPins = filterMarkersByPoints(
-    pinsForBound,
-    realtimeZoom,
-    cameraBound
-  );
+  const filteredPins = filterMarkers(pinsForBound, realtimeZoom, cameraBound);
 
   useEffect(() => {
     if (!location) return;
