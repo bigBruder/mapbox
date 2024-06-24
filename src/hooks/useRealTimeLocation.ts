@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { getLocationByIP } from "@/utils/getLocationByIp";
+import { getLocationByIp } from "@/utils/getLocationByIp";
 import { ToastType, useErrorStore } from "@/store/ErrorStore";
 
 const useRealTimeLocation = () => {
@@ -44,7 +44,7 @@ const useRealTimeLocation = () => {
             }
           );
         } else {
-          const ipLocation = await getLocationByIP();
+          const ipLocation = await getLocationByIp();
 
           setLocation(ipLocation || null);
         }
