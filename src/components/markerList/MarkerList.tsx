@@ -1,8 +1,9 @@
 import { FC } from "react";
-import { ShapeSource, SymbolLayer } from "@rnmapbox/maps";
+import { Images, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import { VibesItem } from "@/types/SearchResponse";
 import { HITBOX, PIN_SYMBOL_LAYER_STYLE } from "@/constants/pin";
 import { getFrameId } from "@/helpers/helpers";
+import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
 
 interface Props {
   pins: VibesItem[];
@@ -65,28 +66,36 @@ export const MarkerList: FC<Props> = ({
 
   const shape = {
     type: "FeatureCollection",
-    features: [...pinFrames, ...pinsToDisplay],
+    features: [...pinsToDisplay, ...pinFrames],
   };
+  const pinsImages = transformPinsToImagesForMap(pins);
 
   return (
-    <ShapeSource
-      id="freshPins_usual"
-      onPress={(e) => {
-        if (e.features[0].id === selectedMarker?.id) setSelectedMarker(null);
-        setSelectedMarker(
-          pins.find((pin) => pin.id === e.features[0].id) || null
-        );
-      }}
-      //@ts-ignore
-      shape={shape}
-      hitbox={HITBOX}
-      cluster={false}
-    >
-      <SymbolLayer
-        id={"freshPins_usual"}
-        layerIndex={85}
-        style={PIN_SYMBOL_LAYER_STYLE}
+    <>
+      <Images
+        images={{
+          ...pinsImages,
+        }}
       />
-    </ShapeSource>
+      <ShapeSource
+        id="freshPins_usual"
+        onPress={(e) => {
+          if (e.features[0].id === selectedMarker?.id) setSelectedMarker(null);
+          setSelectedMarker(
+            pins.find((pin) => pin.id === e.features[0].id) || null
+          );
+        }}
+        //@ts-ignore
+        shape={shape}
+        hitbox={HITBOX}
+        cluster={false}
+      >
+        <SymbolLayer
+          id={"freshPins_usual"}
+          layerIndex={85}
+          style={PIN_SYMBOL_LAYER_STYLE}
+        />
+      </ShapeSource>
+    </>
   );
 };

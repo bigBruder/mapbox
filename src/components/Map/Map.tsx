@@ -119,8 +119,6 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  const pinsImages = transformPinsToImagesForMap(pinsForBound);
-
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -154,7 +152,6 @@ export const Map = () => {
 
               <Images
                 images={{
-                  ...pinsImages,
                   frame: require("@/assets/frame.png"),
                   frameStarted: require("@/assets/frame_started.png"),
                   frameSelected: require("@/assets/frame_selected.png"),
