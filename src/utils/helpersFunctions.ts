@@ -9,12 +9,14 @@ export const formatDate = (date: DateType | null): string => {
   return dayjs(date).format("ddd, MMM DD");
 };
 
-export const transformPinsToImagesForMap = (pins: VibesItem[]) => {
+export const transformPinsToImagesForMap = (
+  pins: VibesItem[]
+): { [key: string]: { uri: string } } => {
   return pins.reduce((acc, pin) => {
-    // @ts-ignore
     acc[pin.icon.replace("id:", "")] = {
       uri: getIconUrl(pin.icon),
     };
+
     return acc;
-  }, {});
+  }, {} as { [key: string]: { uri: string } });
 };
