@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import Mapbox, { Images } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -21,12 +21,13 @@ import { CameraBound } from "@/types";
 import { colors } from "@/constants/colors";
 
 import ToastManager, { Toast } from "toastify-react-native";
-import { ToastType, useToastStore } from "@/store/ToastStore";
+import { useToastStore } from "@/store/ToastStore";
 
-import styles from "./styles";
 import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
 import { filterMarkers } from "@/helpers/filterMarkers";
 import { VibesItem } from "@/types/SearchResponse";
+
+import styles from "./styles";
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
@@ -61,7 +62,12 @@ export const Map = () => {
   const camera = useRef<Mapbox.Camera | null>(null);
   const map = useRef<Mapbox.MapView | null>(null);
 
-  const filteredPins = filterMarkers(pinsForBound, realtimeZoom, cameraBound);
+  // const filteredPins = filterMarkers(pinsForBound, realtimeZoom, cameraBound);
+
+  const pinsImages = useMemo(
+    () => transformPinsToImagesForMap(pinsForBound),
+    [pinsForBound.toString()]
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -129,7 +135,8 @@ export const Map = () => {
   if (isLoading) {
     return <MapLoading />;
   }
-  const pinsImages = transformPinsToImagesForMap(pinsForBound);
+
+  console.log("render");
 
   return (
     <View style={styles.page}>

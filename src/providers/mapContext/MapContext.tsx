@@ -41,6 +41,7 @@ export const MapContextProvider = ({
     [selectedDate, customDate]
   );
 
+  // clear update of pins
   useEffect(() => {
     updatePinsForBound(
       cameraBound,
@@ -54,6 +55,7 @@ export const MapContextProvider = ({
     );
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
+  // update pins for bound
   useEffect(() => {
     updatePinsForBound(
       cameraBound,

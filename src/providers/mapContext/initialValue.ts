@@ -1,6 +1,7 @@
-import { CameraBound, MapContextType, VibesItem } from "@/types";
 import { SetStateAction } from "react";
 import { DateType } from "react-native-ui-datepicker";
+import { CameraBound, MapContextType } from "@/types";
+import { VibesItem } from "@/types/SearchResponse";
 
 const initialValue: MapContextType = {
   totalResultsAmount: {
