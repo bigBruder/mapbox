@@ -31,10 +31,11 @@ export const MarkerList: FC<Props> = ({
         coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
       },
       properties: {
-        priority: isSelected ? 1001 : index * 10 + 1,
+        priority: isSelected ? 1001 : index,
         icon: pin.icon.replace("id:", ""),
         iconSize: 0.3 + pin.points / 100,
         iconOffset: [0, isSelected ? ICON_OFFSET_Y_SELECTED : ICON_OFFSET_Y],
+        allowOverlap: true,
       },
       id: pin.id,
     };
@@ -52,10 +53,11 @@ export const MarkerList: FC<Props> = ({
         coordinates: [longitude, latitude],
       },
       properties: {
-        priority: isSelected ? 1000 : index * 10,
+        priority: isSelected ? 1000 : index,
         icon: getFrameId(isAlreadyStarted, isSelected),
-        iconSize: (0.3 + pin.points / 100) * 1.7,
+        iconSize: (0.3 + pin.points / 100) * 2,
         iconOffset: [0, isSelected ? FRAME_OFFSET_Y_SELECTED : FRAME_OFFSET_Y],
+        allowOverlap: true,
       },
       style: {
         padding: 10,
@@ -68,17 +70,12 @@ export const MarkerList: FC<Props> = ({
     type: "FeatureCollection",
     features: [...pinsToDisplay, ...pinFrames],
   };
-  const pinsImages = transformPinsToImagesForMap(pins);
 
   return (
     <>
-      <Images
-        images={{
-          ...pinsImages,
-        }}
-      />
       <ShapeSource
         id="freshPins_usual"
+        key=""
         onPress={(e) => {
           if (e.features[0].id === selectedMarker?.id) setSelectedMarker(null);
           setSelectedMarker(
@@ -89,6 +86,8 @@ export const MarkerList: FC<Props> = ({
         shape={shape}
         hitbox={HITBOX}
         cluster={false}
+        minZoomLevel={0}
+        maxZoomLevel={24}
       >
         <SymbolLayer
           id={"freshPins_usual"}

@@ -26,6 +26,7 @@ import { ToastType, useToastStore } from "@/store/ToastStore";
 import styles from "./styles";
 import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
 import { filterMarkers } from "@/helpers/filterMarkers";
+import { VibesItem } from "@/types/SearchResponse";
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
@@ -54,12 +55,23 @@ export const Map = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
+  const [debouncedPins, setDebouncedPins] = useState<VibesItem[]>([]);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const camera = useRef<Mapbox.Camera | null>(null);
   const map = useRef<Mapbox.MapView | null>(null);
 
   const filteredPins = filterMarkers(pinsForBound, realtimeZoom, cameraBound);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedPins(pinsForBound);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [pinsForBound]);
 
   useEffect(() => {
     if (!location) return;
@@ -118,6 +130,7 @@ export const Map = () => {
   if (isLoading) {
     return <MapLoading />;
   }
+  const pinsImages = transformPinsToImagesForMap(pinsForBound);
 
   return (
     <View style={styles.page}>
@@ -149,6 +162,11 @@ export const Map = () => {
                 }}
               />
               <HeatmapLayer realtimeZoom={realtimeZoom} />
+              <Images
+                images={{
+                  ...pinsImages,
+                }}
+              />
 
               <Images
                 images={{
@@ -158,14 +176,12 @@ export const Map = () => {
                   frameSelectedStarted: require("@/assets/frame_selected_started.png"),
                 }}
               />
-
               <MarkerList
-                pins={filteredPins}
+                pins={debouncedPins}
                 setSelectedMarker={setSelectedMarker}
                 selectedMarker={selectedMarker}
                 realtimeZoom={realtimeZoom}
               />
-
               {location?.source === "gps" && (
                 <Mapbox.UserLocation
                   visible
@@ -174,7 +190,6 @@ export const Map = () => {
                 />
               )}
               <Mapbox.Camera ref={camera} />
-
               {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
                   zoomLevel={5}

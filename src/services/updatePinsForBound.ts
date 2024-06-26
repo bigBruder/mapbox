@@ -32,6 +32,8 @@ export const updatePinsForBound = (
     IncludeTotalCount: true,
     SingleItemPerVenue: true,
     Tags: selectedTag || undefined,
+    "Filter.OnePerCell": true,
+    // "GridIndex.Enable": true,
     ...dateParams,
   };
 
