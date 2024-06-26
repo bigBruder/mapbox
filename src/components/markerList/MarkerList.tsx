@@ -55,7 +55,7 @@ export const MarkerList: FC<Props> = ({
       properties: {
         priority: isSelected ? 1000 : index,
         icon: getFrameId(isAlreadyStarted, isSelected),
-        iconSize: (0.3 + pin.points / 100) * 2,
+        iconSize: (0.3 + pin.points / 100) * 1.6,
         iconOffset: [0, isSelected ? FRAME_OFFSET_Y_SELECTED : FRAME_OFFSET_Y],
         allowOverlap: true,
       },

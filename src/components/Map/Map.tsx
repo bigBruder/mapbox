@@ -30,16 +30,16 @@ import { VibesItem } from "@/types/SearchResponse";
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
-  const setMessage = useToastStore((state) => state.setMessage);
+  const clearMessage = useToastStore((state) => state.clearMessage);
 
   useEffect(() => {
     if (message.message) {
       Toast[message.type](message.message, "top");
     }
     setTimeout(() => {
-      setMessage({ message: "", type: ToastType.INFO });
+      clearMessage();
     });
-  }, [message]);
+  }, [message.message]);
 
   const {
     cameraBound,
@@ -75,12 +75,13 @@ export const Map = () => {
 
   useEffect(() => {
     if (!location) return;
+    const { longitude, latitude } = location;
 
     camera.current?.setCamera({
       zoomLevel: 5,
       animationDuration: 0,
       animationMode: "flyTo",
-      centerCoordinate: [location.longitude, location.latitude],
+      centerCoordinate: [longitude, latitude],
     });
     setTimeout(() => {
       setIsFirstFlyHappened(true);
@@ -89,14 +90,12 @@ export const Map = () => {
 
   useEffect(() => {
     if (!selectedMarker?.id) return;
+    const { longitude, latitude } = selectedMarker.venue.geo;
 
     camera.current?.setCamera({
       animationDuration: 500,
       animationMode: "flyTo",
-      centerCoordinate: [
-        selectedMarker.venue.geo.longitude,
-        selectedMarker.venue.geo.latitude,
-      ],
+      centerCoordinate: [longitude, latitude],
     });
   }, [selectedMarker?.id]);
 

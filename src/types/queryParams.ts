@@ -6,6 +6,8 @@ export type QueryParams = {
   "TopTags.Enable"?: boolean;
   "Heatmap.Enable"?: boolean;
   "Heatmap.Resolution"?: number;
+  "Filter.OnePerCell"?: boolean;
+  "GridIndex.Enable"?: boolean;
   After?: string;
   Before?: string;
   OrderBy: string;

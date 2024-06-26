@@ -13,6 +13,7 @@ interface ToastState {
     type: ToastType;
   };
   setMessage: (props: { message: string; type: ToastType }) => void;
+  clearMessage: () => void;
 }
 
 export const useToastStore = create<ToastState>()((set) => ({
@@ -27,4 +28,12 @@ export const useToastStore = create<ToastState>()((set) => ({
         type: props.type,
       },
     })),
+  clearMessage: () => {
+    set(() => ({
+      toast: {
+        message: "",
+        type: ToastType.INFO,
+      },
+    }));
+  },
 }));
