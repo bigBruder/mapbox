@@ -1,4 +1,6 @@
 import { getPinsForBound } from "@/api/client";
+import { getHeatmapResolutionByZoom } from "@/helpers/getHeatmapResolutionByZoom";
+import { getGridIndex } from "@/helpers/helpers";
 import { CameraBound } from "@/types/CameraBound";
 import { QueryParams } from "@/types/QueryParams";
 import { VibesItem } from "@/types/SearchResponse";
@@ -18,9 +20,9 @@ export const updatePinsForBound = (
 ) => {
   if (!cameraBound) return;
   const { ne, sw } = cameraBound.properties.bounds;
+  const zoom = cameraBound.properties.zoom;
   const center = cameraBound.properties.center;
   const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
-
   const queryParams: QueryParams = {
     "NE.Latitude": ne[1],
     "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
@@ -33,7 +35,9 @@ export const updatePinsForBound = (
     SingleItemPerVenue: true,
     Tags: selectedTag || undefined,
     "Filter.OnePerCell": true,
+    "Filter.Resolution": Math.round(getGridIndex(zoom)),
     // "GridIndex.Enable": true,
+    // "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
     ...dateParams,
   };
 
@@ -42,20 +46,25 @@ export const updatePinsForBound = (
     if (isClearUpdate) {
       setPinsForBound(response.value.vibes);
     } else {
-      const prevIds = pinsForBound.map((pin) => pin.id);
-      const filteredPins = response.value.vibes
-        .filter((vibe: VibesItem) => !prevIds.includes(vibe.id))
-        .reverse();
+      //     const prevIds = pinsForBound.map((pin) => pin.id);
+      //     const filteredPins = response.value.vibes
+      //       .filter((vibe: VibesItem) => !prevIds.includes(vibe.id))
+      //       .reverse();
+      //     setTags(Object.keys(response.value.tags));
+      //     setTotalResultsAmount((prev) => ({
+      //       ...prev,
+      //       visible: response.value.totalResults,
+      //     }));
+      //     if (filteredPins.length > 0) {
+      //       setPinsForBound((prev) =>
+      //         sortPinsByWeightAndDate([...prev, ...filteredPins])
+      //       );
+      //     }
+      //   }
+      // });
       setTags(Object.keys(response.value.tags));
-      setTotalResultsAmount((prev) => ({
-        ...prev,
-        visible: response.value.totalResults,
-      }));
-      if (filteredPins.length > 0) {
-        setPinsForBound((prev) =>
-          sortPinsByWeightAndDate([...prev, ...filteredPins])
-        );
-      }
+      const revertedArray = response.value.vibes.reverse();
+      setPinsForBound(revertedArray);
     }
   });
 };

@@ -24,7 +24,6 @@ import ToastManager, { Toast } from "toastify-react-native";
 import { useToastStore } from "@/store/ToastStore";
 
 import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
-import { filterMarkers } from "@/helpers/filterMarkers";
 import { VibesItem } from "@/types/SearchResponse";
 
 import styles from "./styles";
@@ -135,8 +134,6 @@ export const Map = () => {
   if (isLoading) {
     return <MapLoading />;
   }
-
-  console.log("render");
 
   return (
     <View style={styles.page}>

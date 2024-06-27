@@ -8,6 +8,7 @@ import { getPointsThreshold } from "@/helpers/filterMarkers";
 import { LocationIcon, PlusIcon } from "@/assets/icons";
 import { colors } from "@/constants/colors";
 import { styles } from "./styles";
+import { getGridIndex } from "@/helpers/helpers";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
@@ -68,6 +69,16 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
           }}
         >
           Zoom:{Math.round(cameraBound?.properties.zoom || 0)}{" "}
+        </Text>
+        <Text
+          style={{
+            color: colors.white,
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "left",
+          }}
+        >
+          Grid: {Math.floor(getGridIndex(cameraBound?.properties.zoom || 0))}
         </Text>
         <Text
           style={{
