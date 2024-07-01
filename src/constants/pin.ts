@@ -10,9 +10,6 @@ export const PIN_SYMBOL_LAYER_STYLE = {
   symbolSortKey: ["to-number", ["get", "priority"]],
   symbolZOrder: "auto",
   iconAllowOverlap: true,
-  iconOpacityTransition: {
-    duration: 500,
-    delay: 0,
-  },
+
   iconOffset: ["get", "iconOffset"],
 };

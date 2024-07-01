@@ -12,10 +12,10 @@ export const getFrameId = (isAlreadyStarted: boolean, isSelected: boolean) => {
 
 export function getGridIndex(zoomLevel: number): number {
   const minZoom = 0;
-  const maxZoom = 15;
+  const maxZoom = 13;
 
   const minGridIndex = 1;
-  const maxGridIndex = 10;
+  const maxGridIndex = 9;
   if (zoomLevel < minZoom) zoomLevel = minZoom;
   if (zoomLevel > maxZoom) zoomLevel = maxZoom;
 
