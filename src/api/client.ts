@@ -125,7 +125,7 @@ export const getWebPageMeta = async (url: string) => {
     if (meta && meta["og:title"].includes("Log in or sign")) return null;
     return meta;
   } catch (error) {
-    console.error("Error fetching metadata:", error);
+    console.error("Error fetching metadata:", error.message);
   }
 };
 

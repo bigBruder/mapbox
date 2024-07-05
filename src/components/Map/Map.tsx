@@ -32,15 +32,6 @@ import { useMapStore } from "@/store/MapStore";
 import { getGridIndex } from "@/helpers/helpers";
 import { getDateParams } from "@/helpers/getDateParams";
 
-const prefetchImages = async (imageUrls: string[]) => {
-  try {
-    const prefetchTasks = imageUrls.map((url) => Image.prefetch(url));
-    // const prefetchedImages = await Promise.all(prefetchTasks);
-  } catch (error) {
-    console.log("Error prefetching images:", error);
-  }
-};
-
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
   const vibes = useMapStore((state) => state.vibes);
@@ -48,6 +39,15 @@ export const Map = () => {
   const fetchVibes = useMapStore((state) => state.fetchVibes);
   const getAllVibes = useMapStore((state) => state.getAllVibes);
   const [visibleVibes, setVisibleVibes] = useState<VibesItem[]>([]);
+
+  // const prefetchImages = async (imageUrls: string[]) => {
+  //   try {
+  //     const prefetchTasks = imageUrls.map((url) => Image.prefetch(url));
+  //     const prefetchedImages = await Promise.all(prefetchTasks);
+  //   } catch (error) {
+  //     console.log("Error prefetching images:", error);
+  //   }
+  // };
 
   const { realTimeZoom, setRealTimeZoom } = useCameraStore((state) => ({
     realTimeZoom: state.realTimeZoom,
@@ -132,15 +132,14 @@ export const Map = () => {
 
   const pinsImages = transformPinsToImagesForMap(getAllVibes());
 
-  useEffect(() => {
-    try {
-      const imageUrls = Object.values(pinsImages).map((image) => image.uri);
-      console.log("Prefetching images...");
-      prefetchImages(imageUrls);
-    } catch (error) {
-      console.error("Error prefetching images:", error);
-    }
-  }, [getAllVibes]);
+  // useEffect(() => {
+  //   try {
+  //     const imageUrls = Object.values(pinsImages).map((image) => image.uri);
+  //     // const images = prefetchImages(imageUrls);
+  //   } catch (error) {
+  //     console.error("Error prefetching images:", error);
+  //   }
+  // }, [getAllVibes]);
 
   useEffect(() => {
     if (!location) return;
@@ -232,7 +231,10 @@ export const Map = () => {
               <Images
                 images={{ ...pinsImages }}
                 onImageMissing={(e) => {
-                  prefetchImages([e]);
+                  // prefetchImages([e]);
+                  setVisibleVibes((state) => [
+                    ...state.filter((pin) => "id:" + pin.icon !== e),
+                  ]);
                 }}
               />
               <Images

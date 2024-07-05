@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { DateSelectionModal } from "@/components/DateSelectionModal/DateSelectionModal";
 import { Tag } from "@/components/tag/Tag";
-import { DateToShortFormat } from "@/utils/dateToShortFormat";
 import MapContext from "@/providers/mapContext/MapContext";
 import { TotalResults } from "./TotalResults";
 import {
@@ -19,6 +18,7 @@ import {
   ShareIcon,
 } from "@/assets/icons";
 import { styles } from "./styles";
+import { dateToShortFormat } from "@/utils";
 
 interface Props {
   showModal: boolean;
@@ -73,9 +73,9 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
             <CalendarIcon />
             <Text>
               {selectedDate === "Custom"
-                ? DateToShortFormat(customDate.startDate) +
+                ? dateToShortFormat(customDate.startDate) +
                   " - " +
-                  DateToShortFormat(customDate.endDate)
+                  dateToShortFormat(customDate.endDate)
                 : selectedDate}
             </Text>
           </TouchableOpacity>

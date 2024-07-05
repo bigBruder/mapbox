@@ -53,7 +53,6 @@ export const useMapStore = create<MapState>((set, get) => ({
     set((state) => {
       const gridIndex =
         Math.round(realTimeZoom) > 10 ? 10 : Math.round(realTimeZoom);
-      console.log("gridIndex", gridIndex);
       if (gridIndex < 0 || gridIndex > 10) {
         console.warn("Grid index out of bounds:", gridIndex);
         return state;

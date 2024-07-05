@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getLocationByIp } from "@/utils/getLocationByIp";
+import { getLocationByIp } from "@/utils/getLocationByIP";
 import { ToastType, useToastStore } from "@/store/ToastStore";
 
 const useRealTimeLocation = () => {
