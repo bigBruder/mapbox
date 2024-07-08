@@ -27,6 +27,7 @@ const initialValue: MapContextType = {
   selectedDate: "Next Month",
   setSelectedDate: (date: string) => {},
   pinsForBound: [],
+  setPinsForBound: () => {},
   selectedTag: null,
   tags: [],
   setTags: (tags: string[]) => {},

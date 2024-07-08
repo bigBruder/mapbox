@@ -20,6 +20,7 @@ export type MapContextType = {
   selectedDate: string;
   setSelectedDate: (date: string) => void;
   pinsForBound: VibesItem[];
+  setPinsForBound: Dispatch<React.SetStateAction<VibesItem[]>>;
   selectedTag: string | null;
   setSelectedTag: Dispatch<React.SetStateAction<string | null>>;
   tags: string[];

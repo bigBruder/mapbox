@@ -8,6 +8,8 @@ export type QueryParams = {
   "Heatmap.Resolution"?: number;
   "Filter.OnePerCell"?: boolean;
   "GridIndex.Enable"?: boolean;
+  "Filter.Resolution"?: number;
+  "GridIndex.Resolution"?: number;
   After?: string;
   Before?: string;
   OrderBy: string;
