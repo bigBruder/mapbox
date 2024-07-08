@@ -34,10 +34,6 @@ import { getIconUrl } from "@/utils";
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
-  const vibes = useMapStore((state) => state.vibes);
-  const getVibes = useMapStore((state) => state.getVibes);
-  const [loadedImages, setLoadedImages] = useState({});
-
   const [debouncedVibes, setDebouncedVibes] = useState<VibesItem[]>([]);
   // const fetchVibes = useMapStore((state) => state.fetchVibes);
   // const getAllVibes = useMapStore((state) => state.getAllVibes);
@@ -70,6 +66,7 @@ export const Map = () => {
   }, [message.message]);
 
   const {
+    setPinsForBound,
     cameraBound,
     pinsForBound,
     selectedMarker,
@@ -272,9 +269,9 @@ export const Map = () => {
                   frameSelectedStarted: require("@/assets/frame_selected_started.png"),
                 }}
               /> */}
-              {pinsForBound && (
+              {debouncedVibes && (
                 <MarkerList
-                  pins={pinsForBound}
+                  pins={debouncedVibes}
                   setSelectedMarker={setSelectedMarker}
                   selectedMarker={selectedMarker}
                   realtimeZoom={realTimeZoom}

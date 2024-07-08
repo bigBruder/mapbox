@@ -36,8 +36,8 @@ export const updatePinsForBound = (
     Tags: selectedTag || undefined,
     "Filter.OnePerCell": true,
     "Filter.Resolution": Math.round(getGridIndex(zoom)),
-    // "GridIndex.Enable": true,
-    // "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
+    "GridIndex.Enable": true,
+    "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
     ...dateParams,
   };
 

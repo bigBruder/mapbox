@@ -1,10 +1,8 @@
 import { FC } from "react";
-import { Images, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
+import { ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import { VibesItem } from "@/types/SearchResponse";
 import { HITBOX, PIN_SYMBOL_LAYER_STYLE } from "@/constants/pin";
 import { getFrameId } from "@/helpers/helpers";
-import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
-import { useMapStore } from "@/store/MapStore";
 
 interface Props {
   pins: VibesItem[];
@@ -23,9 +21,9 @@ export const MarkerList: FC<Props> = ({
   setSelectedMarker,
   selectedMarker,
 }) => {
-  const getAllVibes = useMapStore((state) => state.getAllVibes);
   const pinsToDisplay = pins.map((pin, index) => {
     const isSelected = selectedMarker?.id === pin.id;
+
     return {
       type: "Feature",
       geometry: {
@@ -35,7 +33,7 @@ export const MarkerList: FC<Props> = ({
       properties: {
         priority: isSelected ? 1001 : index * 100 + 1,
         icon: pin.icon.replace("id:", ""),
-        iconSize: 0.2 + pin.points / 100,
+        iconSize: isSelected ? 0.3 + pin.points / 100 : 0.2 + pin.points / 100,
         iconOffset: [0, isSelected ? ICON_OFFSET_Y_SELECTED : ICON_OFFSET_Y],
         allowOverlap: true,
         allowIconOverlap: true,
@@ -70,19 +68,11 @@ export const MarkerList: FC<Props> = ({
 
   const shape = {
     type: "FeatureCollection",
-    features: [...pinFrames, ...pinsToDisplay], // Переконайтеся, що фрейми рендеряться нижче іконок
+    features: [...pinFrames, ...pinsToDisplay],
   };
-
-  // const pinsImages = transformPinsToImagesForMap(getAllVibes());
 
   return (
     <>
-      {/* <Images
-        images={{ ...pinsImages }}
-        onImageMissing={(e) => {
-          console.log("Image missing: ", e);
-        }}
-      /> */}
       <ShapeSource
         id="freshPins_usual"
         onPress={(e) => {
