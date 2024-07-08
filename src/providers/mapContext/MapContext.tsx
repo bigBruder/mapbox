@@ -56,23 +56,23 @@ export const MapContextProvider = ({
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   // update pins for bound
-  // useEffect(() => {
-  //   updatePinsForBound(
-  //     cameraBound,
-  //     selectedTag,
-  //     dateParams,
-  //     setPinsForBound,
-  //     setTags,
-  //     setTotalResultsAmount,
-  //     pinsForBound
-  //   );
-  // }, [
-  //   cameraBound?.properties.bounds.ne[0],
-  //   selectedTag,
-  //   selectedDate,
-  //   customDate.startDate,
-  //   customDate.endDate,
-  // ]);
+  useEffect(() => {
+    updatePinsForBound(
+      cameraBound,
+      selectedTag,
+      dateParams,
+      setPinsForBound,
+      setTags,
+      setTotalResultsAmount,
+      pinsForBound
+    );
+  }, [
+    cameraBound?.properties.bounds.ne[0],
+    selectedTag,
+    selectedDate,
+    customDate.startDate,
+    customDate.endDate,
+  ]);
 
   useEffect(() => {
     updateHeatmap(cameraBound, selectedTag, dateParams, setHeatMap);

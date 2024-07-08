@@ -16,6 +16,8 @@ export const transformPinsToImagesForMap = (
   const idsAdded: string[] = [];
   return pins.reduce((acc, pin) => {
     if (idsAdded.includes(pin.icon)) return acc;
+    if (pin.icon === "userLocationHeading") console.log("userLocationHeading");
+    if (pin.icon === "userLocationHeading") return acc;
     acc[pin.icon.replace("id:", "")] = {
       uri: getIconUrl(pin.icon),
     };
