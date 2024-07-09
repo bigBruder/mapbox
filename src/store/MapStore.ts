@@ -1,25 +1,30 @@
 import { getPinsForBound } from "@/api/client";
 import { QueryParams } from "@/types";
-import { VibesItem } from "@/types/SearchResponse";
+import { Heatmap, VibesItem } from "@/types/SearchResponse";
 import { create } from "zustand";
 
 interface MapState {
   vibes: { [key: number]: VibesItem[] }; // Об'єкт для зберігання vibes за grid index
+  heatMap: any;
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => void;
   getVibes: (gridIndex: number) => VibesItem[] | undefined;
   fetchVibes: (realTimeZoom: number, queryParams: QueryParams) => Promise<void>;
+  clearData: () => void;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
   vibes: {},
+  heatMap: [],
 
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) =>
     set((state) => {
-      const gridIndex = Math.round(realTimeZoom);
-      if (gridIndex < 1 || gridIndex > 10) {
-        console.warn("Grid index out of bounds:", gridIndex);
-        return state;
-      }
+      const gridIndex =
+        Math.round(realTimeZoom) < 1 ? 1 : Math.round(realTimeZoom);
+
+      // if (gridIndex < 1 || gridIndex > 10) {
+      //   console.warn("Grid index out of bounds:", gridIndex);
+      //   return state;
+      // }
 
       return {
         vibes: {
@@ -49,6 +54,12 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
     const response = await getPinsForBound(queryParams);
+    console.log("response vibes: ", response.value?.vibes);
+    const heatmap = response.value?.heatmap || [];
+
+    set((state) => ({
+      heatMap: heatmap,
+    }));
 
     set((state) => {
       const gridIndex =
@@ -69,7 +80,6 @@ export const useMapStore = create<MapState>((set, get) => ({
         resultedVibes.length > 100
           ? resultedVibes.slice(30, 100)
           : resultedVibes;
-
       return {
         vibes: {
           ...state.vibes,
@@ -77,5 +87,14 @@ export const useMapStore = create<MapState>((set, get) => ({
         },
       };
     });
+  },
+
+  clearData: () => {
+    set(() => ({
+      vibes: {},
+    }));
+    set(() => ({
+      heatMap: [],
+    }));
   },
 }));

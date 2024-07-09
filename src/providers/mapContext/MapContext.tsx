@@ -1,7 +1,5 @@
 import { createContext, useEffect, useMemo, useState } from "react";
 import initialValue from "./initialValue";
-import { getPinsForBound } from "@/api/client";
-import { updateHeatmap } from "@/services/updateHeatmap";
 import { updatePinsForBound } from "@/services/updatePinsForBound";
 import { Heatmap, VibesItem } from "@/types/SearchResponse";
 import { CameraBound } from "@/types/CameraBound";
@@ -41,74 +39,74 @@ export const MapContextProvider = ({
     [selectedDate, customDate]
   );
 
-  // clear update of pins
-  useEffect(() => {
-    updatePinsForBound(
-      cameraBound,
-      selectedTag,
-      dateParams,
-      setPinsForBound,
-      setTags,
-      setTotalResultsAmount,
-      [],
-      true
-    );
-  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+  // // clear update of pins
+  // useEffect(() => {
+  //   updatePinsForBound(
+  //     cameraBound,
+  //     selectedTag,
+  //     dateParams,
+  //     setPinsForBound,
+  //     setTags,
+  //     setTotalResultsAmount,
+  //     [],
+  //     true
+  //   );
+  // }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   // update pins for bound
-  useEffect(() => {
-    updatePinsForBound(
-      cameraBound,
-      selectedTag,
-      dateParams,
-      setPinsForBound,
-      setTags,
-      setTotalResultsAmount,
-      pinsForBound
-    );
-  }, [
-    cameraBound?.properties.bounds.ne[0],
-    selectedTag,
-    selectedDate,
-    customDate.startDate,
-    customDate.endDate,
-  ]);
+  // useEffect(() => {
+  //   updatePinsForBound(
+  //     cameraBound,
+  //     selectedTag,
+  //     dateParams,
+  //     setPinsForBound,
+  //     setTags,
+  //     setTotalResultsAmount,
+  //     pinsForBound
+  //   );
+  // }, [
+  //   cameraBound?.properties.bounds.ne[0],
+  //   selectedTag,
+  //   selectedDate,
+  //   customDate.startDate,
+  //   customDate.endDate,
+  // ]);
 
-  useEffect(() => {
-    updateHeatmap(cameraBound, selectedTag, dateParams, setHeatMap);
-  }, [
-    cameraBound?.properties.bounds.ne[0],
-    cameraBound?.properties.center[0],
-    cameraBound?.properties.zoom,
-    selectedTag,
-    selectedDate,
-    customDate.startDate,
-    customDate.endDate,
-  ]);
+  // useEffect(() => {
+  //   updateHeatmap(cameraBound, selectedTag, dateParams, setHeatMap);
+  // }, [
+  //   cameraBound?.properties.bounds.ne[0],
+  //   cameraBound?.properties.center[0],
+  //   cameraBound?.properties.zoom,
+  //   selectedTag,
+  //   selectedDate,
+  //   customDate.startDate,
+  //   customDate.endDate,
+  // ]);
 
-  useEffect(() => {
-    if (pinsForBound.length > 300) {
-      setPinsForBound((prev) => prev.slice(50));
-    }
-  }, [pinsForBound.length]);
+  // useEffect(() => {
+  //   if (pinsForBound.length > 300) {
+  //     setPinsForBound((prev) => prev.slice(50));
+  //   }
+  // }, [pinsForBound.length]);
 
-  useEffect(() => {
-    const queryParams: Partial<QueryParams> = {
-      PageSize: 1,
-      IncludeTotalCount: true,
-      Tags: selectedTag || undefined,
-      ...dateParams,
-    };
+  // useEffect(() => {
+  //   const queryParams: Partial<QueryParams> = {
+  //     PageSize: 1,
+  //     IncludeTotalCount: true,
+  //     Tags: selectedTag || undefined,
+  //     ...dateParams,
+  //   };
 
-    getPinsForBound(queryParams).then((response) => {
-      if (response?.value) {
-        setTotalResultsAmount((prev) => ({
-          ...prev,
-          total: response.value.totalResults,
-        }));
-      }
-    });
-  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+  //   getPinsForBound(queryParams).then((response) => {
+  //     if (response?.value) {
+  //       setTotalResultsAmount((prev) => ({
+  //         ...prev,
+  //         total: response.value.totalResults,
+  //       }));
+  //     }
+  //   });
+  // }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const value = {
     totalResultsAmount,

@@ -3,6 +3,7 @@ import { ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import { VibesItem } from "@/types/SearchResponse";
 import { HITBOX, PIN_SYMBOL_LAYER_STYLE } from "@/constants/pin";
 import { getFrameId } from "@/helpers/helpers";
+import { sortPinsByWeightAndDate } from "@/utils";
 
 interface Props {
   pins: VibesItem[];
@@ -21,7 +22,8 @@ export const MarkerList: FC<Props> = ({
   setSelectedMarker,
   selectedMarker,
 }) => {
-  const pinsToDisplay = pins.map((pin, index) => {
+  console.log(pins.map((pin) => pin.points * 10 + 1));
+  const pinsToDisplay = sortPinsByWeightAndDate(pins).map((pin, index) => {
     const isSelected = selectedMarker?.id === pin.id;
 
     return {
@@ -31,9 +33,11 @@ export const MarkerList: FC<Props> = ({
         coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
       },
       properties: {
-        priority: isSelected ? 1001 : index * 100 + 1,
+        priority: isSelected ? 10001 : pin.points * 10 + index + 1,
         icon: pin.icon.replace("id:", ""),
-        iconSize: isSelected ? 0.3 + pin.points / 100 : 0.2 + pin.points / 100,
+        iconSize: isSelected
+          ? (0.3 + pin.points / 100) * 1.2
+          : (0.2 + pin.points / 100) * 1.2,
         iconOffset: [0, isSelected ? ICON_OFFSET_Y_SELECTED : ICON_OFFSET_Y],
         allowOverlap: true,
         allowIconOverlap: true,
@@ -42,7 +46,7 @@ export const MarkerList: FC<Props> = ({
     };
   });
 
-  const pinFrames = pins.map((pin, index) => {
+  const pinFrames = sortPinsByWeightAndDate(pins).map((pin, index) => {
     const isAlreadyStarted = new Date() > new Date(pin.startsAt);
     const isSelected = selectedMarker?.id === pin.id;
     const { longitude, latitude } = pin.venue.geo;
@@ -54,15 +58,15 @@ export const MarkerList: FC<Props> = ({
         coordinates: [longitude, latitude],
       },
       properties: {
-        priority: isSelected ? 1000 : index * 100,
+        priority: isSelected ? 10000 : pin.points * 10 + index,
         icon: getFrameId(isAlreadyStarted, isSelected),
-        iconSize: (0.3 + pin.points / 100) * 1.6,
+        iconSize: (0.3 + pin.points / 100) * 1.6 * 1.2,
         iconOffset: [0, isSelected ? FRAME_OFFSET_Y_SELECTED : FRAME_OFFSET_Y],
         allowOverlap: true,
         backgroundPattern: "background",
         allowIconOverlap: true,
       },
-      id: pin.id,
+      id: pin.id + "_frame",
     };
   });
 
@@ -90,7 +94,7 @@ export const MarkerList: FC<Props> = ({
       >
         <SymbolLayer
           id={"freshPins_usual"}
-          layerIndex={85}
+          layerIndex={84}
           style={PIN_SYMBOL_LAYER_STYLE}
           minZoomLevel={0}
           maxZoomLevel={24}

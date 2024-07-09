@@ -30,14 +30,17 @@ import styles from "./styles";
 import { useCameraStore } from "@/store/CameraStore";
 import { useMapStore } from "@/store/MapStore";
 import { getGridIndex } from "@/helpers/helpers";
+import { getDateParams } from "@/helpers/getDateParams";
 import { getIconUrl } from "@/utils";
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
+  const heatmap = useMapStore((state) => state.heatMap);
   const [debouncedVibes, setDebouncedVibes] = useState<VibesItem[]>([]);
-  // const fetchVibes = useMapStore((state) => state.fetchVibes);
-  // const getAllVibes = useMapStore((state) => state.getAllVibes);
-  // const [visibleVibes, setVisibleVibes] = useState<VibesItem[]>([]);
+  const getVibes = useMapStore((state) => state.getVibes);
+  const fetchVibes = useMapStore((state) => state.fetchVibes);
+  const clearData = useMapStore((state) => state.clearData);
+  const vibes = useMapStore((state) => state.vibes);
 
   const prefetchImages = async (imageUrls: string[]) => {
     try {
@@ -71,7 +74,7 @@ export const Map = () => {
     pinsForBound,
     selectedMarker,
     setSelectedMarker,
-    heatMap,
+    // heatMap,
     setCameraBound,
     selectedTag,
     selectedDate,
@@ -93,32 +96,40 @@ export const Map = () => {
   //   customDate,
   // ]);
 
-  // useEffect(() => {
-  //   if (!cameraBound) return;
-  //   const { ne, sw } = cameraBound.properties.bounds;
-  //   const zoom = cameraBound.properties.zoom;
-  //   const center = cameraBound.properties.center;
-  //   const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
-  //   const dateParams = getDateParams(selectedDate, customDate);
-  //   const queryParams: QueryParams = {
-  //     "NE.Latitude": ne[1],
-  //     "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
-  //     "SW.Latitude": sw[1],
-  //     "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
-  //     OrderBy: "Points",
-  //     PageSize: 20,
-  //     "TopTags.Enable": true,
-  //     IncludeTotalCount: true,
-  //     SingleItemPerVenue: true,
-  //     Tags: selectedTag || undefined,
-  //     "Filter.OnePerCell": realTimeZoom > 13 ? false : true,
-  //     "Filter.Resolution": Math.round(getGridIndex(zoom)),
-  //     // "GridIndex.Enable": true,
-  //     // "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
-  //     ...dateParams,
-  //   };
-  //   fetchVibes(getGridIndex(Math.floor(zoom)), queryParams);
-  // }, [cameraBound?.properties.center[0], cameraBound?.properties.zoom]);
+  useEffect(() => {
+    if (!cameraBound) return;
+    const { ne, sw } = cameraBound.properties.bounds;
+    const zoom = cameraBound.properties.zoom;
+    const center = cameraBound.properties.center;
+    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
+    const dateParams = getDateParams(selectedDate, customDate);
+    const queryParams: QueryParams = {
+      "NE.Latitude": ne[1],
+      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
+      "SW.Latitude": sw[1],
+      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
+      OrderBy: "Points",
+      PageSize: 20,
+      "TopTags.Enable": true,
+      IncludeTotalCount: true,
+      SingleItemPerVenue: true,
+      Tags: selectedTag || undefined,
+      "Filter.OnePerCell": realTimeZoom > 13 ? false : true,
+      "Filter.Resolution": Math.round(getGridIndex(zoom)),
+      "Heatmap.Enable": true,
+      "Heatmap.Resolution": Math.round(getGridIndex(zoom)),
+      // "GridIndex.Enable": true,
+      // "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
+      ...dateParams,
+    };
+    console.log("getAllVIbers: ", vibes);
+    console.log("Grid index: ", getGridIndex(Math.floor(zoom)));
+    fetchVibes(getGridIndex(Math.floor(zoom)), queryParams);
+  }, [cameraBound?.properties.center[0], cameraBound?.properties.zoom]);
+
+  useEffect(() => {
+    clearData();
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
@@ -135,7 +146,6 @@ export const Map = () => {
   useEffect(() => {
     try {
       const imageUrls = Object.values(pinsImages).map((image) => image.uri);
-      console.log("Image urls: ", imageUrls);
       prefetchImages(imageUrls);
       // console.log(transformPinsToImagesForMap(pinsForBound));
       // const images = prefetchImages(imageUrls);
@@ -172,17 +182,16 @@ export const Map = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedVibes(pinsForBound);
+      setDebouncedVibes(getVibes(getGridIndex(Math.round(realTimeZoom))) || []);
     }, 500);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [pinsForBound]);
+  }, [getGridIndex(Math.floor(realTimeZoom))]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log(new Date());
       setCameraBound(realtimeCamera);
     }, 1000);
 
@@ -235,40 +244,34 @@ export const Map = () => {
                 setSelectedMarker(null);
               }}
             >
-              <Mapbox.ShapeSource
-                id={`heatmap`}
-                shape={{
-                  type: "FeatureCollection",
-                  features: transformDataToHeatData(heatMap.data),
-                }}
-              />
-              <HeatmapLayer realtimeZoom={realTimeZoom} />
+              {heatmap.data && (
+                <Mapbox.ShapeSource
+                  id={`heatmap`}
+                  shape={{
+                    type: "FeatureCollection",
+                    features: transformDataToHeatData(heatmap.data),
+                  }}
+                />
+              )}
+              {heatmap.data && <HeatmapLayer realtimeZoom={realTimeZoom} />}
+
               <Images
                 images={{
-                  ...transformPinsToImagesForMap(pinsForBound),
+                  ...transformPinsToImagesForMap(
+                    getVibes(getGridIndex(Math.floor(realTimeZoom))) || []
+                  ),
                   frame: require("@/assets/frame.png"),
                   frameStarted: require("@/assets/frame_started.png"),
                   frameSelected: require("@/assets/frame_selected.png"),
                   frameSelectedStarted: require("@/assets/frame_selected_started.png"),
-                  // ...missingImages,
                 }}
                 onImageMissing={(e) => {
-                  // console.log("Missing: ", getIconUrl(e));
                   prefetchImages([getIconUrl(e)]);
                   setPinsForBound((state) =>
                     state.filter((pin) => pin.icon.replace("id:", "") !== e)
                   );
-                  // console.log("Image missing: ", e);
                 }}
               />
-              {/* <Images
-                images={{
-                  frame: require("@/assets/frame.png"),
-                  frameStarted: require("@/assets/frame_started.png"),
-                  frameSelected: require("@/assets/frame_selected.png"),
-                  frameSelectedStarted: require("@/assets/frame_selected_started.png"),
-                }}
-              /> */}
               {debouncedVibes && (
                 <MarkerList
                   pins={debouncedVibes}
