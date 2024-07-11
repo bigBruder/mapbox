@@ -22,7 +22,6 @@ export const MarkerList: FC<Props> = ({
   setSelectedMarker,
   selectedMarker,
 }) => {
-  console.log(pins.map((pin) => pin.points * 10 + 1));
   const pinsToDisplay = sortPinsByWeightAndDate(pins).map((pin, index) => {
     const isSelected = selectedMarker?.id === pin.id;
 
@@ -36,8 +35,8 @@ export const MarkerList: FC<Props> = ({
         priority: isSelected ? 10001 : pin.points * 10 + index + 1,
         icon: pin.icon.replace("id:", ""),
         iconSize: isSelected
-          ? (0.3 + pin.points / 100) * 1.2
-          : (0.2 + pin.points / 100) * 1.2,
+          ? (0.3 + pin.points / 100) * 1.1
+          : (0.2 + pin.points / 100) * 1.1,
         iconOffset: [0, isSelected ? ICON_OFFSET_Y_SELECTED : ICON_OFFSET_Y],
         allowOverlap: true,
         allowIconOverlap: true,
@@ -60,7 +59,7 @@ export const MarkerList: FC<Props> = ({
       properties: {
         priority: isSelected ? 10000 : pin.points * 10 + index,
         icon: getFrameId(isAlreadyStarted, isSelected),
-        iconSize: (0.3 + pin.points / 100) * 1.6 * 1.2,
+        iconSize: (0.3 + pin.points / 100) * 1.6 * 1.1,
         iconOffset: [0, isSelected ? FRAME_OFFSET_Y_SELECTED : FRAME_OFFSET_Y],
         allowOverlap: true,
         backgroundPattern: "background",
@@ -89,15 +88,11 @@ export const MarkerList: FC<Props> = ({
         shape={shape}
         hitbox={HITBOX}
         cluster={false}
-        minZoomLevel={0}
-        maxZoomLevel={24}
       >
         <SymbolLayer
           id={"freshPins_usual"}
           layerIndex={84}
           style={PIN_SYMBOL_LAYER_STYLE}
-          minZoomLevel={0}
-          maxZoomLevel={24}
         />
       </ShapeSource>
     </>

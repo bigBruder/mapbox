@@ -4,7 +4,7 @@ import { Heatmap, VibesItem } from "@/types/SearchResponse";
 import { create } from "zustand";
 
 interface MapState {
-  vibes: { [key: number]: VibesItem[] }; // Об'єкт для зберігання vibes за grid index
+  vibes: { [key: number]: VibesItem[] };
   heatMap: any;
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => void;
   getVibes: (gridIndex: number) => VibesItem[] | undefined;
@@ -39,7 +39,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     return Object.values(vibes).flat();
   },
   getVibes: (gridIndex: number) => {
-    if (gridIndex < 1 || gridIndex > 10) {
+    if (gridIndex < 0 || gridIndex > 10) {
       console.warn("Grid index out of bounds:", gridIndex);
       return [];
     }
@@ -54,7 +54,6 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
     const response = await getPinsForBound(queryParams);
-    console.log("response vibes: ", response.value?.vibes);
     const heatmap = response.value?.heatmap || [];
 
     set((state) => ({
@@ -63,7 +62,7 @@ export const useMapStore = create<MapState>((set, get) => ({
 
     set((state) => {
       const gridIndex =
-        Math.round(realTimeZoom) > 10 ? 10 : Math.round(realTimeZoom);
+        Math.floor(realTimeZoom) > 10 ? 10 : Math.floor(realTimeZoom);
       if (gridIndex < 0 || gridIndex > 10) {
         console.warn("Grid index out of bounds:", gridIndex);
         return state;

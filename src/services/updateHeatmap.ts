@@ -33,3 +33,32 @@ export const updateHeatmap = (
     }
   });
 };
+
+export const updateInitialHeatmap = (
+  resolution: number,
+  selectedTag: string | null,
+  dateParams: Partial<QueryParams>,
+  setHeatMap: (heatmap: any) => void
+) => {
+  const params = {
+    "NE.Latitude": 90,
+    "NE.Longitude": 180,
+    "SW.Latitude": -90,
+    "SW.Longitude": -180,
+    "Heatmap.Resolution": resolution,
+    // "Heatmap.MaxResults": 100,
+    SingleItemPerVenue: true,
+    Tags: selectedTag || undefined,
+    ...dateParams,
+  };
+
+  getHeatmap(params).then((heatmap) => {
+    console.log("heatmap", heatmap);
+    if (heatmap?.value) {
+      setHeatMap((state) => ({
+        ...state,
+        [resolution]: heatmap.value.heatmap.data,
+      }));
+    }
+  });
+};

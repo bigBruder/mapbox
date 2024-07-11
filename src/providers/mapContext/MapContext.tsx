@@ -5,6 +5,7 @@ import { Heatmap, VibesItem } from "@/types/SearchResponse";
 import { CameraBound } from "@/types/CameraBound";
 import { QueryParams } from "@/types/QueryParams";
 import { getDateParams } from "@/helpers/getDateParams";
+import { updateHeatmap, updateInitialHeatmap } from "@/services/updateHeatmap";
 
 const MyContext = createContext(initialValue);
 
@@ -72,17 +73,13 @@ export const MapContextProvider = ({
   //   customDate.endDate,
   // ]);
 
-  // useEffect(() => {
-  //   updateHeatmap(cameraBound, selectedTag, dateParams, setHeatMap);
-  // }, [
-  //   cameraBound?.properties.bounds.ne[0],
-  //   cameraBound?.properties.center[0],
-  //   cameraBound?.properties.zoom,
-  //   selectedTag,
-  //   selectedDate,
-  //   customDate.startDate,
-  //   customDate.endDate,
-  // ]);
+  useEffect(() => {
+    updateInitialHeatmap(0, selectedTag, dateParams, setHeatMap);
+    updateInitialHeatmap(1, selectedTag, dateParams, setHeatMap);
+    updateInitialHeatmap(2, selectedTag, dateParams, setHeatMap);
+    updateInitialHeatmap(3, selectedTag, dateParams, setHeatMap);
+    updateInitialHeatmap(4, selectedTag, dateParams, setHeatMap);
+  }, []);
 
   // useEffect(() => {
   //   if (pinsForBound.length > 300) {

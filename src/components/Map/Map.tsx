@@ -69,6 +69,7 @@ export const Map = () => {
   }, [message.message]);
 
   const {
+    heatMap,
     setPinsForBound,
     cameraBound,
     pinsForBound,
@@ -122,10 +123,9 @@ export const Map = () => {
       // "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
       ...dateParams,
     };
-    console.log("getAllVIbers: ", vibes);
-    console.log("Grid index: ", getGridIndex(Math.floor(zoom)));
     fetchVibes(getGridIndex(Math.floor(zoom)), queryParams);
   }, [cameraBound?.properties.center[0], cameraBound?.properties.zoom]);
+  const GridIndex = Math.floor(getGridIndex(Math.round(realTimeZoom)));
 
   useEffect(() => {
     clearData();
@@ -182,13 +182,19 @@ export const Map = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedVibes(getVibes(getGridIndex(Math.round(realTimeZoom))) || []);
-    }, 500);
+      console.log("grid index ==> ", getGridIndex(Math.floor(realTimeZoom)));
+      console.log(
+        "vibes to display ==>",
+        getVibes(getGridIndex(Math.floor(realTimeZoom)))
+      );
+      console.log("realtime zoom ==>", realTimeZoom);
+      setDebouncedVibes(getVibes(getGridIndex(Math.floor(realTimeZoom))) || []);
+    }, 700);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [getGridIndex(Math.floor(realTimeZoom))]);
+  }, [GridIndex]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -221,6 +227,8 @@ export const Map = () => {
     return <MapLoading />;
   }
 
+  console.log(heatmap?.data);
+
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -235,7 +243,7 @@ export const Map = () => {
                 setCameraBound(e as CameraBound);
               }}
               onCameraChanged={(e) => {
-                const roundedZoom = Math.round(e.properties.zoom);
+                const roundedZoom = Math.floor(e.properties.zoom);
                 if (roundedZoom === realTimeZoom) return;
                 setRealtimeCamera(e as CameraBound);
                 setRealTimeZoom(roundedZoom);
@@ -244,7 +252,7 @@ export const Map = () => {
                 setSelectedMarker(null);
               }}
             >
-              {heatmap.data && (
+              {/* {heatmap.data && (
                 <Mapbox.ShapeSource
                   id={`heatmap`}
                   shape={{
@@ -252,14 +260,66 @@ export const Map = () => {
                     features: transformDataToHeatData(heatmap.data),
                   }}
                 />
+              )} */}
+
+              {heatMap[GridIndex] && (
+                <Mapbox.ShapeSource
+                  id={`heatmap`}
+                  shape={{
+                    type: "FeatureCollection",
+                    features: transformDataToHeatData({
+                      ...heatMap[GridIndex],
+                    }),
+                  }}
+                />
               )}
-              {heatmap.data && <HeatmapLayer realtimeZoom={realTimeZoom} />}
+              {heatMap[GridIndex] && (
+                <HeatmapLayer realtimeZoom={realTimeZoom} />
+              )}
+
+              {heatmap?.data && !heatMap[GridIndex] && (
+                <Mapbox.ShapeSource
+                  id={`heatmap`}
+                  shape={{
+                    type: "FeatureCollection",
+                    features: transformDataToHeatData(heatmap?.data),
+                  }}
+                />
+              )}
+              {heatmap?.data && !heatMap[GridIndex] && (
+                <HeatmapLayer realtimeZoom={realTimeZoom} />
+              )}
+              {/* {heatmap.data && <HeatmapLayer realtimeZoom={realTimeZoom} />}
+              {heatMap[GridIndex] && (
+                <HeatmapLayer realtimeZoom={realTimeZoom} />
+              )}
+
+              {heatmap.data && (
+                <Mapbox.ShapeSource
+                  id={`heatmap`}
+                  shape={{
+                    type: "FeatureCollection",
+                    features: heatMap[GridIndex]
+                      ? transformDataToHeatData({ ...heatMap[GridIndex] })
+                      : transformDataToHeatData(heatmap.data),
+                  }}
+                />
+              )} */}
+
+              {/* {heatMap[GridIndex] && (
+                <Mapbox.ShapeSource
+                  id={`heatmap`}
+                  shape={{
+                    type: "FeatureCollection",
+                    features: transformDataToHeatData(heatMap[GridIndex] || []),
+                  }}
+                />
+              )} */}
+              {/* {heatMap[GridIndex] && ( */}
 
               <Images
                 images={{
-                  ...transformPinsToImagesForMap(
-                    getVibes(getGridIndex(Math.floor(realTimeZoom))) || []
-                  ),
+                  ...transformPinsToImagesForMap(getVibes(GridIndex) || []),
                   frame: require("@/assets/frame.png"),
                   frameStarted: require("@/assets/frame_started.png"),
                   frameSelected: require("@/assets/frame_selected.png"),

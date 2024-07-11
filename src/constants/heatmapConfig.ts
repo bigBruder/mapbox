@@ -29,7 +29,7 @@ export const HEATMAP_CONFIG_STYLE = {
 };
 
 export const HEATMAP_CONFIG = {
-  id: `my-heatmap-source-1`,
+  id: `heatmap`,
   sourceID: `heatmap`,
   aboveLayerID: "waterway-label",
   sourceLayerID: "",

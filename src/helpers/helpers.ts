@@ -14,7 +14,7 @@ export function getGridIndex(zoomLevel: number): number {
   const minZoom = 0;
   const maxZoom = 13;
 
-  const minGridIndex = 1;
+  const minGridIndex = 0;
   const maxGridIndex = 9;
   if (zoomLevel < minZoom) zoomLevel = minZoom;
   if (zoomLevel > maxZoom) zoomLevel = maxZoom;
@@ -23,6 +23,6 @@ export function getGridIndex(zoomLevel: number): number {
     minGridIndex +
     ((zoomLevel - minZoom) * (maxGridIndex - minGridIndex)) /
       (maxZoom - minZoom);
-
-  return gridIndex;
+  const roundedGridIndex = Math.round(gridIndex);
+  return roundedGridIndex;
 }
