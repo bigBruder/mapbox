@@ -203,6 +203,24 @@ export const Map = () => {
     return <MapLoading />;
   }
 
+  const renderHeatmapLayer = () => {
+    const heatmapData = heatMap[heatmapResolution] || heatmap?.data;
+    if (!heatmapData) return null;
+
+    return (
+      <>
+        <Mapbox.ShapeSource
+          id={`heatmap`}
+          shape={{
+            type: "FeatureCollection",
+            features: transformDataToHeatData(heatmapData),
+          }}
+        />
+        <HeatmapLayer realtimeZoom={realTimeZoom} />
+      </>
+    );
+  };
+
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -226,33 +244,7 @@ export const Map = () => {
                 setSelectedMarker(null);
               }}
             >
-              {heatMap[heatmapResolution] && (
-                <Mapbox.ShapeSource
-                  id={`heatmap`}
-                  shape={{
-                    type: "FeatureCollection",
-                    features: transformDataToHeatData({
-                      ...heatMap[heatmapResolution],
-                    }),
-                  }}
-                />
-              )}
-              {heatMap[heatmapResolution] && (
-                <HeatmapLayer realtimeZoom={realTimeZoom} />
-              )}
-
-              {heatmap?.data && !heatMap[heatmapResolution] && (
-                <Mapbox.ShapeSource
-                  id={`heatmap`}
-                  shape={{
-                    type: "FeatureCollection",
-                    features: transformDataToHeatData(heatmap?.data),
-                  }}
-                />
-              )}
-              {heatmap?.data && !heatMap[heatmapResolution] && (
-                <HeatmapLayer realtimeZoom={realTimeZoom} />
-              )}
+              {renderHeatmapLayer()}
 
               <Images
                 images={{
