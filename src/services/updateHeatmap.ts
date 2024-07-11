@@ -53,7 +53,6 @@ export const updateInitialHeatmap = (
   };
 
   getHeatmap(params).then((heatmap) => {
-    console.log("heatmap", heatmap);
     if (heatmap?.value) {
       setHeatMap((state) => ({
         ...state,

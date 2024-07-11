@@ -1,11 +1,9 @@
 import { createContext, useEffect, useMemo, useState } from "react";
 import initialValue from "./initialValue";
-import { updatePinsForBound } from "@/services/updatePinsForBound";
 import { Heatmap, VibesItem } from "@/types/SearchResponse";
 import { CameraBound } from "@/types/CameraBound";
-import { QueryParams } from "@/types/QueryParams";
 import { getDateParams } from "@/helpers/getDateParams";
-import { updateHeatmap, updateInitialHeatmap } from "@/services/updateHeatmap";
+import { updateInitialHeatmap } from "@/services/updateHeatmap";
 
 const MyContext = createContext(initialValue);
 
@@ -74,12 +72,11 @@ export const MapContextProvider = ({
   // ]);
 
   useEffect(() => {
-    updateInitialHeatmap(0, selectedTag, dateParams, setHeatMap);
-    updateInitialHeatmap(1, selectedTag, dateParams, setHeatMap);
     updateInitialHeatmap(2, selectedTag, dateParams, setHeatMap);
     updateInitialHeatmap(3, selectedTag, dateParams, setHeatMap);
     updateInitialHeatmap(4, selectedTag, dateParams, setHeatMap);
-  }, []);
+    updateInitialHeatmap(5, selectedTag, dateParams, setHeatMap);
+  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   // useEffect(() => {
   //   if (pinsForBound.length > 300) {

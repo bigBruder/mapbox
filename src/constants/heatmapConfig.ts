@@ -1,3 +1,8 @@
+export const MIN_HEATMAP_RESOLUTION = 2;
+export const MAX_HEATMAP_RESOLUTION = 10;
+export const MIN_HEATMAP_ZOOM = 0;
+export const MAX_HEATMAP_ZOOM = 13;
+
 export const HEATMAP_CONFIG_STYLE = {
   // heatmapRadius: ["interpolate", ["linear"], ["zoom"], 0, 75, 9, 75, 15, 50],
   heatmapRadiusTransition: { duration: 2000 },

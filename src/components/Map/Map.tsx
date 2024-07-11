@@ -29,7 +29,7 @@ import { VibesItem } from "@/types/SearchResponse";
 import styles from "./styles";
 import { useCameraStore } from "@/store/CameraStore";
 import { useMapStore } from "@/store/MapStore";
-import { getGridIndex } from "@/helpers/helpers";
+import { getGridIndex, getHeatmapResolutionByZoom } from "@/helpers/helpers";
 import { getDateParams } from "@/helpers/getDateParams";
 import { getIconUrl } from "@/utils";
 
@@ -82,21 +82,6 @@ export const Map = () => {
     customDate,
   } = useContext(MapContext);
 
-  // useEffect(() => {
-  //   if (!vibes) return;
-  //   setVisibleVibes(getVibes(Math.floor(getGridIndex(realTimeZoom))) || []);
-  // }, [
-  //   realTimeZoom,
-  //   cameraBound,
-  //   selectedMarker,
-  //   setSelectedMarker,
-  //   heatMap,
-  //   setCameraBound,
-  //   selectedTag,
-  //   selectedDate,
-  //   customDate,
-  // ]);
-
   useEffect(() => {
     if (!cameraBound) return;
     const { ne, sw } = cameraBound.properties.bounds;
@@ -119,13 +104,12 @@ export const Map = () => {
       "Filter.Resolution": Math.round(getGridIndex(zoom)),
       "Heatmap.Enable": true,
       "Heatmap.Resolution": Math.round(getGridIndex(zoom)),
-      // "GridIndex.Enable": true,
-      // "GridIndex.Resolution": Math.round(getGridIndex(zoom)),
       ...dateParams,
     };
     fetchVibes(getGridIndex(Math.floor(zoom)), queryParams);
   }, [cameraBound?.properties.center[0], cameraBound?.properties.zoom]);
   const GridIndex = Math.floor(getGridIndex(Math.round(realTimeZoom)));
+  const heatmapResolution = getHeatmapResolutionByZoom(realTimeZoom);
 
   useEffect(() => {
     clearData();
@@ -147,8 +131,6 @@ export const Map = () => {
     try {
       const imageUrls = Object.values(pinsImages).map((image) => image.uri);
       prefetchImages(imageUrls);
-      // console.log(transformPinsToImagesForMap(pinsForBound));
-      // const images = prefetchImages(imageUrls);
     } catch (error) {
       console.error("Error prefetching images:", error);
     }
@@ -182,19 +164,13 @@ export const Map = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("grid index ==> ", getGridIndex(Math.floor(realTimeZoom)));
-      console.log(
-        "vibes to display ==>",
-        getVibes(getGridIndex(Math.floor(realTimeZoom)))
-      );
-      console.log("realtime zoom ==>", realTimeZoom);
       setDebouncedVibes(getVibes(getGridIndex(Math.floor(realTimeZoom))) || []);
     }, 700);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [GridIndex]);
+  }, [GridIndex, cameraBound?.properties.center]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -227,8 +203,6 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  console.log(heatmap?.data);
-
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -252,32 +226,22 @@ export const Map = () => {
                 setSelectedMarker(null);
               }}
             >
-              {/* {heatmap.data && (
-                <Mapbox.ShapeSource
-                  id={`heatmap`}
-                  shape={{
-                    type: "FeatureCollection",
-                    features: transformDataToHeatData(heatmap.data),
-                  }}
-                />
-              )} */}
-
-              {heatMap[GridIndex] && (
+              {heatMap[heatmapResolution] && (
                 <Mapbox.ShapeSource
                   id={`heatmap`}
                   shape={{
                     type: "FeatureCollection",
                     features: transformDataToHeatData({
-                      ...heatMap[GridIndex],
+                      ...heatMap[heatmapResolution],
                     }),
                   }}
                 />
               )}
-              {heatMap[GridIndex] && (
+              {heatMap[heatmapResolution] && (
                 <HeatmapLayer realtimeZoom={realTimeZoom} />
               )}
 
-              {heatmap?.data && !heatMap[GridIndex] && (
+              {heatmap?.data && !heatMap[heatmapResolution] && (
                 <Mapbox.ShapeSource
                   id={`heatmap`}
                   shape={{
@@ -286,36 +250,9 @@ export const Map = () => {
                   }}
                 />
               )}
-              {heatmap?.data && !heatMap[GridIndex] && (
+              {heatmap?.data && !heatMap[heatmapResolution] && (
                 <HeatmapLayer realtimeZoom={realTimeZoom} />
               )}
-              {/* {heatmap.data && <HeatmapLayer realtimeZoom={realTimeZoom} />}
-              {heatMap[GridIndex] && (
-                <HeatmapLayer realtimeZoom={realTimeZoom} />
-              )}
-
-              {heatmap.data && (
-                <Mapbox.ShapeSource
-                  id={`heatmap`}
-                  shape={{
-                    type: "FeatureCollection",
-                    features: heatMap[GridIndex]
-                      ? transformDataToHeatData({ ...heatMap[GridIndex] })
-                      : transformDataToHeatData(heatmap.data),
-                  }}
-                />
-              )} */}
-
-              {/* {heatMap[GridIndex] && (
-                <Mapbox.ShapeSource
-                  id={`heatmap`}
-                  shape={{
-                    type: "FeatureCollection",
-                    features: transformDataToHeatData(heatMap[GridIndex] || []),
-                  }}
-                />
-              )} */}
-              {/* {heatMap[GridIndex] && ( */}
 
               <Images
                 images={{
