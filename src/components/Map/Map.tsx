@@ -32,24 +32,31 @@ import { useMapStore } from "@/store/MapStore";
 import { getGridIndex, getHeatmapResolutionByZoom } from "@/helpers/helpers";
 import { getDateParams } from "@/helpers/getDateParams";
 import { getIconUrl } from "@/utils";
+import { HEATMAP_INITIAL_LEVELS } from "@/constants/heatmapConfig";
+import { updateInitialHeatmap } from "@/services/updateHeatmap";
+
+const prefetchImages = async (imageUrls: string[]) => {
+  try {
+    const prefetchTasks = imageUrls.map((url) => Image.prefetch(url));
+    const prefetchedImages = await Promise.all(prefetchTasks);
+  } catch (error) {
+    console.log("Error prefetching images:", error);
+  }
+};
 
 export const Map = () => {
   const message = useToastStore((state) => state.toast);
   const heatmap = useMapStore((state) => state.heatMap);
+  const selectedTag = useMapStore((state) => state.selectedTag);
   const [debouncedVibes, setDebouncedVibes] = useState<VibesItem[]>([]);
   const getVibes = useMapStore((state) => state.getVibes);
   const fetchVibes = useMapStore((state) => state.fetchVibes);
   const clearData = useMapStore((state) => state.clearData);
-  const vibes = useMapStore((state) => state.vibes);
-
-  const prefetchImages = async (imageUrls: string[]) => {
-    try {
-      const prefetchTasks = imageUrls.map((url) => Image.prefetch(url));
-      const prefetchedImages = await Promise.all(prefetchTasks);
-    } catch (error) {
-      console.log("Error prefetching images:", error);
-    }
-  };
+  const initialHeatmap = useMapStore((state) => state.initialHeatMap);
+  const setInitialHeatmap = useMapStore((state) => state.setInitialHeatMap);
+  const customDate = useMapStore((state) => state.customDate);
+  const camera = useMapStore((state) => state.camera);
+  const setCamera = useMapStore((state) => state.setCamera);
 
   const { realTimeZoom, setRealTimeZoom } = useCameraStore((state) => ({
     realTimeZoom: state.realTimeZoom,
@@ -68,27 +75,20 @@ export const Map = () => {
     return () => clearTimeout(timeoutId);
   }, [message.message]);
 
-  const {
-    heatMap,
-    setPinsForBound,
-    cameraBound,
-    pinsForBound,
-    selectedMarker,
-    setSelectedMarker,
-    // heatMap,
-    setCameraBound,
-    selectedTag,
-    selectedDate,
-    customDate,
-  } = useContext(MapContext);
+  const { selectedMarker, setSelectedMarker, selectedDate } =
+    useContext(MapContext);
 
-  useEffect(() => {
-    if (!cameraBound) return;
-    const { ne, sw } = cameraBound.properties.bounds;
-    const zoom = cameraBound.properties.zoom;
-    const center = cameraBound.properties.center;
+  const dateParams = useMemo(
+    () => getDateParams(selectedDate, customDate),
+    [selectedDate, customDate]
+  );
+
+  const getSearchParams = () => {
+    if (!camera) return;
+    const { ne, sw } = camera.properties.bounds;
+    const center = camera.properties.center;
     const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
-    const dateParams = getDateParams(selectedDate, customDate);
+
     const queryParams: QueryParams = {
       "NE.Latitude": ne[1],
       "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
@@ -101,18 +101,44 @@ export const Map = () => {
       SingleItemPerVenue: true,
       Tags: selectedTag || undefined,
       "Filter.OnePerCell": realTimeZoom > 13 ? false : true,
-      "Filter.Resolution": Math.round(getGridIndex(zoom)),
+      "Filter.Resolution": GridIndex,
       "Heatmap.Enable": true,
-      "Heatmap.Resolution": Math.round(getGridIndex(zoom)),
+      "Heatmap.Resolution": GridIndex,
       ...dateParams,
     };
-    fetchVibes(getGridIndex(Math.floor(zoom)), queryParams);
-  }, [cameraBound?.properties.center[0], cameraBound?.properties.zoom]);
-  const GridIndex = Math.floor(getGridIndex(Math.round(realTimeZoom)));
-  const heatmapResolution = getHeatmapResolutionByZoom(realTimeZoom);
+
+    return queryParams;
+  };
+
+  useEffect(() => {
+    const queryParams = getSearchParams();
+    if (!camera || !queryParams) return;
+    fetchVibes(GridIndex, queryParams);
+  }, [camera?.properties.center[0], camera?.properties.zoom]);
+
+  const GridIndex = useMemo(
+    () => Math.floor(getGridIndex(Math.round(realTimeZoom))),
+    [realTimeZoom]
+  );
+  const heatmapResolution = useMemo(
+    () => getHeatmapResolutionByZoom(realTimeZoom),
+    [realTimeZoom]
+  );
 
   useEffect(() => {
     clearData();
+    const searchParams = getSearchParams();
+    if (!searchParams) return;
+    fetchVibes(GridIndex, searchParams);
+
+    HEATMAP_INITIAL_LEVELS.map((resolution) => {
+      updateInitialHeatmap(
+        resolution,
+        selectedTag,
+        dateParams,
+        setInitialHeatmap
+      );
+    });
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
@@ -122,25 +148,23 @@ export const Map = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
-  const camera = useRef<Mapbox.Camera | null>(null);
+  const cameraRef = useRef<Mapbox.Camera | null>(null);
   const map = useRef<Mapbox.MapView | null>(null);
 
-  const pinsImages = transformPinsToImagesForMap(pinsForBound);
-
-  useEffect(() => {
-    try {
-      const imageUrls = Object.values(pinsImages).map((image) => image.uri);
-      prefetchImages(imageUrls);
-    } catch (error) {
-      console.error("Error prefetching images:", error);
-    }
-  }, [setCameraBound]);
+  // useEffect(() => {
+  //   try {
+  //     const imageUrls = Object.values(pinsImages).map((image) => image.uri);
+  //     prefetchImages(imageUrls);
+  //   } catch (error) {
+  //     console.error("Error prefetching images:", error);
+  //   }
+  // }, [setCameraBound]);
 
   useEffect(() => {
     if (!location) return;
     const { longitude, latitude } = location;
 
-    camera.current?.setCamera({
+    cameraRef.current?.setCamera({
       zoomLevel: 5,
       animationDuration: 0,
       animationMode: "flyTo",
@@ -155,7 +179,7 @@ export const Map = () => {
     if (!selectedMarker?.id) return;
     const { longitude, latitude } = selectedMarker.venue.geo;
 
-    camera.current?.setCamera({
+    cameraRef.current?.setCamera({
       animationDuration: 500,
       animationMode: "flyTo",
       centerCoordinate: [longitude, latitude],
@@ -170,11 +194,11 @@ export const Map = () => {
     return () => {
       clearTimeout(timer);
     };
-  }, [GridIndex, cameraBound?.properties.center]);
+  }, [GridIndex, camera?.properties.center]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCameraBound(realtimeCamera);
+      setCamera(realtimeCamera);
     }, 1000);
 
     return () => {
@@ -190,7 +214,7 @@ export const Map = () => {
     }
     if (!location) return;
     if (!isLoading) {
-      camera.current?.setCamera({
+      cameraRef.current?.setCamera({
         zoomLevel: 6,
         animationDuration: 2000,
         animationMode: "flyTo",
@@ -204,7 +228,7 @@ export const Map = () => {
   }
 
   const renderHeatmapLayer = () => {
-    const heatmapData = heatMap[heatmapResolution] || heatmap?.data;
+    const heatmapData = initialHeatmap[heatmapResolution] || heatmap;
     if (!heatmapData) return null;
 
     return (
@@ -232,7 +256,7 @@ export const Map = () => {
               ref={map}
               {...MAP_PROPS}
               onMapIdle={(e) => {
-                setCameraBound(e as CameraBound);
+                setCamera(e as CameraBound);
               }}
               onCameraChanged={(e) => {
                 const roundedZoom = Math.floor(e.properties.zoom);
@@ -256,9 +280,6 @@ export const Map = () => {
                 }}
                 onImageMissing={(e) => {
                   prefetchImages([getIconUrl(e)]);
-                  setPinsForBound((state) =>
-                    state.filter((pin) => pin.icon.replace("id:", "") !== e)
-                  );
                 }}
               />
               {debouncedVibes && (
@@ -276,7 +297,7 @@ export const Map = () => {
                   showsUserHeadingIndicator
                 />
               )}
-              <Mapbox.Camera ref={camera} />
+              <Mapbox.Camera ref={cameraRef} />
               {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
                   zoomLevel={5}
@@ -291,7 +312,7 @@ export const Map = () => {
             />
             <MapBottomContainer
               handleCenterCamera={handleCenterCamera}
-              cameraBound={cameraBound}
+              camera={camera}
             />
           </View>
         </View>

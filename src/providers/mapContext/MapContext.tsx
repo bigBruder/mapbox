@@ -1,9 +1,7 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 import initialValue from "./initialValue";
-import { Heatmap, VibesItem } from "@/types/SearchResponse";
+import { VibesItem } from "@/types/SearchResponse";
 import { CameraBound } from "@/types/CameraBound";
-import { getDateParams } from "@/helpers/getDateParams";
-import { updateInitialHeatmap } from "@/services/updateHeatmap";
 
 const MyContext = createContext(initialValue);
 
@@ -15,110 +13,13 @@ export const MapContextProvider = ({
   const [selectedMarker, setSelectedMarker] = useState<VibesItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState("Now");
-  const [tags, setTags] = useState<string[]>([]);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [cameraBound, setCameraBound] = useState<CameraBound | null>(null);
-  const [pinsForBound, setPinsForBound] = useState<VibesItem[]>([]);
-  const [totalResultsAmount, setTotalResultsAmount] = useState({
-    total: 0,
-    visible: 0,
-  });
-  const [heatMap, setHeatMap] = useState<Heatmap>({
-    data: {},
-    resolution: 9,
-    cellRadius: 100,
-  });
-  const [customDate, setCustomDate] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
-
-  const dateParams = useMemo(
-    () => getDateParams(selectedDate, customDate),
-    [selectedDate, customDate]
-  );
-
-  // // clear update of pins
-  // useEffect(() => {
-  //   updatePinsForBound(
-  //     cameraBound,
-  //     selectedTag,
-  //     dateParams,
-  //     setPinsForBound,
-  //     setTags,
-  //     setTotalResultsAmount,
-  //     [],
-  //     true
-  //   );
-  // }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
-
-  // update pins for bound
-  // useEffect(() => {
-  //   updatePinsForBound(
-  //     cameraBound,
-  //     selectedTag,
-  //     dateParams,
-  //     setPinsForBound,
-  //     setTags,
-  //     setTotalResultsAmount,
-  //     pinsForBound
-  //   );
-  // }, [
-  //   cameraBound?.properties.bounds.ne[0],
-  //   selectedTag,
-  //   selectedDate,
-  //   customDate.startDate,
-  //   customDate.endDate,
-  // ]);
-
-  useEffect(() => {
-    updateInitialHeatmap(2, selectedTag, dateParams, setHeatMap);
-    updateInitialHeatmap(3, selectedTag, dateParams, setHeatMap);
-    updateInitialHeatmap(4, selectedTag, dateParams, setHeatMap);
-    updateInitialHeatmap(5, selectedTag, dateParams, setHeatMap);
-  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
-
-  // useEffect(() => {
-  //   if (pinsForBound.length > 300) {
-  //     setPinsForBound((prev) => prev.slice(50));
-  //   }
-  // }, [pinsForBound.length]);
-
-  // useEffect(() => {
-  //   const queryParams: Partial<QueryParams> = {
-  //     PageSize: 1,
-  //     IncludeTotalCount: true,
-  //     Tags: selectedTag || undefined,
-  //     ...dateParams,
-  //   };
-
-  //   getPinsForBound(queryParams).then((response) => {
-  //     if (response?.value) {
-  //       setTotalResultsAmount((prev) => ({
-  //         ...prev,
-  //         total: response.value.totalResults,
-  //       }));
-  //     }
-  //   });
-  // }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const value = {
-    totalResultsAmount,
-    setTotalResultsAmount,
-    customDate,
-    setCustomDate,
     selectedDate,
     setSelectedDate,
-    selectedTag,
-    setSelectedTag,
-    pinsForBound,
-    setPinsForBound,
     cameraBound,
     setCameraBound,
-    heatMap,
-    setHeatMap,
-    tags,
-    setTags,
     selectedMarker,
     setSelectedMarker,
     showModal,

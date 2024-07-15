@@ -42,3 +42,5 @@ export const HEATMAP_CONFIG = {
   filter: [],
   minZoomLevel: 0,
 };
+
+export const HEATMAP_INITIAL_LEVELS = [2, 3, 4, 5];

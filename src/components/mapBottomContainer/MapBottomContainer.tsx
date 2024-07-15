@@ -9,34 +9,34 @@ import { LocationIcon, PlusIcon } from "@/assets/icons";
 import { colors } from "@/constants/colors";
 import { styles } from "./styles";
 import { getGridIndex } from "@/helpers/helpers";
+import { useMapStore } from "@/store/MapStore";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
-  cameraBound: CameraBound | null;
+  camera: CameraBound | null;
 }
 
 export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
   const [regionName, setRegionName] = useState<String>("");
-  const { cameraBound } = useContext(MapContext);
+  const camera = useMapStore((state) => state.camera);
 
   useEffect(() => {
-    if (!cameraBound) return;
+    if (!camera) return;
     try {
-      getRegionInfo(
-        cameraBound.properties.center,
-        cameraBound.properties.zoom
-      ).then((regionInfo) => {
-        const featureName = getRegionName(
-          regionInfo.features,
-          cameraBound.properties.zoom
-        );
-        if (featureName === regionName) return;
-        setRegionName(featureName || "");
-      });
+      getRegionInfo(camera.properties.center, camera.properties.zoom).then(
+        (regionInfo) => {
+          const featureName = getRegionName(
+            regionInfo.features,
+            camera.properties.zoom
+          );
+          if (featureName === regionName) return;
+          setRegionName(featureName || "");
+        }
+      );
     } catch (error) {
       console.error("Error fetching region info:", error);
     }
-  }, [cameraBound?.properties.center, cameraBound?.properties.zoom]);
+  }, [camera?.properties.center, camera?.properties.zoom]);
 
   return (
     <View style={styles.bottomContainer} pointerEvents="box-none">
@@ -48,7 +48,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
       </TouchableOpacity>
       <View style={styles.regionContainer} pointerEvents="box-none">
         <Text style={styles.pointText}>
-          {cameraBound?.properties?.zoom < 2 || !regionName
+          {camera?.properties?.zoom < 2 || !regionName
             ? "World"
             : regionName
             ? regionName
@@ -68,7 +68,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
             textAlign: "left",
           }}
         >
-          Zoom:{Math.round(cameraBound?.properties.zoom || 0)}{" "}
+          Zoom:{Math.round(camera?.properties.zoom || 0)}{" "}
         </Text>
         <Text
           style={{
@@ -78,7 +78,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
             textAlign: "left",
           }}
         >
-          Grid: {Math.floor(getGridIndex(cameraBound?.properties.zoom || 0))}
+          Grid: {Math.floor(getGridIndex(camera?.properties.zoom || 0))}
         </Text>
         <Text
           style={{
@@ -88,7 +88,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
             textAlign: "center",
           }}
         >
-          Points: {`>=${getPointsThreshold(cameraBound?.properties.zoom || 0)}`}
+          Points: {`>=${getPointsThreshold(camera?.properties.zoom || 0)}`}
         </Text>
       </View>
       <TouchableOpacity style={styles.addButton} onPress={() => {}}>

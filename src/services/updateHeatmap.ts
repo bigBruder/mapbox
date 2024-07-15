@@ -2,6 +2,7 @@ import { getHeatmap } from "@/api/client";
 import { getHeatmapResolutionByZoom } from "@/helpers/getHeatmapResolutionByZoom";
 import { CameraBound } from "@/types/CameraBound";
 import { QueryParams } from "@/types/QueryParams";
+import { Heatmap, HeatmapData } from "@/types/SearchResponse";
 
 export const updateHeatmap = (
   cameraBound: CameraBound | null,
@@ -38,7 +39,7 @@ export const updateInitialHeatmap = (
   resolution: number,
   selectedTag: string | null,
   dateParams: Partial<QueryParams>,
-  setHeatMap: (heatmap: any) => void
+  setInitialHeatmap: (resolution: number, heatmap: HeatmapData) => void
 ) => {
   const params = {
     "NE.Latitude": 90,
@@ -53,11 +54,9 @@ export const updateInitialHeatmap = (
   };
 
   getHeatmap(params).then((heatmap) => {
+    const heatmapData: HeatmapData = heatmap.value.heatmap.data;
     if (heatmap?.value) {
-      setHeatMap((state) => ({
-        ...state,
-        [resolution]: heatmap.value.heatmap.data,
-      }));
+      setInitialHeatmap(resolution, heatmapData);
     }
   });
 };

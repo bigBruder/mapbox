@@ -14,6 +14,7 @@ import MyContext from "../../providers/mapContext/MapContext";
 
 import styles from "./styles";
 import { DATE_RANGES } from "../../constants/dateRanges";
+import { useMapStore } from "@/store/MapStore";
 
 interface Props {
   onSelect: (date: string) => void;
@@ -26,29 +27,20 @@ export const DateSelectionModal: React.FC<Props> = ({
   onCloseModal,
   selectedDate,
 }) => {
-  const { customDate, setCustomDate, setSelectedDate } = useContext(MyContext);
+  const customDate = useMapStore((state) => state.customDate);
+  const setCustomDate = useMapStore((state) => state.setCustomDate);
+  const clearCustomDate = useMapStore((state) => state.clearCustomDate);
+  const setSelectedDate = useMapStore((state) => state.setSelectedDate);
+
   const [showDatePiker, setShowDatePiker] = useState(false);
 
-  const [startDate, setStartDate] = useState<DateType>(
-    customDate?.startDate || new Date()
-  );
-  const [endDate, setEndDate] = useState<DateType>(
-    customDate?.endDate || new Date()
-  );
-
-  const preparedStartDate = formatDate(startDate).split(",")[1];
-  const preparedEndDate = formatDate(endDate).split(",")[1];
+  const preparedStartDate = formatDate(customDate.startDate).split(",")[1];
+  const preparedEndDate = formatDate(customDate.endDate).split(",")[1];
 
   const handleClear = () => {
-    setCustomDate({
-      startDate: new Date(),
-      endDate: new Date(),
-    });
+    clearCustomDate();
 
     setSelectedDate("Now");
-
-    setStartDate(new Date());
-    setEndDate(new Date());
   };
 
   return (
@@ -125,11 +117,10 @@ export const DateSelectionModal: React.FC<Props> = ({
               todayContainerStyle={{
                 borderColor: "#fff",
               }}
-              startDate={startDate}
-              endDate={endDate}
+              startDate={customDate.startDate}
+              endDate={customDate.endDate}
               onChange={(params) => {
-                setStartDate(params.startDate);
-                setEndDate(params.endDate);
+                setCustomDate(params.startDate, params.endDate);
               }}
               minDate={new Date().setDate(new Date().getDate() - 1)}
               maxDate={new Date().setMonth(new Date().getMonth() + 3)}
@@ -137,7 +128,8 @@ export const DateSelectionModal: React.FC<Props> = ({
 
             <View>
               <Text style={styles.dateTime}>
-                {formatDate(startDate)} - {formatDate(endDate)}
+                {formatDate(customDate.startDate)} -{" "}
+                {formatDate(customDate.endDate)}
               </Text>
             </View>
 
@@ -148,10 +140,7 @@ export const DateSelectionModal: React.FC<Props> = ({
                   return;
                 }
                 setShowDatePiker(false);
-                setCustomDate({
-                  startDate: startDate,
-                  endDate: endDate,
-                });
+                setCustomDate(startDate, endDate);
               }}
             >
               <Text style={styles.textApplyDate}>Apply</Text>

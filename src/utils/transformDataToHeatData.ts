@@ -1,5 +1,7 @@
+import { Heatmap, HeatmapData } from "@/types/SearchResponse";
+
 export function transformDataToHeatData(data: {
-  [key: string]: number;
+  data: HeatmapData;
   //@ts-ignore
 }): Array<Feature<PointGeometry, Properties>> {
   const features = [];

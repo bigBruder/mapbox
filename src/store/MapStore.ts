@@ -1,21 +1,50 @@
 import { getPinsForBound } from "@/api/client";
-import { QueryParams } from "@/types";
-import { VibesItem } from "@/types/SearchResponse";
+import { CameraBound, QueryParams } from "@/types";
+import { Heatmap, HeatmapData, VibesItem } from "@/types/SearchResponse";
 import { create } from "zustand";
 
 interface MapState {
   vibes: { [key: number]: VibesItem[] };
-  heatMap: any;
+  heatMap: HeatmapData;
+  initialHeatMap: {
+    [key: string]: Heatmap; // key is resolution level
+  };
+  tags: string[];
+  selectedTag: string | null;
+  totalResults: number;
+  totalResultsInVisibleArea: number;
+  customDate: {
+    startDate: Date;
+    endDate: Date;
+  };
+  selectedDate: string;
+  camera: CameraBound | null;
+  setSelectedDate: (date: string) => void;
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => void;
+  setInitialHeatMap: (resolution: number, heatmapData: HeatmapData) => void;
+  setCustomDate: (startDate: Date, endDate: Date) => void;
   getVibes: (gridIndex: number) => VibesItem[] | undefined;
+  setSelectedTag: (tag: string | null) => void;
   fetchVibes: (realTimeZoom: number, queryParams: QueryParams) => Promise<void>;
   clearData: () => void;
+  clearCustomDate: () => void;
+  setCamera: (camera: CameraBound | null) => void;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
   vibes: {},
-  heatMap: [],
-
+  heatMap: {},
+  totalResults: 0,
+  totalResultsInVisibleArea: 0,
+  tags: [],
+  initialHeatMap: {},
+  selectedTag: "",
+  customDate: {
+    startDate: new Date(),
+    endDate: new Date(),
+  },
+  selectedDate: "Now",
+  camera: null,
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => {
     const gridIndex = Math.max(1, Math.round(realTimeZoom));
     set((state) => ({
@@ -26,7 +55,48 @@ export const useMapStore = create<MapState>((set, get) => ({
     }));
   },
 
-  getAllVibes: () => Object.values(get().vibes).flat(),
+  setSelectedDate: (date: string) => {
+    set(() => ({
+      selectedDate: date,
+    }));
+  },
+  setSelectedTag: (tag: string | null) => {
+    set(() => ({
+      selectedTag: tag,
+    }));
+  },
+  setTotalResults: (totalResults: number) => {
+    set(() => ({
+      totalResults: totalResults,
+    }));
+  },
+  setTotalResultsInBounds: (totalResultsInVisibleArea: number) => {
+    set(() => ({
+      totalResultsInVisibleArea: totalResultsInVisibleArea,
+    }));
+  },
+
+  setInitialHeatMap: (resolution, heatmapData) => {
+    set((state) => ({
+      initialHeatMap: {
+        ...state.initialHeatMap,
+        [resolution]: heatmapData,
+      },
+    }));
+  },
+  setCustomDate: (startDate, endDate) => {
+    set(() => ({
+      customDate: {
+        startDate: startDate,
+        endDate: endDate,
+      },
+    }));
+  },
+  setCamera: (camera: CameraBound | null) => {
+    set(() => ({
+      camera: camera,
+    }));
+  },
 
   getVibes: (gridIndex: number) => {
     if (gridIndex < 0 || gridIndex > 10) {
@@ -41,9 +111,11 @@ export const useMapStore = create<MapState>((set, get) => ({
     );
   },
 
+  getAllVibes: () => Object.values(get().vibes).flat(),
   fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
     const response = await getPinsForBound(queryParams);
-    const heatmap = response.value?.heatmap || [];
+    const heatmap = response.value?.heatmap.data || [];
+    const totalResultsInVisibleArea = response.value?.totalResults || 0;
 
     const gridIndex = Math.min(10, Math.max(0, Math.floor(realTimeZoom)));
 
@@ -52,18 +124,29 @@ export const useMapStore = create<MapState>((set, get) => ({
       return;
     }
 
-    set((state) => ({
+    set(() => ({
+      tags: Object.keys(response.value?.tags) || [],
+    }));
+
+    set(() => ({
+      totalResultsInVisibleArea: totalResultsInVisibleArea,
+    }));
+
+    set(() => ({
       heatMap: heatmap,
     }));
+
+    const vibes: VibesItem[] = response?.value?.vibes;
+    if (!vibes) return;
 
     set((state) => {
       const oldVibes = state.vibes[gridIndex] || [];
       const oldVibesIds = new Set(oldVibes.map((vibe) => vibe.id));
       const filteredNewVibes =
-        response?.value?.vibes.filter((vibe) => !oldVibesIds.has(vibe.id)) ||
-        [];
+        vibes.filter((vibe) => !oldVibesIds.has(vibe.id)) || [];
       const resultedVibes = [...oldVibes, ...filteredNewVibes];
       const cutedVibes = resultedVibes.slice(-100);
+
       return {
         vibes: {
           ...state.vibes,
@@ -76,7 +159,16 @@ export const useMapStore = create<MapState>((set, get) => ({
   clearData: () => {
     set(() => ({
       vibes: {},
-      heatMap: [],
+      heatMap: {},
+      initialHeatMap: {},
+    }));
+  },
+  clearCustomDate: () => {
+    set(() => ({
+      customDate: {
+        startDate: new Date(),
+        endDate: new Date(),
+      },
     }));
   },
 }));

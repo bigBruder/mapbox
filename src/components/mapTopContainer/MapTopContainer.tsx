@@ -19,6 +19,7 @@ import {
 } from "@/assets/icons";
 import { styles } from "./styles";
 import { dateToShortFormat } from "@/utils";
+import { useMapStore } from "@/store/MapStore";
 
 interface Props {
   showModal: boolean;
@@ -26,15 +27,12 @@ interface Props {
 }
 
 export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
-  const {
-    totalResultsAmount,
-    customDate,
-    selectedDate,
-    setSelectedDate,
-    selectedTag,
-    setSelectedTag,
-    tags,
-  } = useContext(MapContext);
+  const selectedTag = useMapStore((state) => state.selectedTag);
+  const setSelectedTag = useMapStore((state) => state.setSelectedTag);
+  const { selectedDate, setSelectedDate } = useContext(MapContext);
+  const customDate = useMapStore((state) => state.customDate);
+  const totalResults = useMapStore((state) => state.totalResultsInVisibleArea);
+  const tags = useMapStore((state) => state.tags);
   const handleDateSelect = (date: string) => {
     setSelectedDate(date);
   };
@@ -48,10 +46,7 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
           <SearchIcon />
           <TextInput placeholder="Search" style={styles.search} />
         </View>
-        <TotalResults
-          total={totalResultsAmount.total}
-          visible={totalResultsAmount.visible}
-        />
+        <TotalResults total={totalResults} visible={totalResults} />
         <TouchableOpacity style={styles.searchButton}>
           <ShareIcon />
         </TouchableOpacity>
@@ -91,7 +86,7 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
                 .map((tag, id) => (
                   <TouchableOpacity
                     onPress={() =>
-                      setSelectedTag((prev) => (prev === tag ? null : tag))
+                      setSelectedTag(selectedTag === tag ? null : tag)
                     }
                     key={tag}
                   >
