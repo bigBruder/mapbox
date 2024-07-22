@@ -223,7 +223,9 @@ export const Map = () => {
     }
   };
 
-  if (isLoading) {
+  const isMapReady = map.current?.state.isReady || false;
+
+  if (isLoading && !isMapReady) {
     return <MapLoading />;
   }
 

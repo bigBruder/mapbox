@@ -32,8 +32,8 @@ const useRealTimeLocation = () => {
 
           subscription = await Location.watchPositionAsync(
             {
-              accuracy: Location.Accuracy.High,
-              timeInterval: 5000, // Update every 5 seconds
+              accuracy: Location.Accuracy.Balanced,
+              timeInterval: 10000, // Update every 5 seconds
               distanceInterval: 5, // Update every 5 meters
             },
             (newLocation) => {
