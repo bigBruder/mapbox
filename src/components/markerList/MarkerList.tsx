@@ -89,11 +89,7 @@ export const MarkerList: FC<Props> = ({
         hitbox={HITBOX}
         cluster={false}
       >
-        <SymbolLayer
-          id={"freshPins_usual"}
-          layerIndex={84}
-          style={PIN_SYMBOL_LAYER_STYLE}
-        />
+        <SymbolLayer id={"freshPins_usual"} style={PIN_SYMBOL_LAYER_STYLE} />
       </ShapeSource>
     </>
   );

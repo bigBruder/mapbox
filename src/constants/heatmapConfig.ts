@@ -38,7 +38,7 @@ export const HEATMAP_CONFIG = {
   sourceID: `heatmap`,
   aboveLayerID: "waterway-label",
   sourceLayerID: "",
-  layerIndex: 5,
+  type: "heatmap",
   filter: [],
   minZoomLevel: 0,
 };

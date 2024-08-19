@@ -20,7 +20,6 @@
       "bundleIdentifier": "com.qnowing"
     },
     "android": {
-
       "package": "android.com"
     },
     "web": {
@@ -30,7 +29,8 @@
       [
         "@rnmapbox/maps",
         {
-          "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoicm9tb250aGVyb2NrIiwiYSI6ImNsdmdnNDJtMzA2M2YyaW55ZDM0cmNicHQifQ.yMHrUcpVnuaMRIS34kkjpA"
+          "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoicm9tb250aGVyb2NrIiwiYSI6ImNsdmdnNDJtMzA2M2YyaW55ZDM0cmNicHQifQ.yMHrUcpVnuaMRIS34kkjpA",
+          "RNMapboxMapsVersion": "11.4.0"
         }
       ],
       [

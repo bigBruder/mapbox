@@ -1,6 +1,10 @@
 import { getPinsForBound } from "@/api/client";
 import { CameraBound, QueryParams } from "@/types";
-import { Heatmap, HeatmapData, VibesItem } from "@/types/SearchResponse";
+import {
+  Heatmap,
+  HeatmapData,
+  VibesItem,
+} from "@/types/responses/SearchResponse";
 import { create } from "zustand";
 
 interface MapState {
@@ -99,10 +103,14 @@ export const useMapStore = create<MapState>((set, get) => ({
   },
 
   getVibes: (gridIndex: number) => {
-    if (gridIndex < 0 || gridIndex > 10) {
-      console.warn("Grid index out of bounds:", gridIndex);
-      return [];
+    let normalizedGridIndex = gridIndex;
+    if (normalizedGridIndex < 0) {
+      normalizedGridIndex = 0;
     }
+    if (normalizedGridIndex > 10) {
+      normalizedGridIndex = 9;
+    }
+
     const vibes = get().vibes;
     return (
       Object.keys(vibes)
@@ -114,14 +122,17 @@ export const useMapStore = create<MapState>((set, get) => ({
   getAllVibes: () => Object.values(get().vibes).flat(),
   fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
     const response = await getPinsForBound(queryParams);
+    if (!response) return;
     const heatmap = response.value?.heatmap.data || [];
     const totalResultsInVisibleArea = response.value?.totalResults || 0;
 
-    const gridIndex = Math.min(10, Math.max(0, Math.floor(realTimeZoom)));
+    let gridIndex = Math.min(10, Math.max(0, Math.floor(realTimeZoom)));
 
-    if (gridIndex < 0 || gridIndex > 10) {
-      console.warn("Grid index out of bounds:", gridIndex);
-      return;
+    if (gridIndex > 9) {
+      gridIndex = 9;
+    }
+    if (gridIndex < 0) {
+      gridIndex = 0;
     }
 
     set(() => ({

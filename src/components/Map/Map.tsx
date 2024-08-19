@@ -1,5 +1,12 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { View, Image } from "react-native";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { View } from "react-native";
 import Mapbox, { Images } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
@@ -24,31 +31,33 @@ import ToastManager, { Toast } from "toastify-react-native";
 import { useToastStore } from "@/store/ToastStore";
 
 import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
-import { VibesItem } from "@/types/SearchResponse";
+import { VibesItem } from "@/types/responses/SearchResponse";
 
-import styles from "./styles";
 import { useCameraStore } from "@/store/CameraStore";
 import { useMapStore } from "@/store/MapStore";
 import { getGridIndex, getHeatmapResolutionByZoom } from "@/helpers/helpers";
 import { getDateParams } from "@/helpers/getDateParams";
-import { getIconUrl } from "@/utils";
 import { HEATMAP_INITIAL_LEVELS } from "@/constants/heatmapConfig";
 import { updateInitialHeatmap } from "@/services/updateHeatmap";
 
-const prefetchImages = async (imageUrls: string[]) => {
-  try {
-    const prefetchTasks = imageUrls.map((url) => Image.prefetch(url));
-    const prefetchedImages = await Promise.all(prefetchTasks);
-  } catch (error) {
-    console.log("Error prefetching images:", error);
-  }
-};
+import { useH3Hexagons } from "@/hooks/useH3Hexagons";
+import h3 from "h3-js";
+
+import styles from "./styles";
+import { HexagonsLayer } from "./HexagonsLayer";
+import { useHexagonsStore } from "@/store/hexagonsStore";
 
 export const Map = () => {
+  const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
+    null
+  );
   const message = useToastStore((state) => state.toast);
   const heatmap = useMapStore((state) => state.heatMap);
   const selectedTag = useMapStore((state) => state.selectedTag);
   const [debouncedVibes, setDebouncedVibes] = useState<VibesItem[]>([]);
+  const [debouncedCamera, setDebouncedCamera] = useState<CameraBound | null>(
+    null
+  );
   const getVibes = useMapStore((state) => state.getVibes);
   const fetchVibes = useMapStore((state) => state.fetchVibes);
   const clearData = useMapStore((state) => state.clearData);
@@ -57,23 +66,37 @@ export const Map = () => {
   const customDate = useMapStore((state) => state.customDate);
   const camera = useMapStore((state) => state.camera);
   const setCamera = useMapStore((state) => state.setCamera);
-
   const { realTimeZoom, setRealTimeZoom } = useCameraStore((state) => ({
     realTimeZoom: state.realTimeZoom,
     setRealTimeZoom: state.setRealTimeZoom,
   }));
+  const { selectedPolygon, setSelectedPolygon } = useHexagonsStore((state) => ({
+    setSelectedPolygon: state.setSelectedPolygon,
+    selectedPolygon: state.selectedPolygon,
+  }));
+
+  useH3Hexagons(debouncedCamera);
+
+  // useEffect(() => {
+  //   if (!isAutoH3Index) {
+  //     const resolutionOnLevel = getH3ResolutionByZoom(realTimeZoom);
+  //     setH3Index(resolutionOnLevel);
+  //     setPolygons([]);
+  //   }
+  // }, [isAutoH3Index]);
+
   const clearMessage = useToastStore((state) => state.clearMessage);
 
-  useEffect(() => {
-    if (message.message) {
-      Toast[message.type](message.message, "top");
-    }
-    const timeoutId = setTimeout(() => {
-      clearMessage();
-    }, 3000);
+  // useEffect(() => {
+  //   if (message.message) {
+  //     Toast[message.type](message.message, "top");
+  //   }
+  //   const timeoutId = setTimeout(() => {
+  //     clearMessage();
+  //   }, 3000);
 
-    return () => clearTimeout(timeoutId);
-  }, [message.message]);
+  //   return () => clearTimeout(timeoutId);
+  // }, [message.message]);
 
   const { selectedMarker, setSelectedMarker, selectedDate } =
     useContext(MapContext);
@@ -111,10 +134,18 @@ export const Map = () => {
   };
 
   useEffect(() => {
-    const queryParams = getSearchParams();
-    if (!camera || !queryParams) return;
-    fetchVibes(GridIndex, queryParams);
-  }, [camera?.properties.center[0], camera?.properties.zoom]);
+    const timer = setTimeout(() => {
+      setDebouncedCamera(realtimeCamera);
+    });
+
+    return () => clearTimeout(timer);
+  }, [realtimeCamera]);
+
+  // useEffect(() => {
+  //   const queryParams = getSearchParams();
+  //   if (!camera || !queryParams) return;
+  //   fetchVibes(camera.properties.zoom, queryParams);
+  // }, [camera?.properties.center[0], camera?.properties.zoom]);
 
   const GridIndex = useMemo(
     () => Math.floor(getGridIndex(Math.round(realTimeZoom))),
@@ -142,23 +173,11 @@ export const Map = () => {
   }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
-  const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
-    null
-  );
   const [showModal, setShowModal] = useState(false);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
   const cameraRef = useRef<Mapbox.Camera | null>(null);
   const map = useRef<Mapbox.MapView | null>(null);
-
-  // useEffect(() => {
-  //   try {
-  //     const imageUrls = Object.values(pinsImages).map((image) => image.uri);
-  //     prefetchImages(imageUrls);
-  //   } catch (error) {
-  //     console.error("Error prefetching images:", error);
-  //   }
-  // }, [setCameraBound]);
 
   useEffect(() => {
     if (!location) return;
@@ -205,6 +224,28 @@ export const Map = () => {
       clearTimeout(timer);
     };
   }, [realtimeCamera]);
+
+  // const handleMapPress = (event) => {
+  //   const { geometry } = event;
+  //   const [longitude, latitude] = geometry.coordinates;
+  //   const h3Index = h3.latLngToCell(longitude, latitude, 3);
+  //   const hexBoundary = h3.cellToBoundary(h3Index, true);
+  //   // const hexCenterCoordinates = h3.cellToLatLng(h3Index);
+  //   // const hexBoundary = h3.cellToBoundary(h3Index);
+  //   const hexagonsGeoJson = {
+  //     type: "Feature",
+  //     geometry: {
+  //       type: "Polygon",
+  //       coordinates: [
+  //         hexBoundary.map((coord) => [coord[1], coord[0]])
+  //       ],
+  //       properties: {
+  //         id: 22,
+  //       },
+  //     },
+  //   };
+  //   setSelectedPolygon(hexagonsGeoJson);
+  // };
 
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
@@ -257,20 +298,47 @@ export const Map = () => {
               style={styles.map}
               ref={map}
               {...MAP_PROPS}
+              projection="globe"
               onMapIdle={(e) => {
                 setCamera(e as CameraBound);
               }}
               onCameraChanged={(e) => {
                 const roundedZoom = Math.floor(e.properties.zoom);
-                if (roundedZoom === realTimeZoom) return;
                 setRealtimeCamera(e as CameraBound);
                 setRealTimeZoom(roundedZoom);
               }}
-              onPress={() => {
+              onPress={(e) => {
+                // handleMapPress(e);
                 setSelectedMarker(null);
               }}
             >
               {renderHeatmapLayer()}
+              
+
+                { selectedPolygon && 
+                  <Mapbox.ShapeSource
+                  key={"" + 100}
+                  id={`polygon-line`}
+                  shape={{
+                    type: "FeatureCollection",
+                    features: [
+                      selectedPolygon
+                    ],
+                  }}
+                  onPress={() => {}} // Add an empty onPress to prevent interaction delays
+                >
+                  <Mapbox.FillLayer
+                    id={`polygon-line`}
+                    style={{
+                      fillColor: "red",
+                      fillOpacity: 1,
+                      visibility: "visible",
+                    }}
+                    layerIndex={87}
+                    
+                  />
+                </Mapbox.ShapeSource>
+                }
 
               <Images
                 images={{
@@ -279,9 +347,6 @@ export const Map = () => {
                   frameStarted: require("@/assets/frame_started.png"),
                   frameSelected: require("@/assets/frame_selected.png"),
                   frameSelectedStarted: require("@/assets/frame_selected_started.png"),
-                }}
-                onImageMissing={(e) => {
-                  prefetchImages([getIconUrl(e)]);
                 }}
               />
               {debouncedVibes && (
@@ -299,7 +364,7 @@ export const Map = () => {
                   showsUserHeadingIndicator
                 />
               )}
-              <Mapbox.Camera ref={cameraRef} />
+              <Mapbox.Camera ref={cameraRef} minZoomLevel={0} />
               {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
                   zoomLevel={5}
@@ -307,6 +372,7 @@ export const Map = () => {
                   animationDuration={0}
                 />
               )}
+              <HexagonsLayer />
             </Mapbox.MapView>
             <MapTopContainer
               showModal={showModal}
@@ -330,6 +396,7 @@ export const Map = () => {
         backgroundColor={showModal ? colors.white : colors.transparent}
       />
       <Toaster />
+      {/* <HexagonsDebugContainer /> */}
     </View>
   );
 };
