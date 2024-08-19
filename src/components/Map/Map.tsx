@@ -74,6 +74,9 @@ export const Map = () => {
     setSelectedPolygon: state.setSelectedPolygon,
     selectedPolygon: state.selectedPolygon,
   }));
+  const {selectedProjection} = useMapStore((state) => ({
+    selectedProjection: state.selectedProjection,
+  }));
 
   useH3Hexagons(debouncedCamera);
 
@@ -106,32 +109,32 @@ export const Map = () => {
     [selectedDate, customDate]
   );
 
-  const getSearchParams = () => {
-    if (!camera) return;
-    const { ne, sw } = camera.properties.bounds;
-    const center = camera.properties.center;
-    const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
+  // const getSearchParams = () => {
+  //   if (!camera) return;
+  //   const { ne, sw } = camera.properties.bounds;
+  //   const center = camera.properties.center;
+  //   const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
 
-    const queryParams: QueryParams = {
-      "NE.Latitude": ne[1],
-      "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
-      "SW.Latitude": sw[1],
-      "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
-      OrderBy: "Points",
-      PageSize: 20,
-      "TopTags.Enable": true,
-      IncludeTotalCount: true,
-      SingleItemPerVenue: true,
-      Tags: selectedTag || undefined,
-      "Filter.OnePerCell": realTimeZoom > 13 ? false : true,
-      "Filter.Resolution": GridIndex,
-      "Heatmap.Enable": true,
-      "Heatmap.Resolution": GridIndex,
-      ...dateParams,
-    };
+  //   const queryParams: QueryParams = {
+  //     "NE.Latitude": ne[1],
+  //     "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
+  //     "SW.Latitude": sw[1],
+  //     "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
+  //     OrderBy: "Points",
+  //     PageSize: 20,
+  //     "TopTags.Enable": true,
+  //     IncludeTotalCount: true,
+  //     SingleItemPerVenue: true,
+  //     Tags: selectedTag || undefined,
+  //     "Filter.OnePerCell": realTimeZoom > 13 ? false : true,
+  //     "Filter.Resolution": GridIndex,
+  //     "Heatmap.Enable": true,
+  //     "Heatmap.Resolution": GridIndex,
+  //     ...dateParams,
+  //   };
 
-    return queryParams;
-  };
+  //   return queryParams;
+  // };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -147,30 +150,30 @@ export const Map = () => {
   //   fetchVibes(camera.properties.zoom, queryParams);
   // }, [camera?.properties.center[0], camera?.properties.zoom]);
 
-  const GridIndex = useMemo(
-    () => Math.floor(getGridIndex(Math.round(realTimeZoom))),
-    [realTimeZoom]
-  );
-  const heatmapResolution = useMemo(
-    () => getHeatmapResolutionByZoom(realTimeZoom),
-    [realTimeZoom]
-  );
+  // const GridIndex = useMemo(
+  //   () => Math.floor(getGridIndex(Math.round(realTimeZoom))),
+  //   [realTimeZoom]
+  // );
+  // const heatmapResolution = useMemo(
+  //   () => getHeatmapResolutionByZoom(realTimeZoom),
+  //   [realTimeZoom]
+  // );
 
-  useEffect(() => {
-    clearData();
-    const searchParams = getSearchParams();
-    if (!searchParams) return;
-    fetchVibes(GridIndex, searchParams);
+  // useEffect(() => {
+  //   clearData();
+  //   const searchParams = getSearchParams();
+  //   if (!searchParams) return;
+  //   fetchVibes(GridIndex, searchParams);
 
-    HEATMAP_INITIAL_LEVELS.map((resolution) => {
-      updateInitialHeatmap(
-        resolution,
-        selectedTag,
-        dateParams,
-        setInitialHeatmap
-      );
-    });
-  }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
+  //   HEATMAP_INITIAL_LEVELS.map((resolution) => {
+  //     updateInitialHeatmap(
+  //       resolution,
+  //       selectedTag,
+  //       dateParams,
+  //       setInitialHeatmap
+  //     );
+  //   });
+  // }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -205,15 +208,15 @@ export const Map = () => {
     });
   }, [selectedMarker?.id]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedVibes(getVibes(getGridIndex(Math.floor(realTimeZoom))) || []);
-    }, 700);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setDebouncedVibes(getVibes(getGridIndex(Math.floor(realTimeZoom))) || []);
+  //   }, 700);
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [GridIndex, camera?.properties.center]);
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, [GridIndex, camera?.properties.center]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -270,23 +273,23 @@ export const Map = () => {
     return <MapLoading />;
   }
 
-  const renderHeatmapLayer = () => {
-    const heatmapData = initialHeatmap[heatmapResolution] || heatmap;
-    if (!heatmapData) return null;
+  // const renderHeatmapLayer = () => {
+  //   const heatmapData = initialHeatmap[heatmapResolution] || heatmap;
+  //   if (!heatmapData) return null;
 
-    return (
-      <>
-        <Mapbox.ShapeSource
-          id={`heatmap`}
-          shape={{
-            type: "FeatureCollection",
-            features: transformDataToHeatData(heatmapData),
-          }}
-        />
-        <HeatmapLayer realtimeZoom={realTimeZoom} />
-      </>
-    );
-  };
+  //   return (
+  //     <>
+  //       <Mapbox.ShapeSource
+  //         id={`heatmap`}
+  //         shape={{
+  //           type: "FeatureCollection",
+  //           features: transformDataToHeatData(heatmapData),
+  //         }}
+  //       />
+  //       <HeatmapLayer realtimeZoom={realTimeZoom} />
+  //     </>
+  //   );
+  // };
 
   return (
     <View style={styles.page}>
@@ -298,7 +301,7 @@ export const Map = () => {
               style={styles.map}
               ref={map}
               {...MAP_PROPS}
-              projection="globe"
+              projection={selectedProjection}
               onMapIdle={(e) => {
                 setCamera(e as CameraBound);
               }}
@@ -312,7 +315,7 @@ export const Map = () => {
                 setSelectedMarker(null);
               }}
             >
-              {renderHeatmapLayer()}
+              {/* {renderHeatmapLayer()} */}
               
 
                 { selectedPolygon && 
@@ -340,7 +343,7 @@ export const Map = () => {
                 </Mapbox.ShapeSource>
                 }
 
-              <Images
+              {/* <Images
                 images={{
                   ...transformPinsToImagesForMap(getVibes(GridIndex) || []),
                   frame: require("@/assets/frame.png"),
@@ -348,7 +351,7 @@ export const Map = () => {
                   frameSelected: require("@/assets/frame_selected.png"),
                   frameSelectedStarted: require("@/assets/frame_selected_started.png"),
                 }}
-              />
+              /> */}
               {debouncedVibes && (
                 <MarkerList
                   pins={debouncedVibes}

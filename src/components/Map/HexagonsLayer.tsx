@@ -55,7 +55,7 @@ export const HexagonsLayer = () => {
         <Mapbox.LineLayer
           id={`polygon-outer-line-selected`}
           sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={87} // Make sure this is higher than the FillLayer's index
+          layerIndex={85} // Make sure this is higher than the FillLayer's index
           style={{
             lineColor: "white",
             lineWidth: 2, // Adjust this value to make the lines thicker
@@ -68,7 +68,7 @@ export const HexagonsLayer = () => {
             fillColor: "white",
             fillOpacity: 0.7,
           }}
-          layerIndex={87}
+          layerIndex={85}
         />
       </Mapbox.ShapeSource>
       )
@@ -82,7 +82,7 @@ export const HexagonsLayer = () => {
         <Mapbox.LineLayer
           id={`polygon-outer-line-1`}
           sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={86} // Make sure this is higher than the FillLayer's index
+          layerIndex={84} // Make sure this is higher than the FillLayer's index
           style={{
             lineColor: "white",
             lineWidth: 2, // Adjust this value to make the lines thicker
@@ -101,41 +101,9 @@ export const HexagonsLayer = () => {
             fillColor: "transparent",
             visibility: realTimeZoom <= 3 ? "visible" : "none",
           }}
-          layerIndex={86}
+          layerIndex={84}
         />
       </Mapbox.ShapeSource>
-      {/* <Mapbox.ShapeSource
-        key={"" + 1}
-        id={`polygon-1`}
-        shape={polygonData_1}
-        onPress={handlePolygonPress}
-      >
-        <Mapbox.LineLayer
-          id={`polygon-outer-line-1`}
-          sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={86} // Make sure this is higher than the FillLayer's index
-          style={{
-            lineColor: "white",
-            lineWidth: 2, // Adjust this value to make the lines thicker
-            lineOpacity: [
-              "case",
-              ["==", ["get", "index"], selectedPolygonId || -1],
-              0.8,
-              0.5,
-            ],
-            visibility: realTimeZoom <= 3 ? "visible" : "none",
-          }}
-        />
-        <Mapbox.FillLayer
-          id={`polygon-line-1`}
-          style={{
-            fillColor: "transparent",
-            visibility: realTimeZoom <= 3 ? "visible" : "none",
-          }}
-          layerIndex={86}
-        />
-      </Mapbox.ShapeSource>
-      */}
 
       <Mapbox.ShapeSource
         key={"" + 2}
@@ -146,7 +114,7 @@ export const HexagonsLayer = () => {
         <Mapbox.LineLayer
           id={`polygon-outer-line`}
           sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={87} // Make sure this is higher than the FillLayer's index
+          layerIndex={84} // Make sure this is higher than the FillLayer's index
           style={{
             lineColor: "white",
             lineWidth: 2, // Adjust this value to make the lines thicker
@@ -169,7 +137,7 @@ export const HexagonsLayer = () => {
             visibility:
               realTimeZoom > 3 && realTimeZoom <= 5 ? "visible" : "none",
           }}
-          layerIndex={86}
+          layerIndex={84}
         />
       </Mapbox.ShapeSource>
 
@@ -182,7 +150,7 @@ export const HexagonsLayer = () => {
         <Mapbox.LineLayer
           id={`polygon-outer-line-3`}
           sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={87} // Make sure this is higher than the FillLayer's index
+          layerIndex={84} // Make sure this is higher than the FillLayer's index
           style={{
             lineColor: "white",
             lineWidth: 2, // Adjust this value to make the lines thicker
@@ -203,7 +171,7 @@ export const HexagonsLayer = () => {
             visibility:
               realTimeZoom > 5 && realTimeZoom <= 7 ? "visible" : "none",
           }}
-          layerIndex={86}
+          layerIndex={84}
         />
       </Mapbox.ShapeSource>
 

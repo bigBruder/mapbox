@@ -23,6 +23,7 @@ interface MapState {
   };
   selectedDate: string;
   camera: CameraBound | null;
+  selectedProjection: "globe" | "mercator";
   setSelectedDate: (date: string) => void;
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => void;
   setInitialHeatMap: (resolution: number, heatmapData: HeatmapData) => void;
@@ -33,6 +34,7 @@ interface MapState {
   clearData: () => void;
   clearCustomDate: () => void;
   setCamera: (camera: CameraBound | null) => void;
+  toggleSelectedProjection: () => void;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
@@ -49,6 +51,7 @@ export const useMapStore = create<MapState>((set, get) => ({
   },
   selectedDate: "Now",
   camera: null,
+  selectedProjection: "globe",
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => {
     const gridIndex = Math.max(1, Math.round(realTimeZoom));
     set((state) => ({
@@ -119,12 +122,19 @@ export const useMapStore = create<MapState>((set, get) => ({
     );
   },
 
+  toggleSelectedProjection: () => {
+    set((state) => ({
+      selectedProjection: state.selectedProjection === "globe" ? "mercator" : "globe",
+    }));
+  },
+
   getAllVibes: () => Object.values(get().vibes).flat(),
   fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
     const response = await getPinsForBound(queryParams);
     if (!response) return;
     const heatmap = response.value?.heatmap.data || [];
     const totalResultsInVisibleArea = response.value?.totalResults || 0;
+    const selectedProjection = "globe";
 
     let gridIndex = Math.min(10, Math.max(0, Math.floor(realTimeZoom)));
 

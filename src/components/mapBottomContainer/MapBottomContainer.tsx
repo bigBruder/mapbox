@@ -1,14 +1,10 @@
-import { FC, useContext, useEffect, useState } from "react";
-import { TouchableOpacity, View, Text } from "react-native";
-import MapContext from "@/providers/mapContext/MapContext";
+import { FC, useEffect, useState } from "react";
+import { TouchableOpacity, View, Text, Image } from "react-native";
 import { CameraBound } from "@/types/CameraBound";
 import { getRegionInfo } from "@/api/client";
 import { getRegionName } from "@/helpers/getRegionName";
-import { getPointsThreshold } from "@/helpers/filterMarkers";
 import { LocationIcon, PlusIcon } from "@/assets/icons";
-import { colors } from "@/constants/colors";
 import { styles } from "./styles";
-import { getGridIndex } from "@/helpers/helpers";
 import { useMapStore } from "@/store/MapStore";
 
 interface Props {
@@ -19,6 +15,10 @@ interface Props {
 export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
   const [regionName, setRegionName] = useState<String>("");
   const camera = useMapStore((state) => state.camera);
+  const {selectedProjection, toggleSelectedProjection} = useMapStore((state) => ({
+    selectedProjection: state.selectedProjection,
+    toggleSelectedProjection: state.toggleSelectedProjection,
+  }));
 
   useEffect(() => {
     if (!camera) return;
@@ -60,37 +60,23 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
           opacity: 0.9,
         }}
       >
-        <Text
-          style={{
-            color: colors.white,
-            fontSize: 16,
-            fontWeight: "bold",
-            textAlign: "left",
-          }}
-        >
-          Zoom:{Math.round(camera?.properties.zoom || 0)}{" "}
-        </Text>
-        <Text
-          style={{
-            color: colors.white,
-            fontSize: 16,
-            fontWeight: "bold",
-            textAlign: "left",
-          }}
-        >
-          Grid: {Math.floor(getGridIndex(camera?.properties.zoom || 0))}
-        </Text>
-        <Text
-          style={{
-            color: colors.white,
-            fontSize: 16,
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          Points: {`>=${getPointsThreshold(camera?.properties.zoom || 0)}`}
-        </Text>
       </View>
+      <TouchableOpacity onPress={() => {
+        toggleSelectedProjection();
+      }}
+      style={[styles.addButton, {alignItems: "center"}]}
+      >
+        <Image
+          source={require("@/assets/icons/earth.png")}
+          style={{
+            width: 20,
+            height: 20,
+            backgroundColor: "white",
+            borderRadius: 10,
+            opacity: selectedProjection === "globe" ? 1 : 0.7,
+          }}
+        />
+      </TouchableOpacity>
       <TouchableOpacity style={styles.addButton} onPress={() => {}}>
         <PlusIcon />
       </TouchableOpacity>
