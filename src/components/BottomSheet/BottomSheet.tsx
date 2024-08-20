@@ -18,6 +18,7 @@ import { removeLinkFromString } from "@/helpers/removeLinkFromString";
 import { colors } from "@/constants/colors";
 
 import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   selectedMarker: VibesItem;
@@ -28,6 +29,7 @@ export const ModalDataMarker: FC<Props> = ({
   selectedMarker,
   setSelectedMarker,
 }) => {
+  const navigation = useNavigation();
   const snapPoints = ["45%", "93%"];
   const bottomSheetRef = useRef<BottomSheet>(null);
 

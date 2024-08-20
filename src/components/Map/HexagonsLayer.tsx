@@ -44,36 +44,34 @@ export const HexagonsLayer = () => {
 
   return (
     <>
-    {
-      selectedPolygon && (
+      {selectedPolygon && (
         <Mapbox.ShapeSource
-        key={'selected'}
-        id={`polygon-selected`}
-        shape={selectedPolygon}
-        onPress={handlePolygonPress}
-      >
-        <Mapbox.LineLayer
-          id={`polygon-outer-line-selected`}
-          sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={85} // Make sure this is higher than the FillLayer's index
-          style={{
-            lineColor: "white",
-            lineWidth: 2, // Adjust this value to make the lines thicker
-            lineOpacity: 0.2,
-          }}
-        />
-        <Mapbox.FillLayer
-          id={`polygon-line-selected`}
-          style={{
-            fillColor: "white",
-            fillOpacity: 0.7,
-          }}
-          layerIndex={85}
-        />
-      </Mapbox.ShapeSource>
-      )
-    }
-    <Mapbox.ShapeSource
+          key={"selected"}
+          id={`polygon-selected`}
+          shape={selectedPolygon}
+          onPress={handlePolygonPress}
+        >
+          <Mapbox.LineLayer
+            id={`polygon-outer-line-selected`}
+            sourceID="your-source-id" // Make sure to replace this with your source ID
+            layerIndex={85} // Make sure this is higher than the FillLayer's index
+            style={{
+              lineColor: "white",
+              lineWidth: 2, // Adjust this value to make the lines thicker
+              lineOpacity: 0.2,
+            }}
+          />
+          <Mapbox.FillLayer
+            id={`polygon-line-selected`}
+            style={{
+              fillColor: "white",
+              fillOpacity: 0.7,
+            }}
+            layerIndex={85}
+          />
+        </Mapbox.ShapeSource>
+      )}
+      <Mapbox.ShapeSource
         key={"" + 1}
         id={`polygon-1`}
         shape={polygonData_1}
@@ -140,7 +138,7 @@ export const HexagonsLayer = () => {
           layerIndex={84}
         />
       </Mapbox.ShapeSource>
-
+      {/*
       <Mapbox.ShapeSource
         key={"" + 3}
         id={`polygon-3`}
@@ -173,9 +171,7 @@ export const HexagonsLayer = () => {
           }}
           layerIndex={84}
         />
-      </Mapbox.ShapeSource>
-
-      {/*}
+      </Mapbox.ShapeSource> */}
 
       <Mapbox.ShapeSource
         key={"" + 4}
@@ -186,7 +182,7 @@ export const HexagonsLayer = () => {
         }}
         onPress={handlePolygonPress}
       >
-         <Mapbox.LineLayer
+        <Mapbox.LineLayer
           id={`polygon-outer-line-3`}
           sourceID="your-source-id" // Make sure to replace this with your source ID
           layerIndex={87} // Make sure this is higher than the FillLayer's index
@@ -210,7 +206,7 @@ export const HexagonsLayer = () => {
           }}
           layerIndex={86}
         />
-      </Mapbox.ShapeSource> */}
+      </Mapbox.ShapeSource>
     </>
   );
 };

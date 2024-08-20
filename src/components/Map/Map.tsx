@@ -46,6 +46,7 @@ import h3 from "h3-js";
 import styles from "./styles";
 import { HexagonsLayer } from "./HexagonsLayer";
 import { useHexagonsStore } from "@/store/hexagonsStore";
+import { CellInfo } from "../CellInfo/CellInfo";
 
 export const Map = () => {
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
@@ -74,7 +75,7 @@ export const Map = () => {
     setSelectedPolygon: state.setSelectedPolygon,
     selectedPolygon: state.selectedPolygon,
   }));
-  const {selectedProjection} = useMapStore((state) => ({
+  const { selectedProjection } = useMapStore((state) => ({
     selectedProjection: state.selectedProjection,
   }));
 
@@ -316,17 +317,14 @@ export const Map = () => {
               }}
             >
               {/* {renderHeatmapLayer()} */}
-              
 
-                { selectedPolygon && 
-                  <Mapbox.ShapeSource
+              {selectedPolygon && (
+                <Mapbox.ShapeSource
                   key={"" + 100}
                   id={`polygon-line`}
                   shape={{
                     type: "FeatureCollection",
-                    features: [
-                      selectedPolygon
-                    ],
+                    features: [selectedPolygon],
                   }}
                   onPress={() => {}} // Add an empty onPress to prevent interaction delays
                 >
@@ -338,10 +336,9 @@ export const Map = () => {
                       visibility: "visible",
                     }}
                     layerIndex={87}
-                    
                   />
                 </Mapbox.ShapeSource>
-                }
+              )}
 
               {/* <Images
                 images={{
@@ -391,6 +388,12 @@ export const Map = () => {
           <ModalDataMarker
             selectedMarker={selectedMarker}
             setSelectedMarker={setSelectedMarker}
+          />
+        )}
+        {selectedPolygon && (
+          <CellInfo
+            selectedPolygon={selectedPolygon}
+            setSelectedPolygon={setSelectedPolygon}
           />
         )}
         <ToastManager />

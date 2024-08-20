@@ -6,6 +6,8 @@ import { getRegionName } from "@/helpers/getRegionName";
 import { LocationIcon, PlusIcon } from "@/assets/icons";
 import { styles } from "./styles";
 import { useMapStore } from "@/store/MapStore";
+import { useNavigation } from "@react-navigation/native";
+import PulseIcon from "@/assets/icons/pulse";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
@@ -15,10 +17,14 @@ interface Props {
 export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
   const [regionName, setRegionName] = useState<String>("");
   const camera = useMapStore((state) => state.camera);
-  const {selectedProjection, toggleSelectedProjection} = useMapStore((state) => ({
-    selectedProjection: state.selectedProjection,
-    toggleSelectedProjection: state.toggleSelectedProjection,
-  }));
+  const { selectedProjection, toggleSelectedProjection } = useMapStore(
+    (state) => ({
+      selectedProjection: state.selectedProjection,
+      toggleSelectedProjection: state.toggleSelectedProjection,
+    })
+  );
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (!camera) return;
@@ -59,12 +65,12 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
         style={{
           opacity: 0.9,
         }}
-      >
-      </View>
-      <TouchableOpacity onPress={() => {
-        toggleSelectedProjection();
-      }}
-      style={[styles.addButton, {alignItems: "center"}]}
+      ></View>
+      <TouchableOpacity
+        onPress={() => {
+          toggleSelectedProjection();
+        }}
+        style={[styles.addButton, { alignItems: "center" }]}
       >
         <Image
           source={require("@/assets/icons/earth.png")}
@@ -77,8 +83,13 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
           }}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton} onPress={() => {}}>
-        <PlusIcon />
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+          navigation.navigate("Pulse");
+        }}
+      >
+        <PulseIcon fill="white" />
       </TouchableOpacity>
     </View>
   );

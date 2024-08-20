@@ -20,6 +20,7 @@ import {
 import { styles } from "./styles";
 import { dateToShortFormat } from "@/utils";
 import { useMapStore } from "@/store/MapStore";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   showModal: boolean;
@@ -36,10 +37,16 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
   const handleDateSelect = (date: string) => {
     setSelectedDate(date);
   };
+  const navigation = useNavigation();
   return (
     <View style={styles.topContainer}>
       <View style={styles.upperContainer}>
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() => {
+            navigation.navigate("MyProfile");
+          }}
+        >
           <ProfileIcon />
         </TouchableOpacity>
         <View style={styles.searchContainer}>

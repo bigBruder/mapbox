@@ -8,3 +8,6 @@ export * from "./like";
 export * from "./more";
 export * from "./eye";
 export * from "./eye_hidden";
+export * from "./back_rotated";
+export * from "./pulse";
+export * from "./heatmap";
