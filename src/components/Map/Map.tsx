@@ -270,9 +270,9 @@ export const Map = () => {
 
   const isMapReady = map.current?.state.isReady || false;
 
-  if (isLoading && !isMapReady) {
-    return <MapLoading />;
-  }
+  // if (isLoading && !isMapReady) {
+  //   return <MapLoading />;
+  // }
 
   // const renderHeatmapLayer = () => {
   //   const heatmapData = initialHeatmap[heatmapResolution] || heatmap;

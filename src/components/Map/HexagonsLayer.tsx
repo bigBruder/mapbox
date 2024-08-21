@@ -6,8 +6,33 @@ import { useHexagonsStore } from "@/store/hexagonsStore";
 import polygonData_1 from "@/assets/json/hexagons/global-hexagons-resolution-1.json";
 import polygonData_2 from "@/assets/json/hexagons/global-hexagons-resolution-2.json";
 import polygonData_3 from "@/assets/json/hexagons/global-hexagons-resolution-3.json";
+import { useEffect, useRef } from "react";
+import { Animated } from "react-native";
 
 export const HexagonsLayer = () => {
+  const scaleValue = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    animatePulse();
+  }, []);
+
+  const animatePulse = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(scaleValue, {
+          toValue: 1.2, // Розширення гексагону
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleValue, {
+          toValue: 1, // Повернення до початкового розміру
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
   const { selectedPolygonId, setSelectedPolygonId } = useHexagonsStore(
     (state) => ({
       selectedPolygonId: state.selectedPolygonId,
@@ -40,6 +65,8 @@ export const HexagonsLayer = () => {
       type: "FeatureCollection",
       features: [e.features[0]],
     });
+
+    animatePulse();
   };
 
   return (
@@ -50,6 +77,19 @@ export const HexagonsLayer = () => {
           id={`polygon-selected`}
           shape={selectedPolygon}
           onPress={handlePolygonPress}
+          style={{
+            fillColor: scaleValue.interpolate({
+              inputRange: [1, 1.2],
+              outputRange: [
+                "rgba(255, 255, 255, 0.7)",
+                "rgba(255, 255, 255, 1)",
+              ], // зміна прозорості
+            }),
+            fillOpacity: scaleValue.interpolate({
+              inputRange: [1, 1.2],
+              outputRange: [0.7, 1],
+            }),
+          }}
         >
           <Mapbox.LineLayer
             id={`polygon-outer-line-selected`}

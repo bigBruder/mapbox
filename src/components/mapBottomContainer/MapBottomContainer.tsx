@@ -8,6 +8,9 @@ import { styles } from "./styles";
 import { useMapStore } from "@/store/MapStore";
 import { useNavigation } from "@react-navigation/native";
 import PulseIcon from "@/assets/icons/pulse";
+import ManIcon from "@/assets/icons/man";
+import { colors } from "@/constants/colors";
+import { useUserStore } from "@/store/userStore";
 
 interface Props {
   handleCenterCamera: () => Promise<void>;
@@ -15,6 +18,7 @@ interface Props {
 }
 
 export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
+  const { toggleUser } = useUserStore((state) => state);
   const [regionName, setRegionName] = useState<String>("");
   const camera = useMapStore((state) => state.camera);
   const { selectedProjection, toggleSelectedProjection } = useMapStore(
@@ -84,12 +88,17 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
         />
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.addButton}
+        style={{
+          margin: 10,
+          backgroundColor: colors.pulsePrimary,
+          padding: 10,
+          borderRadius: 30,
+        }}
         onPress={() => {
-          navigation.navigate("Pulse");
+          toggleUser();
         }}
       >
-        <PulseIcon fill="white" />
+        <ManIcon fill="white" />
       </TouchableOpacity>
     </View>
   );
