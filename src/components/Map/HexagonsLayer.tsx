@@ -5,33 +5,11 @@ import { useHexagonsStore } from "@/store/hexagonsStore";
 
 import polygonData_1 from "@/assets/json/hexagons/global-hexagons-resolution-1.json";
 import polygonData_2 from "@/assets/json/hexagons/global-hexagons-resolution-2.json";
-import polygonData_3 from "@/assets/json/hexagons/global-hexagons-resolution-3.json";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Animated } from "react-native";
 
 export const HexagonsLayer = () => {
   const scaleValue = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    animatePulse();
-  }, []);
-
-  const animatePulse = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scaleValue, {
-          toValue: 1.2, // Розширення гексагону
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleValue, {
-          toValue: 1, // Повернення до початкового розміру
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  };
 
   const { selectedPolygonId, setSelectedPolygonId } = useHexagonsStore(
     (state) => ({
@@ -65,8 +43,6 @@ export const HexagonsLayer = () => {
       type: "FeatureCollection",
       features: [e.features[0]],
     });
-
-    animatePulse();
   };
 
   return (
@@ -93,11 +69,11 @@ export const HexagonsLayer = () => {
         >
           <Mapbox.LineLayer
             id={`polygon-outer-line-selected`}
-            sourceID="your-source-id" // Make sure to replace this with your source ID
-            layerIndex={85} // Make sure this is higher than the FillLayer's index
+            sourceID="source-id"
+            layerIndex={85}
             style={{
               lineColor: "white",
-              lineWidth: 2, // Adjust this value to make the lines thicker
+              lineWidth: 2,
               lineOpacity: 0.2,
             }}
           />
@@ -151,11 +127,11 @@ export const HexagonsLayer = () => {
       >
         <Mapbox.LineLayer
           id={`polygon-outer-line`}
-          sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={84} // Make sure this is higher than the FillLayer's index
+          sourceID="source-id"
+          layerIndex={84}
           style={{
             lineColor: "white",
-            lineWidth: 2, // Adjust this value to make the lines thicker
+            lineWidth: 2,
             lineOpacity: [
               "case",
               ["==", ["get", "index"], selectedPolygonId || -1],
@@ -178,40 +154,6 @@ export const HexagonsLayer = () => {
           layerIndex={84}
         />
       </Mapbox.ShapeSource>
-      {/*
-      <Mapbox.ShapeSource
-        key={"" + 3}
-        id={`polygon-3`}
-        shape={polygonData_3}
-        onPress={handlePolygonPress}
-      >
-        <Mapbox.LineLayer
-          id={`polygon-outer-line-3`}
-          sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={84} // Make sure this is higher than the FillLayer's index
-          style={{
-            lineColor: "white",
-            lineWidth: 2, // Adjust this value to make the lines thicker
-            lineOpacity: [
-              "case",
-              ["==", ["get", "index"], selectedPolygonId || -1],
-              0.8,
-              0.5,
-            ],
-            visibility:
-              realTimeZoom > 5 && realTimeZoom <= 7 ? "visible" : "none",
-          }}
-        />
-        <Mapbox.FillLayer
-          id={`polygon-line-3`}
-          style={{
-            fillColor: "transparent",
-            visibility:
-              realTimeZoom > 5 && realTimeZoom <= 7 ? "visible" : "none",
-          }}
-          layerIndex={84}
-        />
-      </Mapbox.ShapeSource> */}
 
       <Mapbox.ShapeSource
         key={"" + 4}
@@ -224,11 +166,11 @@ export const HexagonsLayer = () => {
       >
         <Mapbox.LineLayer
           id={`polygon-outer-line-3`}
-          sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={87} // Make sure this is higher than the FillLayer's index
+          sourceID="your-source-id"
+          layerIndex={87}
           style={{
             lineColor: "white",
-            lineWidth: 2, // Adjust this value to make the lines thicker
+            lineWidth: 2,
             lineOpacity: [
               "case",
               ["==", ["get", "index"], selectedPolygonId || -1],

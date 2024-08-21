@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     lineHeight: 19,
   },
+  disabled: {
+    backgroundColor: colors.pulseGrey,
+  },
 });
 
 export default styles;

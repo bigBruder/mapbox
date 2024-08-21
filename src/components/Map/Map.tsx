@@ -14,39 +14,32 @@ import * as Location from "expo-location";
 
 import MapContext from "@/providers/mapContext/MapContext";
 import useRealTimeLocation from "@/hooks/useRealTimeLocation";
-import { transformDataToHeatData } from "@/utils/transformDataToHeatData";
 
 import { ModalDataMarker } from "@/components/BottomSheet/BottomSheet";
 import { MapTopContainer } from "@/components/mapTopContainer/MapTopContainer";
 import { MapBottomContainer } from "@/components/mapBottomContainer/MapBottomContainer";
 import { MarkerList } from "@/components/markerList/MarkerList";
 import { Toaster } from "@/components/toaster/Toaster";
-import { MapLoading } from "./MapLoading";
-import { HeatmapLayer } from "./HeatmapLayer";
 import { MAP_PROPS } from "@/constants/map";
-import { CameraBound, QueryParams } from "@/types";
+import { CameraBound } from "@/types";
 import { colors } from "@/constants/colors";
 
 import ToastManager, { Toast } from "toastify-react-native";
 import { useToastStore } from "@/store/ToastStore";
 
-import { transformPinsToImagesForMap } from "@/utils/helpersFunctions";
 import { VibesItem } from "@/types/responses/SearchResponse";
 
 import { useCameraStore } from "@/store/CameraStore";
 import { useMapStore } from "@/store/MapStore";
-import { getGridIndex, getHeatmapResolutionByZoom } from "@/helpers/helpers";
 import { getDateParams } from "@/helpers/getDateParams";
-import { HEATMAP_INITIAL_LEVELS } from "@/constants/heatmapConfig";
-import { updateInitialHeatmap } from "@/services/updateHeatmap";
 
 import { useH3Hexagons } from "@/hooks/useH3Hexagons";
-import h3 from "h3-js";
 
-import styles from "./styles";
 import { HexagonsLayer } from "./HexagonsLayer";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 import { CellInfo } from "../CellInfo/CellInfo";
+
+import styles from "./styles";
 
 export const Map = () => {
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
@@ -90,17 +83,6 @@ export const Map = () => {
   // }, [isAutoH3Index]);
 
   const clearMessage = useToastStore((state) => state.clearMessage);
-
-  // useEffect(() => {
-  //   if (message.message) {
-  //     Toast[message.type](message.message, "top");
-  //   }
-  //   const timeoutId = setTimeout(() => {
-  //     clearMessage();
-  //   }, 3000);
-
-  //   return () => clearTimeout(timeoutId);
-  // }, [message.message]);
 
   const { selectedMarker, setSelectedMarker, selectedDate } =
     useContext(MapContext);

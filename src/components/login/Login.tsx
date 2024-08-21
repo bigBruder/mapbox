@@ -2,9 +2,7 @@ import {
   View,
   Text,
   SafeAreaView,
-  Image,
   TextInput,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
 
@@ -16,10 +14,14 @@ import ManIcon from "@/assets/icons/man";
 import { colors } from "@/constants/colors";
 import { useUserStore } from "@/store/userStore";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 export const Login = () => {
+  const [email, setEmail] = useState("");
   const { toggleUser } = useUserStore((state) => state);
   const navigation = useNavigation();
+
+  const isContinueDisabled = !email || email.length < 3 || !email.includes("@");
   return (
     <View style={styles.container}>
       <SafeAreaView
@@ -39,9 +41,10 @@ export const Login = () => {
             <Text style={styles.label}>Email</Text>
             <TextInput
               style={styles.input}
-              value={"Non set"}
+              value={email}
               placeholder="useless placeholder"
               keyboardType="email-address"
+              onChange={(e) => setEmail(e.nativeEvent.text)}
             />
           </View>
           <View style={styles.buttonsContainer}>
@@ -50,6 +53,7 @@ export const Login = () => {
               onPress={() => {
                 navigation.navigate("Verify");
               }}
+              disabled={isContinueDisabled}
             />
             <Button style={styles.loginWithProviderButton} onPress={() => {}}>
               <GoogleIcon />

@@ -17,7 +17,7 @@ export const useH3Hexagons = (realtimeCamera: CameraBound | null) => {
   );
 
   const generateH3Grid = useCallback(() => {
-    if (!realtimeCamera || realtimeCamera.properties.zoom <= 7) {
+    if (!realtimeCamera || realtimeCamera.properties.zoom <= 5) {
       setPolygons([]);
       return;
     }

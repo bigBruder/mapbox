@@ -9,6 +9,7 @@ interface ButtonProps {
   style?: any;
   styleText?: any;
   children?: any;
+  disabled?: boolean;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -17,9 +18,14 @@ export const Button: FC<ButtonProps> = ({
   style,
   styleText,
   children,
+  disabled,
 }) => {
   return (
-    <TouchableOpacity style={[styles.actionButton, style]} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.actionButton, style, disabled && styles.disabled]}
+      onPress={onPress}
+      disabled={disabled}
+    >
       {children ? (
         children
       ) : (

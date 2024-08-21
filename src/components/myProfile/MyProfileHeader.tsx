@@ -18,18 +18,20 @@ export const MyProfileHeader = ({ navigation }) => {
           gap: 10,
         }}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <BackIcon />
-        </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "600",
-            lineHeight: 24,
-          }}
-        >
-          My Profile
-        </Text>
+        <View style={styles.headerLeftContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <BackIcon />
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "600",
+              lineHeight: 24,
+            }}
+          >
+            My Profile
+          </Text>
+        </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("Settings");

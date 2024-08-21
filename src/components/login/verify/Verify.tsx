@@ -1,23 +1,21 @@
+import { useState } from "react";
 import {
   SafeAreaView,
   View,
   Text,
-  Touchable,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-
-import { Platform } from "react-native";
-
-import styles from "./styles";
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
-import { useState } from "react";
 import { Button } from "@/components/UI/Button";
+
+import styles from "./styles";
 
 const CELL_COUNT = 4;
 
@@ -31,19 +29,18 @@ export const VerifyScreen = () => {
   return (
     <View style={styles.wrapper}>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
-          <View style={styles.topContainer}>
-            <Text style={styles.title}>Verify Email</Text>
-            <Text style={styles.description}>
-              Enter the code that was sent to naveen@gmail.com{" "}
-            </Text>
-            <TouchableOpacity>
-              <Text style={styles.actionText}>Resend code</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.topContainer}>
+          <Text style={styles.title}>Verify Email</Text>
+          <Text style={styles.description}>
+            Enter the code that was sent to naveen@gmail.com
+          </Text>
+          <TouchableOpacity>
+            <Text style={styles.actionText}>Resend code</Text>
+          </TouchableOpacity>
           <View
             style={{
               alignItems: "center",
+              marginTop: 32,
             }}
           >
             <CodeField
@@ -72,10 +69,17 @@ export const VerifyScreen = () => {
               )}
             />
           </View>
+        </View>
+
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={140}
+          style={[styles.wrapper, {}]}
+          behavior="position"
+        >
           <Button
             title="Continue"
             onPress={() => {}}
-            style={{ marginTop: 68 }}
+            disabled={value.length < 4}
           />
         </KeyboardAvoidingView>
       </SafeAreaView>

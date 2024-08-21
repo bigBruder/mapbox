@@ -1,4 +1,4 @@
-import BackIcon from "@/assets/icons/back_rotated";
+import BackIcon from "@/assets/icons/back";
 import { SafeAreaView, TouchableOpacity, View } from "react-native";
 
 import styles from "./styles";

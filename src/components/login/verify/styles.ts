@@ -4,10 +4,11 @@ import { colors } from "@/constants/colors";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // backgroundColor: colors.pulsePrimary,
   },
   wrapper: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     backgroundColor: colors.white,
     paddingHorizontal: 10,
   },
@@ -25,8 +26,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   topContainer: {
+    flex: 1,
     alignContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   actionText: {
     color: colors.pulsePrimary,
@@ -37,8 +40,8 @@ const styles = StyleSheet.create({
   },
 
   // library styles
-  root: { width: "40%" },
-  codeFieldRoot: { marginTop: 20, gap: 20, justifyContent: "space-between" },
+  root: { width: "40%", marginTop: 32 },
+  codeFieldRoot: { gap: 20, justifyContent: "space-between" },
   cell: {
     width: 56,
     height: 48,

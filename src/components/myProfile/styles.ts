@@ -11,6 +11,10 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.lightGrey,
     borderBottomWidth: 1,
   },
+  headerLeftContainer: {
+    flexDirection: "row",
+    gap: 10,
+  },
   container: {
     flex: 1,
     padding: 20,
