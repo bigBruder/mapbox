@@ -6,7 +6,7 @@ interface UserState {
 }
 
 export const useUserStore = create<UserState>()((set) => ({
-  user: false,
+  user: true,
   toggleUser: () =>
     set((state) => ({
       user: !state.user,

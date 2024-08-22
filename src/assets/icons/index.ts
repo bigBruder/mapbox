@@ -11,3 +11,4 @@ export * from "./eye_hidden";
 export * from "./back_rotated";
 export * from "./pulse";
 export * from "./heatmap";
+export * from "./point";

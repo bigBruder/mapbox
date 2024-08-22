@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#0059ec",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash_pulse.png",
       "resizeMode": "cover",
       "backgroundColor": "#0059ec"
     },
@@ -17,13 +17,19 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.qnowing"
+      "bundleIdentifier": "com.qnowing",
+      "splash": {
+        "image": "./assets/splash_pulse.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#0059ec"
+      }
     },
     "android": {
       "package": "android.com"
     },
     "web": {
-      "favicon": "./assets/play_store_512.png"
+      "favicon": "./assets/play_store_512.png",
+      "resizeMode": "cover"
     },
     "plugins": [
       [

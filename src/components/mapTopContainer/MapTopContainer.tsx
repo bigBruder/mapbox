@@ -11,16 +11,15 @@ import { DateSelectionModal } from "@/components/DateSelectionModal/DateSelectio
 import { Tag } from "@/components/tag/Tag";
 import MapContext from "@/providers/mapContext/MapContext";
 import { TotalResults } from "./TotalResults";
-import {
-  CalendarIcon,
-  ProfileIcon,
-  SearchIcon,
-  ShareIcon,
-} from "@/assets/icons";
+import { CalendarIcon } from "@/assets/icons";
 import { styles } from "./styles";
 import { dateToShortFormat } from "@/utils";
 import { useMapStore } from "@/store/MapStore";
 import { useNavigation } from "@react-navigation/native";
+import ProfileIcon from "@/assets/icons/profile";
+import ShareIcon from "@/assets/icons/share";
+import { SearchIcon } from "../../../assets/icons";
+import { colors } from "@/constants/colors";
 
 interface Props {
   showModal: boolean;
@@ -28,15 +27,15 @@ interface Props {
 }
 
 export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
-  const selectedTag = useMapStore((state) => state.selectedTag);
-  const setSelectedTag = useMapStore((state) => state.setSelectedTag);
-  const { selectedDate, setSelectedDate } = useContext(MapContext);
-  const customDate = useMapStore((state) => state.customDate);
-  const totalResults = useMapStore((state) => state.totalResultsInVisibleArea);
-  const tags = useMapStore((state) => state.tags);
-  const handleDateSelect = (date: string) => {
-    setSelectedDate(date);
-  };
+  // const selectedTag = useMapStore((state) => state.selectedTag);
+  // const setSelectedTag = useMapStore((state) => state.setSelectedTag);
+  // const { selectedDate, setSelectedDate } = useContext(MapContext);
+  // const customDate = useMapStore((state) => state.customDate);
+  // const totalResults = useMapStore((state) => state.totalResultsInVisibleArea);
+  // const tags = useMapStore((state) => state.tags);
+  // const handleDateSelect = (date: string) => {
+  //   setSelectedDate(date);
+  // };
   const navigation = useNavigation();
   return (
     <View style={styles.topContainer}>
@@ -51,14 +50,18 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
         </TouchableOpacity>
         <View style={styles.searchContainer}>
           <SearchIcon />
-          <TextInput placeholder="Search" style={styles.search} />
+          <TextInput
+            placeholder="Search"
+            style={styles.search}
+            placeholderTextColor={colors.pulseGrey}
+          />
         </View>
-        <TotalResults total={totalResults} visible={totalResults} />
+        {/* <TotalResults total={totalResults} visible={totalResults} /> */}
         <TouchableOpacity style={styles.searchButton}>
           <ShareIcon />
         </TouchableOpacity>
       </View>
-      <View style={styles.tagsContainer}>
+      {/* <View style={styles.tagsContainer}>
         <Modal visible={showModal} animationType="slide">
           <DateSelectionModal
             onSelect={handleDateSelect}
@@ -102,7 +105,7 @@ export const MapTopContainer: FC<Props> = ({ showModal, setShowModal }) => {
                 ))}
           </ScrollView>
         </>
-      </View>
+      </View> */}
     </View>
   );
 };

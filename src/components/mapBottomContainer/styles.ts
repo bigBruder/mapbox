@@ -14,14 +14,14 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
   pointText: {
-    fontSize: 18,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 19,
     color: colors.white,
   },
 
   searchButton: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     backgroundColor: colors.white,
     borderRadius: 40,
     display: "flex",
@@ -30,9 +30,9 @@ export const styles = StyleSheet.create({
   },
 
   addButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: colors.primary,
+    width: 56,
+    height: 56,
+    backgroundColor: colors.pulsePrimary,
     borderRadius: 40,
     display: "flex",
     justifyContent: "center",
@@ -40,8 +40,18 @@ export const styles = StyleSheet.create({
   },
 
   regionContainer: {
-    alignItems: "flex-start",
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    marginBottom: 8,
+    gap: 8,
     flex: 1,
+
+    backgroundColor: "transparent",
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
   },
 });

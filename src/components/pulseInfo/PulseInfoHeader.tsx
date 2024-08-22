@@ -3,9 +3,10 @@ import { SafeAreaView, TouchableOpacity, View } from "react-native";
 
 import styles from "./styles";
 import PulseIcon from "@/assets/icons/pulse";
-import { MoreIcon, ShareIcon } from "@/assets/icons";
+import { MoreIcon } from "@/assets/icons";
 import HeatmapIcon from "@/assets/icons/heatmap";
 import { colors } from "@/constants/colors";
+import ShareIcon from "@/assets/icons/share";
 
 export const PulseInfoHeader = ({ navigation }) => {
   return (

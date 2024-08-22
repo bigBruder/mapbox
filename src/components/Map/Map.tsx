@@ -38,6 +38,7 @@ import { useH3Hexagons } from "@/hooks/useH3Hexagons";
 import { HexagonsLayer } from "./HexagonsLayer";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 import { CellInfo } from "../CellInfo/CellInfo";
+import h3 from "h3-js";
 
 import styles from "./styles";
 
@@ -91,6 +92,43 @@ export const Map = () => {
     () => getDateParams(selectedDate, customDate),
     [selectedDate, customDate]
   );
+
+  // useEffect(() => {
+  //   if (
+  //     !selectedPolygon ||
+  //     !realtimeCamera?.properties.bounds.ne[0] ||
+  //     !realtimeCamera?.properties.bounds.sw[0]
+  //   ) {
+  //     return;
+  //   }
+
+  //   console.log(
+  //     "selectedPolygon ==>",
+  //     selectedPolygon.features[0].properties?.h3Index ||
+  //       selectedPolygon.features[0].properties?.index
+  //   );
+
+  //   const cellCenter = h3.cellToLatLng(
+  //     selectedPolygon.features[0].properties?.h3Index
+  //   );
+
+  //   console.log("cellCenter ==> ", cellCenter);
+  //   // const longitude =
+  //   //   selectedPolygon?.features[0].geometry.coordinates[0][0][0];
+  //   // const latitude = selectedPolygon?.features[0].geometry.coordinates[0][0][1];
+  //   const screenDistance =
+  //     (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
+  //       Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
+  //     4;
+
+  //   console.log(screenDistance);
+
+  //   cameraRef.current?.setCamera({
+  //     animationDuration: 500,
+  //     animationMode: "flyTo",
+  //     centerCoordinate: [cellCenter[1], cellCenter[0]],
+  //   });
+  // }, [selectedPolygon]);
 
   // const getSearchParams = () => {
   //   if (!camera) return;
@@ -350,6 +388,7 @@ export const Map = () => {
               {!isFirstFlyHappened && location && (
                 <Mapbox.Camera
                   zoomLevel={5}
+                  maxZoomLevel={15}
                   centerCoordinate={[location.longitude, location.latitude]}
                   animationDuration={0}
                 />

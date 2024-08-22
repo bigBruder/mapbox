@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 10,
     borderRadius: 10,
-    shadowColor: "#000",
+    // shadowColor: "#000",
     backgroundColor: "rgba(5, 89, 227, 0.05)",
   },
   title: {
