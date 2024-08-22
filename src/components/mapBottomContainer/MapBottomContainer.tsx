@@ -121,7 +121,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            toggleSelectedProjection();
+            // toggleSelectedProjection();
           }}
           style={[styles.addButton, { alignItems: "center" }]}
         >
