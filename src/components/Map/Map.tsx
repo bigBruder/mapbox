@@ -93,42 +93,43 @@ export const Map = () => {
     [selectedDate, customDate]
   );
 
-  // useEffect(() => {
-  //   if (
-  //     !selectedPolygon ||
-  //     !realtimeCamera?.properties.bounds.ne[0] ||
-  //     !realtimeCamera?.properties.bounds.sw[0]
-  //   ) {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (
+      !selectedPolygon ||
+      !realtimeCamera?.properties.bounds.ne[0] ||
+      !realtimeCamera?.properties.bounds.sw[0]
+    ) {
+      return;
+    }
 
-  //   console.log(
-  //     "selectedPolygon ==>",
-  //     selectedPolygon.features[0].properties?.h3Index ||
-  //       selectedPolygon.features[0].properties?.index
-  //   );
+    console.log(
+      "selectedPolygon ==>",
+      selectedPolygon.features[0].properties?.h3Index ||
+        selectedPolygon.features[0].properties?.index
+    );
 
-  //   const cellCenter = h3.cellToLatLng(
-  //     selectedPolygon.features[0].properties?.h3Index
-  //   );
+    const cellCenter = h3.cellToLatLng(
+      selectedPolygon.features[0].properties?.h3Index ||
+        selectedPolygon.features[0].properties?.index
+    );
 
-  //   console.log("cellCenter ==> ", cellCenter);
-  //   // const longitude =
-  //   //   selectedPolygon?.features[0].geometry.coordinates[0][0][0];
-  //   // const latitude = selectedPolygon?.features[0].geometry.coordinates[0][0][1];
-  //   const screenDistance =
-  //     (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
-  //       Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
-  //     4;
+    // const longitude =
+    //   selectedPolygon?.features[0].geometry.coordinates[0][0][0];
+    // const latitude = selectedPolygon?.features[0].geometry.coordinates[0][0][1];
+    const screenDistance =
+      (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
+        Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
+      4;
 
-  //   console.log(screenDistance);
-
-  //   cameraRef.current?.setCamera({
-  //     animationDuration: 500,
-  //     animationMode: "flyTo",
-  //     centerCoordinate: [cellCenter[1], cellCenter[0]],
-  //   });
-  // }, [selectedPolygon]);
+    cameraRef.current?.setCamera({
+      animationDuration: 500,
+      animationMode: "flyTo",
+      centerCoordinate: [cellCenter[1], cellCenter[0] - screenDistance],
+    });
+  }, [
+    selectedPolygon?.features[0]?.properties?.h3Index,
+    selectedPolygon?.features[0]?.properties?.index,
+  ]);
 
   // const getSearchParams = () => {
   //   if (!camera) return;
@@ -213,6 +214,7 @@ export const Map = () => {
       animationMode: "flyTo",
       centerCoordinate: [longitude, latitude],
     });
+
     setTimeout(() => {
       setIsFirstFlyHappened(true);
     }, 1000);
