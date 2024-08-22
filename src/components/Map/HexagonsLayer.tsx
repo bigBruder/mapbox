@@ -1,14 +1,23 @@
+import React, { useRef } from "react";
+import { Animated } from "react-native";
 import Mapbox from "@rnmapbox/maps";
+import h3 from "h3-js";
 
 import { useCameraStore } from "@/store/CameraStore";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 
 import polygonData_1 from "@/assets/json/hexagons/global-hexagons-resolution-1.json";
 import polygonData_2 from "@/assets/json/hexagons/global-hexagons-resolution-2.json";
-import { useRef } from "react";
-import { Animated } from "react-native";
 
-export const HexagonsLayer = () => {
+interface HexagonsLayerProps {
+  cameraRef: React.MutableRefObject<Mapbox.Camera | null>;
+  realTimeCamera: any;
+}
+
+export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
+  cameraRef,
+  realTimeCamera,
+}) => {
   const scaleValue = useRef(new Animated.Value(1)).current;
 
   const { selectedPolygonId, setSelectedPolygonId } = useHexagonsStore(
@@ -35,13 +44,26 @@ export const HexagonsLayer = () => {
   }));
 
   const handlePolygonPress = (e) => {
-    console.log("e", e.features[0].properties);
     if (!e) return;
-    const selectedHexagon = e.features[0].properties?.index || -1;
+    const selectedHexagon = e.features[0].properties?.h3Index || -1;
     setSelectedPolygonId(selectedHexagon);
     setSelectedPolygon({
       type: "FeatureCollection",
       features: [e.features[0]],
+    });
+
+    const cellCenter = h3.cellToLatLng(selectedHexagon);
+
+    const screenDistance = Math.abs(
+      (Math.abs(realTimeCamera?.properties.bounds.ne[0]) -
+        Math.abs(realTimeCamera?.properties.bounds.sw[0])) /
+        3.5
+    );
+
+    cameraRef.current?.setCamera({
+      animationDuration: 500,
+      animationMode: "flyTo",
+      centerCoordinate: [cellCenter[1], cellCenter[0] - screenDistance],
     });
   };
 
@@ -145,7 +167,6 @@ export const HexagonsLayer = () => {
         <Mapbox.FillLayer
           id={`polygon-line-2`}
           style={{
-            fillOutlineColor: "white",
             fillOutlineColor: "white",
             fillColor: "transparent",
             visibility:

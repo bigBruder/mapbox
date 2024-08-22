@@ -72,6 +72,7 @@ export const Map = () => {
   const { selectedProjection } = useMapStore((state) => ({
     selectedProjection: state.selectedProjection,
   }));
+  const cameraRef = useRef<Mapbox.Camera | null>(null);
 
   useH3Hexagons(debouncedCamera);
 
@@ -93,43 +94,44 @@ export const Map = () => {
     [selectedDate, customDate]
   );
 
-  useEffect(() => {
-    if (
-      !selectedPolygon ||
-      !realtimeCamera?.properties.bounds.ne[0] ||
-      !realtimeCamera?.properties.bounds.sw[0]
-    ) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (
+  //     !selectedPolygon ||
+  //     !realtimeCamera?.properties.bounds.ne[0] ||
+  //     !realtimeCamera?.properties.bounds.sw[0]
+  //   ) {
+  //     return;
+  //   }
 
-    console.log(
-      "selectedPolygon ==>",
-      selectedPolygon.features[0].properties?.h3Index ||
-        selectedPolygon.features[0].properties?.index
-    );
+  //   console.log(
+  //     "selectedPolygon ==>",
+  //     selectedPolygon.features[0].properties?.h3Index ||
+  //       selectedPolygon.features[0].properties?.index
+  //   );
 
-    const cellCenter = h3.cellToLatLng(
-      selectedPolygon.features[0].properties?.h3Index ||
-        selectedPolygon.features[0].properties?.index
-    );
+  //   const cellCenter = h3.cellToLatLng(
+  //     selectedPolygon.features[0].properties?.h3Index ||
+  //       selectedPolygon.features[0].properties?.index
+  //   );
 
-    // const longitude =
-    //   selectedPolygon?.features[0].geometry.coordinates[0][0][0];
-    // const latitude = selectedPolygon?.features[0].geometry.coordinates[0][0][1];
-    const screenDistance =
-      (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
-        Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
-      4;
+  //   // const longitude =
+  //   //   selectedPolygon?.features[0].geometry.coordinates[0][0][0];
+  //   // const latitude = selectedPolygon?.features[0].geometry.coordinates[0][0][1];
+  //   const screenDistance =
+  //     (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
+  //       Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
+  //     4;
 
-    cameraRef.current?.setCamera({
-      animationDuration: 500,
-      animationMode: "flyTo",
-      centerCoordinate: [cellCenter[1], cellCenter[0] - screenDistance],
-    });
-  }, [
-    selectedPolygon?.features[0]?.properties?.h3Index,
-    selectedPolygon?.features[0]?.properties?.index,
-  ]);
+  //   cameraRef.current?.setCamera({
+  //     animationDuration: 500,
+  //     animationMode: "flyTo",
+  //     centerCoordinate: [cellCenter[1], cellCenter[0]],
+  //   });
+  // }, [
+  //   selectedPolygon?.features[0]?.properties?.h3Index,
+  //   selectedPolygon?.features[0]?.properties?.index,
+  //   cameraRef.current,
+  // ]);
 
   // const getSearchParams = () => {
   //   if (!camera) return;
@@ -201,7 +203,6 @@ export const Map = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
-  const cameraRef = useRef<Mapbox.Camera | null>(null);
   const map = useRef<Mapbox.MapView | null>(null);
 
   useEffect(() => {
@@ -395,7 +396,10 @@ export const Map = () => {
                   animationDuration={0}
                 />
               )}
-              <HexagonsLayer />
+              <HexagonsLayer
+                cameraRef={cameraRef}
+                realTimeCamera={realtimeCamera}
+              />
             </Mapbox.MapView>
             <MapTopContainer
               showModal={showModal}

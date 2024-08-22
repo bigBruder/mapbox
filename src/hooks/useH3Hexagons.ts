@@ -53,7 +53,7 @@ export const useH3Hexagons = (realtimeCamera: CameraBound | null) => {
           coordinates: [boundary],
         },
         properties: {
-          index: hex,
+          h3Index: hex,
         },
       };
     });
