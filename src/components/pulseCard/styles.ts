@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "600",
     lineHeight: 19,
+    fontFamily: "SF-Text-Medium",
   },
 
   rightContainer: {
@@ -49,6 +49,15 @@ const styles = StyleSheet.create({
   infoRowValue: {
     fontSize: 14,
     fontWeight: "400",
+    color: colors.pulseGrey,
+    fontFamily: "SF-Text",
+  },
+  percentageText: {
+    marginTop: "auto",
+    marginBottom: 10,
+    marginRight: 4,
+    fontSize: 12,
+    fontWeight: "600",
     color: colors.pulseGrey,
   },
 });

@@ -1,11 +1,13 @@
-import BackIcon from "@/assets/icons/back";
+import { FC } from "react";
 import { SafeAreaView, TouchableOpacity, View, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
-import styles from "./styles";
+import { Navigation } from "@/types/Navigation";
+import BackIcon from "@/assets/icons/back";
 import SettingsIcon from "@/assets/icons/settings";
 
-export const MyProfileHeader = ({ navigation }) => {
+import styles from "./styles";
+
+export const MyProfileHeader: FC<Navigation> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.headerContainer}>
       <View
@@ -25,8 +27,8 @@ export const MyProfileHeader = ({ navigation }) => {
           <Text
             style={{
               fontSize: 20,
-              fontWeight: "600",
               lineHeight: 24,
+              fontFamily: "SF-Text-Bold",
             }}
           >
             My Profile

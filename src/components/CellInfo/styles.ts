@@ -2,6 +2,15 @@ import { StyleSheet } from "react-native";
 import { colors } from "@/constants/colors";
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    fontFamily: "SF-Text-Bold",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.pulseGrey,
+    fontFamily: "SF-Text",
+  },
   bottomSheet: {
     paddingVertical: 8,
     paddingHorizontal: 14,

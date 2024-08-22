@@ -1,24 +1,16 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Image, SafeAreaView, Text, View } from "react-native";
+import React, { FC, useRef, useState } from "react";
+import { SafeAreaView, Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
-import { getVibeDetails } from "@/api/client";
-import { formatDateForVibe, formatTagsInText } from "@/utils";
-import { getIconUrl } from "@/utils/getIconUrl";
-import { VibesItem } from "@/types/SearchResponse";
-import {
-  PorstDetailsValue,
-  PostDetailsResponse,
-} from "@/types/responses/PostDetailsResponse";
-import { Facebook } from "react-content-loader/native";
+import { PorstDetailsValue } from "@/types/responses/PostDetailsResponse";
 
-import { LinkPreview } from "@/components/linkPreview/LinkPreview";
-import { removeLinkFromString } from "@/helpers/removeLinkFromString";
 import { colors } from "@/constants/colors";
 
-import styles from "./styles";
 import { PulseCard } from "../pulseCard/PulseCard";
 import { ScrollView } from "react-native-gesture-handler";
+import { VibesItem } from "@/types/responses/SearchResponse";
+
+import styles from "./styles";
 
 interface Props {
   selectedPolygon: VibesItem;
@@ -62,23 +54,8 @@ export const CellInfo: FC<Props> = ({
               gap: 6,
             }}
           >
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-              }}
-            >
-              Trending in this Cell
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "400",
-                color: "#8386A5",
-              }}
-            >
-              Trending last 24 hours
-            </Text>
+            <Text style={styles.title}>Trending in this Cell</Text>
+            <Text style={styles.subtitle}>Trending last 24 hours</Text>
           </View>
           <ScrollView>
             <View

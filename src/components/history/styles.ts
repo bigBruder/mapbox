@@ -17,10 +17,12 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     color: colors.pulseGrey,
+    fontFamily: "SF-Text-Medium",
   },
   subTitle: {
     fontSize: 12,
     color: colors.pulseGrey,
+    fontFamily: "SF-Text",
   },
 });
 

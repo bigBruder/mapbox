@@ -2,31 +2,23 @@ import BackIcon from "@/assets/icons/back";
 import { View, Text, SafeAreaView, TouchableOpacity } from "react-native";
 
 import styles from "./styles";
+import { Navigation } from "@/types/Navigation";
 
-export const DefaultHeader = ({ navigation, title }) => {
+interface DefaultHeaderProps extends Navigation {
+  title: string;
+}
+
+export const DefaultHeader: React.FC<DefaultHeaderProps> = ({
+  navigation,
+  title,
+}) => {
   return (
     <SafeAreaView style={styles.headerContainer}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignContent: "center",
-          padding: 20,
-          gap: 10,
-        }}
-      >
+      <View style={styles.leftContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <BackIcon />
         </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "600",
-            lineHeight: 24,
-          }}
-        >
-          {title}
-        </Text>
+        <Text style={styles.title}>{title}</Text>
       </View>
     </SafeAreaView>
   );

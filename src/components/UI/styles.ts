@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: "600",
     lineHeight: 19,
+    fontFamily: "SF-Text-Bold",
   },
   disabled: {
     backgroundColor: colors.pulseGrey,

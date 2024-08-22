@@ -45,19 +45,23 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     color: colors.pulseGrey,
+    fontFamily: "SF-Text",
   },
   value: {
     fontSize: 16,
     color: colors.pulseBlack,
     maxWidth: 276,
+    fontFamily: "SF-Text-Medium",
   },
   valueAction: {
     fontSize: 12,
     color: colors.pulseGrey,
+    fontFamily: "SF-Text",
   },
   titleAction: {
     fontWeight: "600",
     color: colors.pulseBlack,
+    fontFamily: "SF-Text-Medium",
   },
 });
 

@@ -60,6 +60,7 @@ export const styles = StyleSheet.create({
   search: {
     flex: 1,
     height: 40,
+    fontFamily: "SF-Pro-Text",
   },
   tagsContainer: {
     display: "flex",

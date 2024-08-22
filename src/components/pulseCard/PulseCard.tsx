@@ -1,11 +1,12 @@
+import { ReactNode } from "react";
 import { Image, View, Text, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+import PulseIcon from "@/assets/icons/pulse";
+import ManIcon from "@/assets/icons/man";
+import { colors } from "@/constants/colors";
 
 import styles from "./styles";
-import ManIcon from "@/assets/icons/man";
-import { ReactNode } from "react";
-import PulseIcon from "@/assets/icons/pulse";
-import { colors } from "@/constants/colors";
-import { useNavigation } from "@react-navigation/native";
 
 export const PulseCard = () => {
   const navigation = useNavigation();
@@ -34,23 +35,17 @@ export const PulseCard = () => {
           value="Philadelphia Eagles"
         />
       </View>
-      <Text
-        style={{
-          marginTop: "auto",
-          marginBottom: 10,
-          marginRight: 4,
-          fontSize: 12,
-          fontWeight: "600",
-          color: colors.pulseGrey,
-        }}
-      >
-        58%
-      </Text>
+      <Text style={styles.percentageText}>58%</Text>
     </TouchableOpacity>
   );
 };
 
-const InfoRow = ({ icon, value }: { icon: ReactNode; value: string }) => {
+type InfoRowProps = {
+  icon: ReactNode;
+  value: string;
+};
+
+const InfoRow: React.FC<InfoRowProps> = ({ icon, value }) => {
   return (
     <View style={styles.infoRowContainer}>
       {icon}

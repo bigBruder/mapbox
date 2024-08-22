@@ -17,13 +17,14 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontWeight: "600",
     color: colors.pulseBlack,
+    fontFamily: "SF-Text-Medium",
   },
   description: {
-    fontSize: 16,
-    lineHeight: 17,
-
-    color: colors.pulseGrey,
     marginTop: 10,
+    fontSize: 14,
+    lineHeight: 16.71,
+    color: colors.pulseGrey,
+    fontFamily: "SF-Text",
   },
   footerContainer: {
     padding: 20,
@@ -42,8 +43,8 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: "600",
     lineHeight: 19,
+    fontFamily: "SF-Text-Bold",
   },
 });
 

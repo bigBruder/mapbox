@@ -1,11 +1,13 @@
-import ManIcon from "@/assets/icons/man";
 import { View, Text, TouchableOpacity } from "react-native";
 
-import styles from "./styles";
-import BackIcon from "@/assets/icons/back_rotated";
 import { SettingsRow } from "./SettingsRow";
+import { Navigation } from "@/types/Navigation";
+import BackIcon from "@/assets/icons/back_rotated";
+import ManIcon from "@/assets/icons/man";
 
-export const Settings = ({ navigation }) => {
+import styles from "./styles";
+
+export const Settings: React.FC<Navigation> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {renderAccountRow()}
@@ -56,8 +58,8 @@ const renderAccountRow = () => (
       <Text
         style={{
           fontSize: 20,
-          fontWeight: "600",
           lineHeight: 24,
+          fontFamily: "SF-Text-Bold",
         }}
       >
         Chicago Bears
