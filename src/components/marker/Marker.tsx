@@ -1,10 +1,11 @@
 import { Image, TouchableOpacity, ImageBackground, View } from "react-native";
 import { getIconUrl } from "@/utils/getIconUrl";
-import { VibesItem } from "@/types/SearchResponse";
 import { getMarkerSizeByPoints } from "@/helpers/getMarkerSizeByPoints";
 import { useMemo, useState } from "react";
 
 import { colors } from "@/constants/colors";
+import { VibesItem } from "@/types/responses/SearchResponse";
+
 import styles from "./styles";
 
 export const Marker = ({

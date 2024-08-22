@@ -1,21 +1,28 @@
 import { ReactNode } from "react";
 import { Image, View, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
+import { RootStackParamList } from "@/types/Navigation";
 import PulseIcon from "@/assets/icons/pulse";
 import ManIcon from "@/assets/icons/man";
 import { colors } from "@/constants/colors";
 
 import styles from "./styles";
 
+type PulseCardNavigationProp = NavigationProp<RootStackParamList, "Pulse">;
+
 export const PulseCard = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<PulseCardNavigationProp>();
 
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
-        navigation.navigate("Pulse");
+        navigation.navigate("Pulse", {
+          state: {
+            itemId: "Fly Eagles Fly",
+          },
+        });
       }}
     >
       <View style={styles.imageContainer}>

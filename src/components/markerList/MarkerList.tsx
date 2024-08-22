@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { ShapeSource, SymbolLayer } from "@rnmapbox/maps";
-import { VibesItem } from "@/types/SearchResponse";
 import { HITBOX, PIN_SYMBOL_LAYER_STYLE } from "@/constants/pin";
 import { getFrameId } from "@/helpers/helpers";
 import { sortPinsByWeightAndDate } from "@/utils";
+import { VibesItem } from "@/types/responses/SearchResponse";
 
 interface Props {
   pins: VibesItem[];

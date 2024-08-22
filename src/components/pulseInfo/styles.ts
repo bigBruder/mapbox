@@ -66,6 +66,13 @@ export const styles = StyleSheet.create({
 
   // content region
 
+  pulseInfoContainer: {
+    flex: 1,
+    gap: 20,
+    justifyContent: "space-between",
+    backgroundColor: "white",
+  },
+
   contentContainer: {
     flexDirection: "column",
     paddingHorizontal: 20,
