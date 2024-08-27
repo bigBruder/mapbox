@@ -78,12 +78,12 @@ export const Login = () => {
         >
           <ManIcon fill="white" />
         </TouchableOpacity>
-        <View style={styles.signUpContainer}>
+        {/* <View style={styles.signUpContainer}>
           <Text>Don't have an account?</Text>
           <TouchableOpacity>
             <Text style={styles.actionText}>Sign up</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </SafeAreaView>
     </View>
   );

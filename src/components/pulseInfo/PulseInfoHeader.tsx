@@ -2,7 +2,7 @@ import BackIcon from "@/assets/icons/back";
 import { SafeAreaView, TouchableOpacity, View } from "react-native";
 
 import styles from "./styles";
-import PulseIcon from "@/assets/icons/pulse";
+// import PulseIcon from "@/assets/icons/pulse";
 import { MoreIcon } from "@/assets/icons";
 import HeatmapIcon from "@/assets/icons/heatmap";
 import { colors } from "@/constants/colors";
@@ -34,7 +34,7 @@ export const PulseInfoHeader = ({ navigation }) => {
               alignSelf: "center",
             }}
           >
-            <PulseIcon width={35} height={32} fill={colors.pulsePrimary} />
+            {/* <PulseIcon width={35} height={32} fill={colors.pulsePrimary} /> */}
           </View>
         </View>
         <View style={styles.headerNavigationContainer}>

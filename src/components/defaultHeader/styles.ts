@@ -8,8 +8,8 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: colors.white,
 
-    borderBottomColor: colors.lightGrey,
-    borderBottomWidth: 1,
+    // borderBottomColor: colors.lightGrey,
+    // borderBottomWidth: 1,
   },
   leftContainer: {
     flex: 1,
