@@ -23,6 +23,7 @@ import { PulseInfoHeader } from "@/components/pulseInfo/PulseInfoHeader";
 import { MyProfile } from "@/components/myProfile/MyProfile";
 import { MyProfileHeader } from "@/components/myProfile/MyProfileHeader";
 import { LoginHeader } from "@/components/login/LoginHeader";
+import * as Notifications from "expo-notifications";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
@@ -103,6 +104,17 @@ const appNavigator = () => {
 
 export default function App() {
   const { user } = useUserStore((state) => state);
+
+  useEffect(() => {
+    const requestPermissions = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("You need to enable notifications to use this app");
+      }
+    };
+
+    requestPermissions();
+  }, []);
 
   useEffect(() => {
     (async () => {

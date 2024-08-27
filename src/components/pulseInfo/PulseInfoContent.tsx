@@ -1,8 +1,15 @@
-import { ScrollView, View, Text, Image } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  Image,
+  TouchableHighlight,
+} from "react-native";
+
+import ManIcon from "@/assets/icons/man";
+import { scheduleNotification } from "@/services/scheduleNotification";
 
 import styles from "./styles";
-import PeopleIcon from "@/assets/icons/people";
-import ManIcon from "@/assets/icons/man";
 
 export const PulseInfoContent = () => {
   return (
@@ -13,6 +20,21 @@ export const PulseInfoContent = () => {
           <ManIcon />
           <Text style={styles.authorName}>Los Angeles Rams</Text>
         </View>
+        <TouchableHighlight
+          onPress={() => scheduleNotification({ seconds: 5 }, "1")}
+        >
+          <Text>Set Reminder in 5 seconds</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          onPress={() => scheduleNotification({ seconds: 30 }, "1")}
+        >
+          <Text>Set Reminder in 30 seconds</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          onPress={() => scheduleNotification({ seconds: 86400 }, "1")}
+        >
+          <Text>Set Reminder in 1 day</Text>
+        </TouchableHighlight>
         <Text style={styles.contentText}>
           In the "Ram House," unity and explosive energy reign. This pulse aims
           to bring fans together under the banner of speed and strategy, the

@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -7,7 +6,7 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import Mapbox, { Images } from "@rnmapbox/maps";
+import Mapbox from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
@@ -24,7 +23,7 @@ import { MAP_PROPS } from "@/constants/map";
 import { CameraBound } from "@/types";
 import { colors } from "@/constants/colors";
 
-import ToastManager, { Toast } from "toastify-react-native";
+import ToastManager from "toastify-react-native";
 import { useToastStore } from "@/store/ToastStore";
 
 import { VibesItem } from "@/types/responses/SearchResponse";
@@ -38,9 +37,9 @@ import { useH3Hexagons } from "@/hooks/useH3Hexagons";
 import { HexagonsLayer } from "./HexagonsLayer";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 import { CellInfo } from "../CellInfo/CellInfo";
-import h3 from "h3-js";
 
 import styles from "./styles";
+import { useNotificationObserver } from "@/hooks/useNotifications";
 
 export const Map = () => {
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
@@ -75,14 +74,7 @@ export const Map = () => {
   const cameraRef = useRef<Mapbox.Camera | null>(null);
 
   useH3Hexagons(debouncedCamera);
-
-  // useEffect(() => {
-  //   if (!isAutoH3Index) {
-  //     const resolutionOnLevel = getH3ResolutionByZoom(realTimeZoom);
-  //     setH3Index(resolutionOnLevel);
-  //     setPolygons([]);
-  //   }
-  // }, [isAutoH3Index]);
+  useNotificationObserver();
 
   const clearMessage = useToastStore((state) => state.clearMessage);
 
@@ -94,72 +86,6 @@ export const Map = () => {
     [selectedDate, customDate]
   );
 
-  // useEffect(() => {
-  //   if (
-  //     !selectedPolygon ||
-  //     !realtimeCamera?.properties.bounds.ne[0] ||
-  //     !realtimeCamera?.properties.bounds.sw[0]
-  //   ) {
-  //     return;
-  //   }
-
-  //   console.log(
-  //     "selectedPolygon ==>",
-  //     selectedPolygon.features[0].properties?.h3Index ||
-  //       selectedPolygon.features[0].properties?.index
-  //   );
-
-  //   const cellCenter = h3.cellToLatLng(
-  //     selectedPolygon.features[0].properties?.h3Index ||
-  //       selectedPolygon.features[0].properties?.index
-  //   );
-
-  //   // const longitude =
-  //   //   selectedPolygon?.features[0].geometry.coordinates[0][0][0];
-  //   // const latitude = selectedPolygon?.features[0].geometry.coordinates[0][0][1];
-  //   const screenDistance =
-  //     (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
-  //       Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
-  //     4;
-
-  //   cameraRef.current?.setCamera({
-  //     animationDuration: 500,
-  //     animationMode: "flyTo",
-  //     centerCoordinate: [cellCenter[1], cellCenter[0]],
-  //   });
-  // }, [
-  //   selectedPolygon?.features[0]?.properties?.h3Index,
-  //   selectedPolygon?.features[0]?.properties?.index,
-  //   cameraRef.current,
-  // ]);
-
-  // const getSearchParams = () => {
-  //   if (!camera) return;
-  //   const { ne, sw } = camera.properties.bounds;
-  //   const center = camera.properties.center;
-  //   const isMeridianCrossed = center[0] < sw[0] || center[0] > ne[0];
-
-  //   const queryParams: QueryParams = {
-  //     "NE.Latitude": ne[1],
-  //     "NE.Longitude": !isMeridianCrossed ? ne[0] : sw[0],
-  //     "SW.Latitude": sw[1],
-  //     "SW.Longitude": !isMeridianCrossed ? sw[0] : ne[0],
-  //     OrderBy: "Points",
-  //     PageSize: 20,
-  //     "TopTags.Enable": true,
-  //     IncludeTotalCount: true,
-  //     SingleItemPerVenue: true,
-  //     Tags: selectedTag || undefined,
-  //     "Filter.OnePerCell": realTimeZoom > 13 ? false : true,
-  //     "Filter.Resolution": GridIndex,
-  //     "Heatmap.Enable": true,
-  //     "Heatmap.Resolution": GridIndex,
-  //     ...dateParams,
-  //   };
-
-  //   return queryParams;
-  // };
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedCamera(realtimeCamera);
@@ -167,37 +93,6 @@ export const Map = () => {
 
     return () => clearTimeout(timer);
   }, [realtimeCamera]);
-
-  // useEffect(() => {
-  //   const queryParams = getSearchParams();
-  //   if (!camera || !queryParams) return;
-  //   fetchVibes(camera.properties.zoom, queryParams);
-  // }, [camera?.properties.center[0], camera?.properties.zoom]);
-
-  // const GridIndex = useMemo(
-  //   () => Math.floor(getGridIndex(Math.round(realTimeZoom))),
-  //   [realTimeZoom]
-  // );
-  // const heatmapResolution = useMemo(
-  //   () => getHeatmapResolutionByZoom(realTimeZoom),
-  //   [realTimeZoom]
-  // );
-
-  // useEffect(() => {
-  //   clearData();
-  //   const searchParams = getSearchParams();
-  //   if (!searchParams) return;
-  //   fetchVibes(GridIndex, searchParams);
-
-  //   HEATMAP_INITIAL_LEVELS.map((resolution) => {
-  //     updateInitialHeatmap(
-  //       resolution,
-  //       selectedTag,
-  //       dateParams,
-  //       setInitialHeatmap
-  //     );
-  //   });
-  // }, [selectedTag, selectedDate, customDate.startDate, customDate.endDate]);
 
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -232,16 +127,6 @@ export const Map = () => {
     });
   }, [selectedMarker?.id]);
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setDebouncedVibes(getVibes(getGridIndex(Math.floor(realTimeZoom))) || []);
-  //   }, 700);
-
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, [GridIndex, camera?.properties.center]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setCamera(realtimeCamera);
@@ -251,28 +136,6 @@ export const Map = () => {
       clearTimeout(timer);
     };
   }, [realtimeCamera]);
-
-  // const handleMapPress = (event) => {
-  //   const { geometry } = event;
-  //   const [longitude, latitude] = geometry.coordinates;
-  //   const h3Index = h3.latLngToCell(longitude, latitude, 3);
-  //   const hexBoundary = h3.cellToBoundary(h3Index, true);
-  //   // const hexCenterCoordinates = h3.cellToLatLng(h3Index);
-  //   // const hexBoundary = h3.cellToBoundary(h3Index);
-  //   const hexagonsGeoJson = {
-  //     type: "Feature",
-  //     geometry: {
-  //       type: "Polygon",
-  //       coordinates: [
-  //         hexBoundary.map((coord) => [coord[1], coord[0]])
-  //       ],
-  //       properties: {
-  //         id: 22,
-  //       },
-  //     },
-  //   };
-  //   setSelectedPolygon(hexagonsGeoJson);
-  // };
 
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
@@ -290,30 +153,6 @@ export const Map = () => {
       });
     }
   };
-
-  const isMapReady = map.current?.state.isReady || false;
-
-  // if (isLoading && !isMapReady) {
-  //   return <MapLoading />;
-  // }
-
-  // const renderHeatmapLayer = () => {
-  //   const heatmapData = initialHeatmap[heatmapResolution] || heatmap;
-  //   if (!heatmapData) return null;
-
-  //   return (
-  //     <>
-  //       <Mapbox.ShapeSource
-  //         id={`heatmap`}
-  //         shape={{
-  //           type: "FeatureCollection",
-  //           features: transformDataToHeatData(heatmapData),
-  //         }}
-  //       />
-  //       <HeatmapLayer realtimeZoom={realTimeZoom} />
-  //     </>
-  //   );
-  // };
 
   return (
     <View style={styles.page}>
@@ -361,24 +200,6 @@ export const Map = () => {
                     layerIndex={87}
                   />
                 </Mapbox.ShapeSource>
-              )}
-
-              {/* <Images
-                images={{
-                  ...transformPinsToImagesForMap(getVibes(GridIndex) || []),
-                  frame: require("@/assets/frame.png"),
-                  frameStarted: require("@/assets/frame_started.png"),
-                  frameSelected: require("@/assets/frame_selected.png"),
-                  frameSelectedStarted: require("@/assets/frame_selected_started.png"),
-                }}
-              /> */}
-              {debouncedVibes && (
-                <MarkerList
-                  pins={debouncedVibes}
-                  setSelectedMarker={setSelectedMarker}
-                  selectedMarker={selectedMarker}
-                  realtimeZoom={realTimeZoom}
-                />
               )}
               {location?.source === "gps" && (
                 <Mapbox.UserLocation
@@ -429,7 +250,6 @@ export const Map = () => {
         backgroundColor={showModal ? colors.white : colors.transparent}
       />
       <Toaster />
-      {/* <HexagonsDebugContainer /> */}
     </View>
   );
 };
