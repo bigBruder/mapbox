@@ -47,32 +47,36 @@ export const CellInfo: FC<Props> = ({
       style={styles.bottomSheet}
     >
       <BottomSheetView style={styles.bottomsheetView}>
-        <SafeAreaView style={styles.safeBottomSheetContainer}>
+        <View
+          style={{
+            gap: 6,
+            padding: 20,
+            paddingBottom: 0,
+          }}
+        >
+          <Text style={styles.title}>Trending in this Cell</Text>
+          <Text style={styles.subtitle}>Trending last 24 hours</Text>
+        </View>
+        <ScrollView
+          style={{ padding: 20 }}
+          showsVerticalScrollIndicator={false}
+        >
           <View
             style={{
-              paddingBottom: 20,
-              gap: 6,
+              gap: 15,
+              marginBottom: 150,
             }}
           >
-            <Text style={styles.title}>Trending in this Cell</Text>
-            <Text style={styles.subtitle}>Trending last 24 hours</Text>
+            <PulseCard />
+            <PulseCard />
+            <PulseCard />
+            <PulseCard />
+            <PulseCard />
+            <PulseCard />
+            <PulseCard />
+            <PulseCard />
           </View>
-          <ScrollView>
-            <View
-              style={{
-                flex: 1,
-                height: "100%",
-                gap: 15,
-              }}
-            >
-              <PulseCard />
-              <PulseCard />
-              <PulseCard />
-              <PulseCard />
-              <PulseCard />
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+        </ScrollView>
       </BottomSheetView>
     </BottomSheet>
   );

@@ -13,10 +13,9 @@ const styles = StyleSheet.create({
   },
   bottomSheet: {
     paddingVertical: 8,
-    paddingHorizontal: 14,
   },
   bottomsheetView: {
-    paddingVertical: 20,
+    // paddingVertical: 20,
     gap: 10,
   },
   bottomSheetHandle: {
