@@ -15,11 +15,12 @@ import { colors } from "@/constants/colors";
 import { useUserStore } from "@/store/userStore";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { NavigationProp } from "@/types/Navigation";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const { toggleUser } = useUserStore((state) => state);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   const isContinueDisabled = !email || email.length < 3 || !email.includes("@");
   return (
@@ -78,12 +79,6 @@ export const Login = () => {
         >
           <ManIcon fill="white" />
         </TouchableOpacity>
-        {/* <View style={styles.signUpContainer}>
-          <Text>Don't have an account?</Text>
-          <TouchableOpacity>
-            <Text style={styles.actionText}>Sign up</Text>
-          </TouchableOpacity>
-        </View> */}
       </SafeAreaView>
     </View>
   );

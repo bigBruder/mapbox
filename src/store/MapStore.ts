@@ -1,15 +1,17 @@
-import { getPinsForBound } from "@/api/client";
-import { CameraBound, QueryParams } from "@/types";
+import { fetchHeatmap } from "@/api/client";
+import { CameraBound, QueryParams, TransformedHeatmapData } from "@/types";
 import {
   Heatmap,
   HeatmapData,
   VibesItem,
 } from "@/types/responses/SearchResponse";
+import { transformHeatmapResponseToHeatmapData } from "@/utils/transformDataToHeatData";
 import { create } from "zustand";
+import { useHexagonsStore } from "./hexagonsStore";
 
 interface MapState {
   vibes: { [key: number]: VibesItem[] };
-  heatMap: HeatmapData;
+  heatMap: TransformedHeatmapData;
   initialHeatMap: {
     [key: string]: Heatmap; // key is resolution level
   };
@@ -21,24 +23,32 @@ interface MapState {
     startDate: Date;
     endDate: Date;
   };
-  selectedDate: string;
+  // selectedDate: string;
   camera: CameraBound | null;
   selectedProjection: "globe" | "mercator";
+  topics: any;
+  showUserPosition: boolean;
+  setTopics: (topics: any) => void;
+  wipeTopics: () => void;
   setSelectedDate: (date: string) => void;
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => void;
   setInitialHeatMap: (resolution: number, heatmapData: HeatmapData) => void;
   setCustomDate: (startDate: Date, endDate: Date) => void;
   getVibes: (gridIndex: number) => VibesItem[] | undefined;
   setSelectedTag: (tag: string | null) => void;
-  fetchVibes: (realTimeZoom: number, queryParams: QueryParams) => Promise<void>;
+  // fetchVibes: (realTimeZoom: number, queryParams: QueryParams) => Promise<void>;
   clearData: () => void;
   clearCustomDate: () => void;
   setCamera: (camera: CameraBound | null) => void;
   toggleSelectedProjection: () => void;
+  toggleShowUserPosition: () => void;
+  setShowUserPosition: (showUserPosition: boolean) => void;
+  updateHeatmap: (queryParams: QueryParams) => Promise<void>;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
   vibes: {},
+  topics: {},
   heatMap: {},
   totalResults: 0,
   totalResultsInVisibleArea: 0,
@@ -52,6 +62,28 @@ export const useMapStore = create<MapState>((set, get) => ({
   selectedDate: "Now",
   camera: null,
   selectedProjection: "globe",
+  showUserPosition: true,
+
+  toggleShowUserPosition: () => {
+    set((state) => ({
+      showUserPosition: !state.showUserPosition,
+    }));
+  },
+  setShowUserPosition: (showUserPosition: boolean) => {
+    set(() => ({
+      showUserPosition: showUserPosition,
+    }));
+  },
+  setTopics: (topics) => {
+    set(() => ({
+      topics: topics,
+    }));
+  },
+  wipeTopics: () => {
+    set(() => ({
+      topics: null,
+    }));
+  },
   setVibes: (realTimeZoom: number, newVibes: VibesItem[]) => {
     const gridIndex = Math.max(1, Math.round(realTimeZoom));
     set((state) => ({
@@ -124,66 +156,76 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   toggleSelectedProjection: () => {
     set((state) => ({
-      selectedProjection: state.selectedProjection === "globe" ? "mercator" : "globe",
+      selectedProjection:
+        state.selectedProjection === "globe" ? "mercator" : "globe",
     }));
   },
 
   getAllVibes: () => Object.values(get().vibes).flat(),
-  fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
-    const response = await getPinsForBound(queryParams);
-    if (!response) return;
-    const heatmap = response.value?.heatmap.data || [];
-    const totalResultsInVisibleArea = response.value?.totalResults || 0;
-    const selectedProjection = "globe";
+  // fetchVibes: async (realTimeZoom: number, queryParams: QueryParams) => {
+  //   const response = await getPinsForBound(queryParams);
+  //   if (!response) return;
+  //   const heatmap = response.value?.heatmap.data || [];
+  //   const totalResultsInVisibleArea = response.value?.totalResults || 0;
+  //   const selectedProjection = "globe";
 
-    let gridIndex = Math.min(10, Math.max(0, Math.floor(realTimeZoom)));
+  //   let gridIndex = Math.min(10, Math.max(0, Math.floor(realTimeZoom)));
 
-    if (gridIndex > 9) {
-      gridIndex = 9;
-    }
-    if (gridIndex < 0) {
-      gridIndex = 0;
-    }
+  //   if (gridIndex > 9) {
+  //     gridIndex = 9;
+  //   }
+  //   if (gridIndex < 0) {
+  //     gridIndex = 0;
+  //   }
+
+  //   set(() => ({
+  //     tags: Object.keys(response.value?.tags) || [],
+  //   }));
+
+  //   set(() => ({
+  //     totalResultsInVisibleArea: totalResultsInVisibleArea,
+  //   }));
+
+  //   set(() => ({
+  //     heatMap: heatmap,
+  //   }));
+
+  //   const vibes: VibesItem[] = response?.value?.vibes;
+  //   if (!vibes) return;
+
+  //   set((state) => {
+  //     const oldVibes = state.vibes[gridIndex] || [];
+  //     const oldVibesIds = new Set(oldVibes.map((vibe) => vibe.id));
+  //     const filteredNewVibes =
+  //       vibes.filter((vibe) => !oldVibesIds.has(vibe.id)) || [];
+  //     const resultedVibes = [...oldVibes, ...filteredNewVibes];
+  //     const cutedVibes = resultedVibes.slice(-100);
+
+  //     return {
+  //       vibes: {
+  //         ...state.vibes,
+  //         [gridIndex]: cutedVibes,
+  //       },
+  //     };
+  //   });
+  // },
+
+  updateHeatmap: async (queryParams: QueryParams) => {
+    const response = await fetchHeatmap(queryParams);
 
     set(() => ({
-      tags: Object.keys(response.value?.tags) || [],
+      heatMap: response,
     }));
 
-    set(() => ({
-      totalResultsInVisibleArea: totalResultsInVisibleArea,
-    }));
-
-    set(() => ({
-      heatMap: heatmap,
-    }));
-
-    const vibes: VibesItem[] = response?.value?.vibes;
-    if (!vibes) return;
-
-    set((state) => {
-      const oldVibes = state.vibes[gridIndex] || [];
-      const oldVibesIds = new Set(oldVibes.map((vibe) => vibe.id));
-      const filteredNewVibes =
-        vibes.filter((vibe) => !oldVibesIds.has(vibe.id)) || [];
-      const resultedVibes = [...oldVibes, ...filteredNewVibes];
-      const cutedVibes = resultedVibes.slice(-100);
-
-      return {
-        vibes: {
-          ...state.vibes,
-          [gridIndex]: cutedVibes,
-        },
-      };
-    });
+    // if (!response) return;
   },
-
-  clearData: () => {
-    set(() => ({
-      vibes: {},
-      heatMap: {},
-      initialHeatMap: {},
-    }));
-  },
+  // clearData: () => {
+  //   set(() => ({
+  //     vibes: {},
+  //     heatMap: {},
+  //     initialHeatMap: {},
+  //   }));
+  // },
   clearCustomDate: () => {
     set(() => ({
       customDate: {

@@ -1,8 +1,6 @@
-import { View, Text } from "react-native";
-import { PulseCard } from "../pulseCard/PulseCard";
+import { View, Text, ScrollView } from "react-native";
 
 import styles from "./styles";
-import { ScrollView } from "react-native";
 
 export const History = () => {
   return (
@@ -19,20 +17,7 @@ export const History = () => {
           <Text style={styles.subTitle}>History Visible only for you</Text>
         </View>
 
-        <View style={styles.historyList}>
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-          <PulseCard />
-        </View>
+        <View style={styles.historyList}>{/* <PulseCard /> */}</View>
       </ScrollView>
     </View>
   );

@@ -3,7 +3,7 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXApplication (5.8.4):
     - ExpoModulesCore
-  - EXConstants (15.4.6):
+  - EXConstants (16.0.2):
     - ExpoModulesCore
   - EXFont (11.10.3):
     - ExpoModulesCore
@@ -11,9 +11,11 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.28.16):
     - ExpoModulesCore
-  - Expo (50.0.19):
+  - Expo (50.0.20):
     - ExpoModulesCore
   - ExpoFileSystem (16.0.9):
+    - ExpoModulesCore
+  - ExpoHead (3.5.23):
     - ExpoModulesCore
   - ExpoKeepAwake (12.8.2):
     - ExpoModulesCore
@@ -1096,19 +1098,19 @@ PODS:
     - React-jsi (= 0.73.6)
     - React-logger (= 0.73.6)
     - React-perflogger (= 0.73.6)
-  - RNCAsyncStorage (1.23.1):
+  - RNCAsyncStorage (1.24.0):
     - React-Core
   - RNGestureHandler (2.14.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - rnmapbox-maps (10.1.24):
+  - rnmapbox-maps (10.1.30):
     - MapboxMaps (= 11.0.0)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.1.24)
+    - rnmapbox-maps/DynamicLibrary (= 10.1.30)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.1.24):
+  - rnmapbox-maps/DynamicLibrary (10.1.30):
     - MapboxMaps (= 11.0.0)
     - React
     - React-Core
@@ -1139,6 +1141,7 @@ DEPENDENCIES:
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
+  - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoNetwork (from `../node_modules/expo-network/ios`)
@@ -1231,6 +1234,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
+  ExpoHead:
+    :path: "../node_modules/expo-router/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
@@ -1355,12 +1360,13 @@ SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   EXApplication: 16bcea16789221bd566e64b5ea2608cf7756b005
-  EXConstants: a5f6276e565d98f9eb4280f81241fc342d641590
+  EXConstants: 409690fbfd5afea964e5e9d6c4eb2c2b59222c59
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXLocation: a631bd8dc4e7db986fb27edb7fc9ea8174ebe249
   EXNotifications: b1b174716b287e161350a18de1d253aabceeea2d
-  Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
+  Expo: d86f597bbab83615207499c5b3bfd80992e2bbd3
   ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
+  ExpoHead: fcb28a68ed4ba28f177394d2dfb8a0a8824cd103
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoModulesCore: 4a8928a228569301ac4fc4a1e846713e05754d05
   ExpoNetwork: 97d7774ab8f62e35f08db77fbef0388d5e1f2c76
@@ -1418,9 +1424,9 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 9636eee762c699ca7c85751a359101797e4c8b3b
   React-utils: d16c1d2251c088ad817996621947d0ac8167b46c
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
-  RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
+  RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNGestureHandler: 15c6ef51acba34c49ff03003806cf5dd6098f383
-  rnmapbox-maps: 4d41484d138749a793cb698048c7748a62aac27c
+  rnmapbox-maps: 14194498b524e73673ba20b1d9b8251d60ab6658
   RNReanimated: f6b02d8f5eaa2830296411d4ec3b8ef5442dd13d
   RNScreens: 29418ceffb585b8f0ebd363de304288c3dce8323
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a

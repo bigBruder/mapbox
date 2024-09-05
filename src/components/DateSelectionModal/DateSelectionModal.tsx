@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -7,14 +7,14 @@ import {
   SafeAreaView,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import DateTimePicker, { DateType } from "react-native-ui-datepicker";
+import DateTimePicker from "react-native-ui-datepicker";
 import { formatDate } from "../../utils/helpersFunctions";
 import { StatusBar } from "expo-status-bar";
-import MyContext from "../../providers/mapContext/MapContext";
 
-import styles from "./styles";
 import { DATE_RANGES } from "../../constants/dateRanges";
 import { useMapStore } from "@/store/MapStore";
+
+import styles from "./styles";
 
 interface Props {
   onSelect: (date: string) => void;

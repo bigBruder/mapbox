@@ -6,7 +6,7 @@ export const MAX_HEATMAP_ZOOM = 13;
 export const HEATMAP_CONFIG_STYLE = {
   // heatmapRadius: ["interpolate", ["linear"], ["zoom"], 0, 75, 9, 75, 15, 50],
   heatmapRadiusTransition: { duration: 2000 },
-  heatmapWeight: ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 1, 15, 0.6],
+  heatmapWeight: ["/", ["get", "weight"], 10000],
   heatmapIntensityTransition: { duration: 2000 },
   heatmapIntensity: ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 1, 15, 1],
   heatmapOpacityTransition: { duration: 1000 },

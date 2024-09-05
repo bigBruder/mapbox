@@ -1,10 +1,4 @@
-import {
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -24,13 +18,9 @@ import { CameraBound } from "@/types";
 import { colors } from "@/constants/colors";
 
 import ToastManager from "toastify-react-native";
-import { useToastStore } from "@/store/ToastStore";
-
-import { VibesItem } from "@/types/responses/SearchResponse";
 
 import { useCameraStore } from "@/store/CameraStore";
 import { useMapStore } from "@/store/MapStore";
-import { getDateParams } from "@/helpers/getDateParams";
 
 import { useH3Hexagons } from "@/hooks/useH3Hexagons";
 
@@ -38,28 +28,21 @@ import { HexagonsLayer } from "./HexagonsLayer";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 import { CellInfo } from "../CellInfo/CellInfo";
 
-import styles from "./styles";
 import { useNotificationObserver } from "@/hooks/useNotifications";
+
+import styles from "./styles";
+import { getH3ResolutionByZoom } from "@/utils/polygonsUtils";
+import { getCellsVibes } from "@/api/client";
+import { HeatmapLayer } from "./HeatmapLayer";
+import { useUserStore } from "@/store/userStore";
+import { useNavigation } from "@react-navigation/native";
+import * as Notifications from "expo-notifications";
 
 export const Map = () => {
   const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
     null
   );
-  const message = useToastStore((state) => state.toast);
-  const heatmap = useMapStore((state) => state.heatMap);
-  const selectedTag = useMapStore((state) => state.selectedTag);
-  const [debouncedVibes, setDebouncedVibes] = useState<VibesItem[]>([]);
-  const [debouncedCamera, setDebouncedCamera] = useState<CameraBound | null>(
-    null
-  );
-  const getVibes = useMapStore((state) => state.getVibes);
-  const fetchVibes = useMapStore((state) => state.fetchVibes);
-  const clearData = useMapStore((state) => state.clearData);
-  const initialHeatmap = useMapStore((state) => state.initialHeatMap);
-  const setInitialHeatmap = useMapStore((state) => state.setInitialHeatMap);
-  const customDate = useMapStore((state) => state.customDate);
   const camera = useMapStore((state) => state.camera);
-  const setCamera = useMapStore((state) => state.setCamera);
   const { realTimeZoom, setRealTimeZoom } = useCameraStore((state) => ({
     realTimeZoom: state.realTimeZoom,
     setRealTimeZoom: state.setRealTimeZoom,
@@ -72,37 +55,46 @@ export const Map = () => {
     selectedProjection: state.selectedProjection,
   }));
   const cameraRef = useRef<Mapbox.Camera | null>(null);
+  const { topics, setTopics } = useMapStore((state) => ({
+    topics: state.topics,
+    setTopics: state.setTopics,
+  }));
+  const { h3Index, setH3Index } = useHexagonsStore((state) => ({
+    h3Index: state.h3Index,
+    setH3Index: state.setH3Index,
+  }));
 
-  useH3Hexagons(debouncedCamera);
+  const { setRealTimeZoomDebug } = useCameraStore((state) => ({
+    setRealTimeZoomDebug: state.setRealTimeZoomDebug,
+  }));
+
+  const { heatMap } = useMapStore((state) => ({
+    heatMap: state.heatMap,
+  }));
+
+  useH3Hexagons(realtimeCamera);
   useNotificationObserver();
-
-  const clearMessage = useToastStore((state) => state.clearMessage);
 
   const { selectedMarker, setSelectedMarker, selectedDate } =
     useContext(MapContext);
 
-  const dateParams = useMemo(
-    () => getDateParams(selectedDate, customDate),
-    [selectedDate, customDate]
-  );
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedCamera(realtimeCamera);
-    });
-
-    return () => clearTimeout(timer);
-  }, [realtimeCamera]);
-
   const [isFirstFlyHappened, setIsFirstFlyHappened] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
-  const { location, setPermissionStatus, isLoading } = useRealTimeLocation();
+  const { setPermissionStatus, isLoading } = useRealTimeLocation();
+  const { toggleShowUserPosition, showUserPosition, setShowUserPosition } =
+    useMapStore((state) => ({
+      toggleShowUserPosition: state.toggleShowUserPosition,
+      showUserPosition: state.showUserPosition,
+      setShowUserPosition: state.setShowUserPosition,
+    }));
   const map = useRef<Mapbox.MapView | null>(null);
+  const { userLocation } = useUserStore((state) => ({
+    userLocation: state.userLocation,
+  }));
 
   useEffect(() => {
-    if (!location) return;
-    const { longitude, latitude } = location;
+    if (!userLocation) return;
+    const { longitude, latitude } = userLocation;
 
     cameraRef.current?.setCamera({
       zoomLevel: 5,
@@ -114,28 +106,21 @@ export const Map = () => {
     setTimeout(() => {
       setIsFirstFlyHappened(true);
     }, 1000);
-  }, [location?.source]);
+  }, [userLocation?.source]);
 
-  useEffect(() => {
-    if (!selectedMarker?.id) return;
-    const { longitude, latitude } = selectedMarker.venue.geo;
+  const { updateHeatmap } = useMapStore((state) => ({
+    updateHeatmap: state.updateHeatmap,
+  }));
 
-    cameraRef.current?.setCamera({
-      animationDuration: 500,
-      animationMode: "flyTo",
-      centerCoordinate: [longitude, latitude],
-    });
-  }, [selectedMarker?.id]);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setCamera(realtimeCamera);
+  //   }, 1000);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCamera(realtimeCamera);
-    }, 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [realtimeCamera]);
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, [realtimeCamera]);
 
   const handleCenterCamera = async () => {
     const isGpsGranted = await Location.getForegroundPermissionsAsync();
@@ -143,15 +128,69 @@ export const Map = () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       setPermissionStatus(status);
     }
-    if (!location) return;
+
+    if (!userLocation) return;
     if (!isLoading) {
-      cameraRef.current?.setCamera({
-        zoomLevel: 6,
-        animationDuration: 2000,
-        animationMode: "flyTo",
-        centerCoordinate: [location.longitude, location.latitude],
-      });
+      // need to check if user is already in the center
+      const isUserPositionInCenter =
+        realtimeCamera?.properties.center[0].toFixed(4) ===
+          userLocation.longitude.toFixed(4) &&
+        realtimeCamera?.properties.center[1].toFixed(4) ===
+          userLocation.latitude.toFixed(4);
+
+      if (isUserPositionInCenter) {
+        toggleShowUserPosition();
+        return;
+      } else {
+        !showUserPosition && setShowUserPosition(true);
+        cameraRef.current?.setCamera({
+          zoomLevel: 6,
+          animationDuration: 0,
+          animationMode: "flyTo",
+          centerCoordinate: [userLocation.longitude, userLocation.latitude],
+        });
+      }
     }
+  };
+
+  useEffect(() => {
+    setSelectedPolygon(null);
+    setTopics(null);
+  }, [h3Index]);
+
+  const handleMapIdle = (e: Mapbox.MapState) => {
+    const { center, zoom } = e.properties;
+    const requiredH3Index = getH3ResolutionByZoom(Math.floor(zoom));
+
+    if (requiredH3Index !== h3Index) {
+      setH3Index(requiredH3Index);
+    }
+
+    const neLatitude = e?.properties.bounds.ne[1];
+    const neLongitude = e?.properties.bounds.ne[0];
+    const swLatitude = e?.properties.bounds.sw[1];
+    const swLongitude = e?.properties.bounds.sw[0];
+
+    const queryParams = {
+      Resolution: requiredH3Index,
+      "NE.latitude": neLatitude,
+      "NE.longitude": neLongitude,
+      "SW.latitude": swLatitude,
+      "SW.longitude": swLongitude,
+    };
+
+    updateHeatmap(queryParams);
+
+    const fetchMapTopics = async () => {
+      try {
+        const response = await getCellsVibes(queryParams);
+        setTopics(response);
+      } catch (error) {
+        console.error("Error fetching map topics:", error);
+      }
+    };
+
+    fetchMapTopics();
   };
 
   return (
@@ -160,72 +199,51 @@ export const Map = () => {
         <View style={styles.container}>
           <View style={styles.container}>
             <Mapbox.MapView
-              preferredFramesPerSecond={30}
               style={styles.map}
               ref={map}
               {...MAP_PROPS}
               projection={selectedProjection}
               onMapIdle={(e) => {
-                setCamera(e as CameraBound);
+                handleMapIdle(e);
+                setRealtimeCamera(e);
               }}
               onCameraChanged={(e) => {
-                const roundedZoom = Math.floor(e.properties.zoom);
-                setRealtimeCamera(e as CameraBound);
-                setRealTimeZoom(roundedZoom);
+                setRealTimeZoomDebug(e.properties.zoom);
+                setRealTimeZoom(e.properties.zoom);
+                // }
               }}
               onPress={(e) => {
-                // handleMapPress(e);
                 setSelectedMarker(null);
               }}
             >
-              {/* {renderHeatmapLayer()} */}
+              {/* <Images images={getMapImages(topics)} /> */}
 
-              {selectedPolygon && (
-                <Mapbox.ShapeSource
-                  key={"" + 100}
-                  id={`polygon-line`}
-                  shape={{
-                    type: "FeatureCollection",
-                    features: [selectedPolygon],
-                  }}
-                  onPress={() => {}} // Add an empty onPress to prevent interaction delays
-                >
-                  <Mapbox.FillLayer
-                    id={`polygon-line`}
-                    style={{
-                      fillColor: "red",
-                      fillOpacity: 1,
-                      visibility: "visible",
-                    }}
-                    layerIndex={87}
-                  />
-                </Mapbox.ShapeSource>
-              )}
-              {location?.source === "gps" && (
-                <Mapbox.UserLocation
-                  visible
-                  animated
-                  showsUserHeadingIndicator
-                />
+              <MarkerList topics={topics} zoomLevel={realTimeZoom} />
+
+              {userLocation?.source === "gps" && showUserPosition && (
+                <Mapbox.UserLocation visible animated />
               )}
               <Mapbox.Camera ref={cameraRef} minZoomLevel={0} />
-              {!isFirstFlyHappened && location && (
+              {!isFirstFlyHappened && userLocation && (
                 <Mapbox.Camera
-                  zoomLevel={5}
-                  maxZoomLevel={15}
-                  centerCoordinate={[location.longitude, location.latitude]}
+                  zoomLevel={4}
+                  maxZoomLevel={9}
+                  centerCoordinate={[
+                    userLocation?.longitude,
+                    userLocation?.latitude,
+                  ]}
                   animationDuration={0}
                 />
               )}
+              <HeatmapLayer realtimeZoom={1} />
               <HexagonsLayer
                 cameraRef={cameraRef}
                 realTimeCamera={realtimeCamera}
               />
+              <Mapbox.ShapeSource id={`heatmap`} shape={heatMap} />
+              <HeatmapLayer realtimeZoom={realTimeZoom} />
             </Mapbox.MapView>
-            <MapTopContainer
-              showModal={showModal}
-              setShowModal={setShowModal}
-            />
+            <MapTopContainer />
             <MapBottomContainer
               handleCenterCamera={handleCenterCamera}
               camera={camera}
@@ -246,9 +264,7 @@ export const Map = () => {
         )}
         <ToastManager />
       </GestureHandlerRootView>
-      <StatusBar
-        backgroundColor={showModal ? colors.white : colors.transparent}
-      />
+      <StatusBar backgroundColor={colors.transparent} />
       <Toaster />
     </View>
   );

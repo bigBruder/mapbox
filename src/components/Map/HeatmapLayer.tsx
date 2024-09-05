@@ -20,13 +20,13 @@ export const HeatmapLayer: FC<Props> = ({ realtimeZoom }) => {
           ["linear"],
           ["zoom"],
           0,
-          realtimeZoom * 40,
+          realtimeZoom * 50,
           5,
-          realtimeZoom * 20,
+          realtimeZoom * 30,
           9,
-          realtimeZoom * 10,
+          realtimeZoom * 20,
           15,
-          realtimeZoom * 5,
+          realtimeZoom * 20,
         ],
       }}
     />

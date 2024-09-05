@@ -1,17 +1,28 @@
 export const getH3ResolutionByZoom = (zoom: number) => {
-  if (zoom < 2) return 1;
-  if (zoom < 4) return 1;
-  if (zoom < 5) return 1;
-  if (zoom < 6) return 2;
-  if (zoom < 7) return 3;
-  if (zoom < 8) return 5;
-  if (zoom < 9) return 5;
-  if (zoom < 10) return 5;
-  if (zoom < 11) return 6;
-  if (zoom < 12) return 7;
-  if (zoom < 14) return 8;
-  if (zoom < 16) return 9;
-  return 9;
+  switch (true) {
+    case zoom >= 0 && zoom <= 2:
+      return 1;
+    case zoom >= 3 && zoom <= 4:
+      return 1;
+    case zoom >= 5 && zoom < 6:
+      return 2;
+    case zoom >= 6 && zoom <= 7:
+      return 3;
+    case zoom >= 7 && zoom <= 8:
+      return 4;
+    case zoom >= 9 && zoom <= 10:
+      return 5;
+    case zoom >= 11 && zoom <= 12:
+      return 6;
+    case zoom >= 13 && zoom <= 14:
+      return 7;
+    case zoom >= 15 && zoom <= 16:
+      return 8;
+    case zoom >= 17 && zoom <= 18:
+      return 9;
+    default:
+      return 1;
+  }
 };
 
 export const addBufferToCoordinates = (

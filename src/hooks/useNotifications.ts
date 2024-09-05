@@ -16,14 +16,15 @@ export function useNotificationObserver() {
 
   // console.log("route ===>", route.params);
   useEffect(() => {
+    console.log("useNotificationObserver");
     let isMounted = true;
 
     function redirect(notification: Notifications.Notification) {
       const url = notification.request.content.data?.url;
       const id = notification.request.content.data?.id;
-      console.log("notification ===>", id);
+      console.log("id ===>", id);
       if (url) {
-        navigation.navigate(url);
+        navigation.navigate(url, { state: { itemId: id } });
       }
     }
 

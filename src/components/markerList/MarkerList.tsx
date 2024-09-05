@@ -1,96 +1,116 @@
-import { FC } from "react";
-import { ShapeSource, SymbolLayer } from "@rnmapbox/maps";
-import { HITBOX, PIN_SYMBOL_LAYER_STYLE } from "@/constants/pin";
-import { getFrameId } from "@/helpers/helpers";
-import { sortPinsByWeightAndDate } from "@/utils";
-import { VibesItem } from "@/types/responses/SearchResponse";
+import { FC, useEffect, useState } from "react";
+import { Image, TouchableOpacity, StyleSheet } from "react-native";
+import { MarkerView } from "@rnmapbox/maps";
+import h3 from "h3-js";
+import { TopicData, TopicsResponse } from "@/types/responses/MapTopicsResponse";
+import { useHexagonsStore } from "@/store/hexagonsStore";
+
+import styles from "./styles";
+import { useConfigStore } from "@/store/ServerConfigStore";
 
 interface Props {
-  pins: VibesItem[];
-  setSelectedMarker: (pin: any) => void;
-  selectedMarker: any;
-  realtimeZoom: number;
+  topics: TopicsResponse;
+  zoomLevel: number;
 }
 
-const ICON_OFFSET_Y = 0;
-const ICON_OFFSET_Y_SELECTED = -45;
-const FRAME_OFFSET_Y = 0;
-const FRAME_OFFSET_Y_SELECTED = -24;
+export const MarkerList: FC<Props> = ({ topics, zoomLevel }) => {
+  if (!topics) return;
 
-export const MarkerList: FC<Props> = ({
-  pins,
-  setSelectedMarker,
-  selectedMarker,
-}) => {
-  const pinsToDisplay = sortPinsByWeightAndDate(pins).map((pin, index) => {
-    const isSelected = selectedMarker?.id === pin.id;
-
-    return {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [pin.venue.geo.longitude, pin.venue.geo.latitude],
-      },
-      properties: {
-        priority: isSelected ? 10001 : pin.points * 10 + index + 1,
-        icon: pin.icon.replace("id:", ""),
-        iconSize: isSelected
-          ? (0.3 + pin.points / 100) * 1.1
-          : (0.2 + pin.points / 100) * 1.1,
-        iconOffset: [0, isSelected ? ICON_OFFSET_Y_SELECTED : ICON_OFFSET_Y],
-        allowOverlap: true,
-        allowIconOverlap: true,
-      },
-      id: pin.id,
-    };
-  });
-
-  const pinFrames = sortPinsByWeightAndDate(pins).map((pin, index) => {
-    const isAlreadyStarted = new Date() > new Date(pin.startsAt);
-    const isSelected = selectedMarker?.id === pin.id;
-    const { longitude, latitude } = pin.venue.geo;
-
-    return {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [longitude, latitude],
-      },
-      properties: {
-        priority: isSelected ? 10000 : pin.points * 10 + index,
-        icon: getFrameId(isAlreadyStarted, isSelected),
-        iconSize: (0.3 + pin.points / 100) * 1.6 * 1.1,
-        iconOffset: [0, isSelected ? FRAME_OFFSET_Y_SELECTED : FRAME_OFFSET_Y],
-        allowOverlap: true,
-        backgroundPattern: "background",
-        allowIconOverlap: true,
-      },
-      id: pin.id + "_frame",
-    };
-  });
-
-  const shape = {
-    type: "FeatureCollection",
-    features: [...pinFrames, ...pinsToDisplay],
-  };
-
-  return (
-    <>
-      <ShapeSource
-        id="freshPins_usual"
-        onPress={(e) => {
-          if (e.features[0].id === selectedMarker?.id) setSelectedMarker(null);
-          setSelectedMarker(
-            pins.find((pin) => pin.id === e.features[0].id) || null
-          );
-        }}
-        //@ts-ignore
-        shape={shape}
-        hitbox={HITBOX}
-        cluster={false}
-      >
-        <SymbolLayer id={"freshPins_usual"} style={PIN_SYMBOL_LAYER_STYLE} />
-      </ShapeSource>
-    </>
+  const [transformedTopics, setTransformedTopics] = useState<any>([]);
+  const { setSelectedPolygon, setSelectedPolygonId } = useHexagonsStore(
+    (state) => ({
+      setSelectedPolygon: state.setSelectedPolygon,
+      setSelectedPolygonId: state.setSelectedPolygonId,
+    })
   );
+  const { blobUrlPrefix: linkPrefix } = useConfigStore((state) => ({
+    blobUrlPrefix: state.blobUrlPrefix,
+  }));
+
+  const interpolatePinSize = (currentZoom: number) => {
+    const minZoom = 0;
+    const maxZoom = 2;
+    const minSize = 0;
+    const maxSize = 10;
+
+    return (
+      minSize +
+      ((maxSize - minSize) / (maxZoom - minZoom)) * (currentZoom - minZoom)
+    );
+  };
+  useEffect(() => {
+    const indexes = Object.keys(topics);
+    const transformed = indexes.map((index) => {
+      const topic = topics[index];
+      const center = h3.cellToLatLng(index).reverse();
+      return {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: center,
+        },
+        properties: {
+          h3Index: index,
+          iconId: topics[index].icon,
+          iconSize: 100,
+          iconOffset: 0,
+          allowOverlap: true,
+          // backgroundPattern: "background",
+          allowIconOverlap: true,
+        },
+        id: index,
+      };
+    });
+    if (transformed.length) {
+      setTransformedTopics(transformed);
+    }
+  }, [topics]);
+
+  if (!transformedTopics || !transformedTopics.length) return null;
+
+  return transformedTopics.map((topic: TopicData) => (
+    <MarkerView
+      coordinate={topic.geometry.coordinates}
+      pointerEvents="none"
+      allowOverlap
+      key={topic.id}
+    >
+      <TouchableOpacity
+        style={styles.markerContainer}
+        onPress={() => {
+          // console.log("topic id ===>", topic.id);
+          let geometry = {
+            type: "Polygon",
+            coordinates: [h3.cellToBoundary(topic.id, true)],
+          };
+
+          const polygon = {
+            type: "Feature",
+            geometry,
+            properties: {
+              h3Index: topic.id,
+            },
+          };
+
+          // console.log("hexagon ===>", polygon);
+          setSelectedPolygon(polygon);
+          setSelectedPolygonId(topic.id);
+        }}
+      >
+        <Image
+          source={{
+            uri: linkPrefix + topic.properties.iconId,
+          }}
+          style={[
+            styles.markerImage,
+            {
+              width: 30 + interpolatePinSize(zoomLevel),
+              height: 30 + interpolatePinSize(zoomLevel),
+              borderRadius: 30 + interpolatePinSize(zoomLevel) / 2,
+            },
+          ]}
+        />
+      </TouchableOpacity>
+    </MarkerView>
+  ));
 };

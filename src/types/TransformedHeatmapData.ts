@@ -3,14 +3,20 @@ export interface TransformedHeatmapData {
   features: {
     type: string;
     properties: {
-      intensity: number;
-      cellRadius: number;
+      weight: number;
     };
     geometry: {
       type: string;
-      coordinates: [number, number];
+      coordinates: number[];
     };
   }[];
-  resolution: number;
-  cellRadius: number;
 }
+
+// type: "Feature",
+// geometry: {
+//   type: "Point",
+//   coordinates: [longitude, latitude],
+// },
+// properties: {
+//   weight: value,
+// },

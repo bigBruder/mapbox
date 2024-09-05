@@ -1,10 +1,16 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import cheerio from "cheerio";
 import { MAP_FEATURES_TYPES } from "@/constants/map";
-import { QueryParams } from "@/types/QueryParams";
+import { TopicsResponse } from "@/types/responses/MapTopicsResponse";
+import { CellInfoResponse } from "@/types/responses/cellInfoResponse";
+import { HexagonMap } from "@/types/responses/heatmapResponse";
+import { transformHeatmapResponseToHeatmapData } from "@/utils/transformDataToHeatData";
+import { QueryParams, TransformedHeatmapData } from "@/types";
+import { Vote } from "@/components/pulseInfo/PulseInfo";
 
-const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_CONNECT_URL || "";
+const BASE_URL = "http://pulse-dev-api.eastus.azurecontainer.io:8080";
+
+// const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
 
 const breakpoints = {
@@ -19,138 +25,156 @@ const getAccessTokenFromStore = async () => {
   return access_token;
 };
 
-const fetchWithAuth = async (url: string, params: any = null) => {
-  let access_token = await getAccessTokenFromStore();
-  let headers = {
-    Authorization: `Bearer ${access_token}`,
-  };
+// const fetchWithAuth = async (url: string, params: any = null) => {
+//   let access_token = await getAccessTokenFromStore();
+//   let headers = {
+//     Authorization: `Bearer ${access_token}`,
+//   };
 
+//   try {
+//     const { data } = await axios.get(url, {
+//       params,
+//       headers,
+//     });
+//     return data;
+//   } catch (error) {
+//     // @ts-ignore
+//     if (error.response && error.response.status === 401) {
+//       access_token = await getAccessToken();
+//       if (access_token) {
+//         headers.Authorization = `Bearer ${access_token}`;
+//         const { data } = await axios.get(url, {
+//           params,
+//           headers,
+//         });
+//         return data;
+//       } else {
+//         throw new Error("Unable to refresh access token");
+//       }
+//     } else {
+//       throw error;
+//     }
+//   }
+// };
+
+// export const getAccessToken = async () => {
+//   try {
+//     const device_id = await SecureStore.getItemAsync("mapbox_secure_deviceid");
+//     if (!device_id) throw new Error("Device ID not found");
+
+//     const params = new URLSearchParams();
+//     params.append("device_id", device_id);
+//     params.append("grant_type", "device_id");
+
+//     const { data } = await axios.post(
+//       `${BASE_URL_CONNECT}/connect/token`,
+//       params,
+//       {
+//         headers: {
+//           "Content-Type": "application/x-www-form-urlencoded",
+//           Authorization: `Basic ${process.env.EXPO_PUBLIC_API_ACCESS_TOKEN}`,
+//         },
+//       }
+//     );
+
+//     await SecureStore.setItemAsync(
+//       "mapbox_secure_access_token",
+//       data.access_token
+//     );
+//     return data.access_token;
+//   } catch (error) {
+//     console.error("Error fetching access token:", error);
+//     return null;
+//   }
+// };
+
+// export const searchPosts = async (queryParams: QueryParams) => {
+//   try {
+//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
+//   } catch (error) {
+//     console.error("Error fetching posts:", error);
+//     return null;
+//   }
+// };
+
+// export const getVibeDetails = async (id: string) => {
+//   try {
+//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/${id}`);
+//   } catch (error) {
+//     console.error("Error fetching vibe details:", error);
+//     return null;
+//   }
+// };
+
+// export const getPinsForBound = async (queryParams: Partial<QueryParams>) => {
+//   try {
+//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
+//   } catch (error) {
+//     console.error("Error fetching pins for bound:", error);
+//     return null;
+//   }
+// };
+
+// export const getWebPageMeta = async (url: string) => {
+//   try {
+//     const response = await axios.get(url);
+//     const html = response.data;
+//     const $ = cheerio.load(html);
+//     const meta = {};
+//     $("meta").each((i, elem) => {
+//       const name = $(elem).attr("name") || $(elem).attr("property");
+//       const content = $(elem).attr("content");
+//       if (name) {
+//         meta[name] = content;
+//       }
+//     });
+//     if (meta && meta["og:title"].includes("Log in or sign")) return null;
+//     return meta;
+//   } catch (error) {
+//     console.error("Error fetching metadata:", error.message);
+//   }
+// };
+
+// export const getHeatmap = async (
+//   queryParams: Pick<
+//     QueryParams,
+//     | "NE.Latitude"
+//     | "NE.Longitude"
+//     | "SW.Latitude"
+//     | "SW.Longitude"
+//     | "Heatmap.Resolution"
+//   >
+// ) => {
+//   const baseParams = {
+//     "Heatmap.Enable": true,
+//     PageSize: 0,
+//   };
+//   const pageSize = 0;
+//   try {
+//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, {
+//       ...baseParams,
+//       ...queryParams,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching heatmap:", error);
+//     return null;
+//   }
+// };
+
+export const getCellsVibes = async (
+  queryParams: Partial<QueryParams>
+): Promise<TopicsResponse | null> => {
   try {
-    const { data } = await axios.get(url, {
-      params,
-      headers,
+    // console.log("queryParams", queryParams);
+    const response = await axios.get(BASE_URL + "/map/top", {
+      params: queryParams,
     });
-    return data;
+
+    // console.log("response topics ==> ", response.data);
+    // console.log("response", response.data);
+    return response.data;
   } catch (error) {
-    // @ts-ignore
-    if (error.response && error.response.status === 401) {
-      access_token = await getAccessToken();
-      if (access_token) {
-        headers.Authorization = `Bearer ${access_token}`;
-        const { data } = await axios.get(url, {
-          params,
-          headers,
-        });
-        return data;
-      } else {
-        throw new Error("Unable to refresh access token");
-      }
-    } else {
-      throw error;
-    }
-  }
-};
-
-export const getAccessToken = async () => {
-  try {
-    const device_id = await SecureStore.getItemAsync("mapbox_secure_deviceid");
-    if (!device_id) throw new Error("Device ID not found");
-
-    const params = new URLSearchParams();
-    params.append("device_id", device_id);
-    params.append("grant_type", "device_id");
-
-    const { data } = await axios.post(
-      `${BASE_URL_CONNECT}/connect/token`,
-      params,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${process.env.EXPO_PUBLIC_API_ACCESS_TOKEN}`,
-        },
-      }
-    );
-
-    await SecureStore.setItemAsync(
-      "mapbox_secure_access_token",
-      data.access_token
-    );
-    return data.access_token;
-  } catch (error) {
-    console.error("Error fetching access token:", error);
-    return null;
-  }
-};
-
-export const searchPosts = async (queryParams: QueryParams) => {
-  try {
-    return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-    return null;
-  }
-};
-
-export const getVibeDetails = async (id: string) => {
-  try {
-    return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/${id}`);
-  } catch (error) {
-    console.error("Error fetching vibe details:", error);
-    return null;
-  }
-};
-
-export const getPinsForBound = async (queryParams: Partial<QueryParams>) => {
-  try {
-    return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
-  } catch (error) {
-    console.error("Error fetching pins for bound:", error);
-    return null;
-  }
-};
-
-export const getWebPageMeta = async (url: string) => {
-  try {
-    const response = await axios.get(url);
-    const html = response.data;
-    const $ = cheerio.load(html);
-    const meta = {};
-    $("meta").each((i, elem) => {
-      const name = $(elem).attr("name") || $(elem).attr("property");
-      const content = $(elem).attr("content");
-      if (name) {
-        meta[name] = content;
-      }
-    });
-    if (meta && meta["og:title"].includes("Log in or sign")) return null;
-    return meta;
-  } catch (error) {
-    console.error("Error fetching metadata:", error.message);
-  }
-};
-
-export const getHeatmap = async (
-  queryParams: Pick<
-    QueryParams,
-    | "NE.Latitude"
-    | "NE.Longitude"
-    | "SW.Latitude"
-    | "SW.Longitude"
-    | "Heatmap.Resolution"
-  >
-) => {
-  const baseParams = {
-    "Heatmap.Enable": true,
-    PageSize: 0,
-  };
-  const pageSize = 0;
-  try {
-    return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, {
-      ...baseParams,
-      ...queryParams,
-    });
-  } catch (error) {
-    console.error("Error fetching heatmap:", error);
+    console.error("Error fetching cells vibes:", error);
     return null;
   }
 };
@@ -164,10 +188,118 @@ export const getRegionInfo = async (area: number[], zoom: number) => {
     const response = await axios.get(
       `${baseUrl}/${coords}.json?access_token=${process.env.EXPO_PUBLIC_API_KEY}&types=${fields}`
     );
-
+    // console.log("responseAPIGEO ==> ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching region info:", error);
+    return null;
+  }
+};
+
+export const getCellInfo = async (
+  cellId: string
+): Promise<CellInfoResponse | null> => {
+  try {
+    const response = await axios.get(BASE_URL + `/map/cell`, {
+      params: {
+        Id: cellId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching cell info:", error);
+    return null;
+  }
+};
+
+export const fetchTopicById = async (id: number) => {
+  try {
+    const response = await axios.get(BASE_URL + `/topics/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching topic by id:", error);
+    return null;
+  }
+};
+
+export const fetchHeatmap = async (
+  queryParams: QueryParams
+): Promise<TransformedHeatmapData | null> => {
+  try {
+    const response = await axios.get(BASE_URL + "/map/votes", {
+      params: queryParams,
+    });
+
+    const transformedData = transformHeatmapResponseToHeatmapData(
+      response.data
+    );
+
+    // console.log("transformedData", transformedData.features[0]);
+
+    return transformedData;
+  } catch (error) {
+    console.error("Error fetching heatmap:", error);
+    return null;
+  }
+};
+
+export const publishVote = async (
+  userId: string,
+  topicId: string,
+  location: { latitude: number; longitude: number },
+  locationName: string
+): Promise<Vote | null> => {
+  try {
+    const response = await axios.post(BASE_URL + "/votes", {
+      userId,
+      topicId,
+      location,
+      locationName,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error publishing vote:", error);
+    return null;
+  }
+};
+
+export const fetchUserVotes = async (userId: string): Promise<Vote[] | []> => {
+  try {
+    const response = await axios.get(BASE_URL + "/votes/my", {
+      params: {
+        userId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user votes:", error);
+    return [];
+  }
+};
+
+export const fetchVoteByTopicId = async (
+  userId: string,
+  topicId: string
+): Promise<Vote[] | null> => {
+  try {
+    const response = await axios.get(BASE_URL + "/votes/my", {
+      params: {
+        userId,
+        topicId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching vote by topic id:", error);
+    return null;
+  }
+};
+export const fetchSettings = async () => {
+  try {
+    const response = await axios.get(BASE_URL + "/settings");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching settings:", error);
     return null;
   }
 };

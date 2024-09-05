@@ -3,7 +3,6 @@ import { Animated } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 import h3 from "h3-js";
 
-import { useCameraStore } from "@/store/CameraStore";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 
 import polygonData_1 from "@/assets/json/hexagons/global-hexagons-resolution-1.json";
@@ -26,13 +25,8 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
       setSelectedPolygonId: state.setSelectedPolygonId,
     })
   );
-  const { setSelectedPolygon, selectedPolygon } = useHexagonsStore((state) => ({
-    setSelectedPolygon: state.setSelectedPolygon,
+  const { selectedPolygon } = useHexagonsStore((state) => ({
     selectedPolygon: state.selectedPolygon,
-  }));
-
-  const { realTimeZoom } = useCameraStore((state) => ({
-    realTimeZoom: state.realTimeZoom,
   }));
 
   const { polygons } = useHexagonsStore((state) => ({
@@ -43,29 +37,33 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
     lastZoom: state.lastZoom,
   }));
 
-  const handlePolygonPress = (e) => {
-    if (!e) return;
-    const selectedHexagon = e.features[0].properties?.h3Index || -1;
-    setSelectedPolygonId(selectedHexagon);
-    setSelectedPolygon({
-      type: "FeatureCollection",
-      features: [e.features[0]],
-    });
+  const { h3Index } = useHexagonsStore((state) => ({
+    h3Index: state.h3Index,
+  }));
 
-    const cellCenter = h3.cellToLatLng(selectedHexagon);
+  // const handlePolygonPress = (e) => {
+  //   if (!e) return;
+  //   const selectedHexagon = e.features[0].properties?.h3Index || -1;
+  //   setSelectedPolygonId(selectedHexagon);
+  //   setSelectedPolygon({
+  //     type: "FeatureCollection",
+  //     features: [e.features[0]],
+  //   });
 
-    const screenDistance = Math.abs(
-      (Math.abs(realTimeCamera?.properties.bounds.ne[0]) -
-        Math.abs(realTimeCamera?.properties.bounds.sw[0])) /
-        3.5
-    );
+  //   const cellCenter = h3.cellToLatLng(selectedHexagon);
 
-    cameraRef.current?.setCamera({
-      animationDuration: 500,
-      animationMode: "flyTo",
-      centerCoordinate: [cellCenter[1], cellCenter[0] - screenDistance],
-    });
-  };
+  //   const screenDistance = Math.abs(
+  //     (Math.abs(realTimeCamera?.properties.bounds.ne[0]) -
+  //       Math.abs(realTimeCamera?.properties.bounds.sw[0])) /
+  //       3.5
+  //   );
+
+  //   cameraRef.current?.setCamera({
+  //     animationDuration: 500,
+  //     animationMode: "flyTo",
+  //     centerCoordinate: [cellCenter[1], cellCenter[0] - screenDistance],
+  //   });
+  // };
 
   return (
     <>
@@ -74,7 +72,6 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           key={"selected"}
           id={`polygon-selected`}
           shape={selectedPolygon}
-          onPress={handlePolygonPress}
           style={{
             fillColor: scaleValue.interpolate({
               inputRange: [1, 1.2],
@@ -109,44 +106,28 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           />
         </Mapbox.ShapeSource>
       )}
-      <Mapbox.ShapeSource
-        key={"" + 1}
-        id={`polygon-1`}
-        shape={polygonData_1}
-        onPress={handlePolygonPress}
-      >
+      <Mapbox.ShapeSource key={"" + 1} id={`polygon-1`} shape={polygonData_1}>
         <Mapbox.LineLayer
           id={`polygon-outer-line-1`}
-          sourceID="your-source-id" // Make sure to replace this with your source ID
-          layerIndex={84} // Make sure this is higher than the FillLayer's index
+          sourceID="your-source-id"
+          layerIndex={84}
           style={{
             lineColor: "white",
-            lineWidth: 2, // Adjust this value to make the lines thicker
-            lineOpacity: [
-              "case",
-              ["==", ["get", "index"], selectedPolygonId || -1],
-              0.8,
-              0.5,
-            ],
-            visibility: realTimeZoom <= 3 ? "visible" : "none",
+            lineWidth: 2,
+            visibility: h3Index === 1 ? "visible" : "none",
           }}
         />
         <Mapbox.FillLayer
           id={`polygon-line-1`}
           style={{
             fillColor: "transparent",
-            visibility: realTimeZoom <= 3 ? "visible" : "none",
+            visibility: h3Index === 1 ? "visible" : "none",
           }}
           layerIndex={84}
         />
       </Mapbox.ShapeSource>
 
-      <Mapbox.ShapeSource
-        key={"" + 2}
-        id={`polygon-2`}
-        shape={polygonData_2}
-        onPress={handlePolygonPress}
-      >
+      <Mapbox.ShapeSource key={"" + 2} id={`polygon-2`} shape={polygonData_2}>
         <Mapbox.LineLayer
           id={`polygon-outer-line`}
           sourceID="source-id"
@@ -154,14 +135,7 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           style={{
             lineColor: "white",
             lineWidth: 2,
-            lineOpacity: [
-              "case",
-              ["==", ["get", "index"], selectedPolygonId || -1],
-              0.8,
-              0.5,
-            ],
-            visibility:
-              realTimeZoom > 3 && realTimeZoom <= 5 ? "visible" : "none",
+            visibility: h3Index === 2 ? "visible" : "none",
           }}
         />
         <Mapbox.FillLayer
@@ -169,8 +143,7 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           style={{
             fillOutlineColor: "white",
             fillColor: "transparent",
-            visibility:
-              realTimeZoom > 3 && realTimeZoom <= 5 ? "visible" : "none",
+            visibility: h3Index === 2 ? "visible" : "none",
           }}
           layerIndex={84}
         />
@@ -183,7 +156,6 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           type: "FeatureCollection",
           features: polygons,
         }}
-        onPress={handlePolygonPress}
       >
         <Mapbox.LineLayer
           id={`polygon-outer-line-3`}
@@ -192,20 +164,12 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           style={{
             lineColor: "white",
             lineWidth: 2,
-            lineOpacity: [
-              "case",
-              ["==", ["get", "index"], selectedPolygonId || -1],
-              0.8,
-              0.5,
-            ],
-            visibility: lastZoom - 1 > realTimeZoom ? "none" : "visible",
           }}
         />
         <Mapbox.FillLayer
           id={`polygon-line-4`}
           style={{
             fillColor: "transparent",
-            visibility: lastZoom - 1 > realTimeZoom ? "none" : "visible",
           }}
           layerIndex={86}
         />

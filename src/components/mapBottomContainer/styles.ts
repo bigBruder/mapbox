@@ -27,6 +27,12 @@ export const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 20,
   },
 
   addButton: {
@@ -46,8 +52,9 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
     gap: 8,
     flex: 1,
+  },
 
-    backgroundColor: "transparent",
+  regionShadow: {
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,

@@ -8,7 +8,14 @@ export interface Navigation {
 export interface RootStackParamList {
   Pulse: {
     state: {
-      itemId: string;
+      itemId: number;
     };
   };
+  MyProfile: undefined;
+  [key: string]: undefined | { state: { itemId: number } };
 }
+
+export type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  keyof RootStackParamList
+>;

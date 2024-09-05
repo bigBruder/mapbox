@@ -7,9 +7,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     backgroundColor: colors.white,
-
-    // borderBottomColor: colors.lightGrey,
-    // borderBottomWidth: 1,
   },
   leftContainer: {
     flex: 1,

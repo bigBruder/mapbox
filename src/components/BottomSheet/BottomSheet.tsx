@@ -5,7 +5,6 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { getVibeDetails } from "@/api/client";
 import { formatDateForVibe, formatTagsInText } from "@/utils";
 import { getIconUrl } from "@/utils/getIconUrl";
-import { VibesItem } from "@/types/SearchResponse";
 import {
   PorstDetailsValue,
   PostDetailsResponse,
@@ -17,8 +16,10 @@ import { LinkPreview } from "@/components/linkPreview/LinkPreview";
 import { removeLinkFromString } from "@/helpers/removeLinkFromString";
 import { colors } from "@/constants/colors";
 
-import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
+import { VibesItem } from "@/types/responses/SearchResponse";
+
+import styles from "./styles";
 
 interface Props {
   selectedMarker: VibesItem;

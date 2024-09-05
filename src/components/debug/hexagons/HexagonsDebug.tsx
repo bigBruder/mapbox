@@ -2,7 +2,6 @@ import { TouchableOpacity, Text, View } from "react-native";
 
 import { useCameraStore } from "@/store/CameraStore";
 import { useHexagonsStore } from "@/store/hexagonsStore";
-
 import { getH3ResolutionByZoom } from "@/utils/polygonsUtils";
 
 import styles from "./styles";
@@ -74,7 +73,7 @@ export const HexagonsDebugContainer = () => {
       ) : (
         <View style={{ height: 50, justifyContent: "space-between" }}>
           <Text style={{ textAlign: "center", color: "white", fontSize: 20 }}>
-            {getH3ResolutionByZoom(realTimeZoom)}
+            {getH3ResolutionByZoom(Math.floor(realTimeZoom))}
           </Text>
           <TouchableOpacity
             onPress={() => toggleIsAutoH3Index()}

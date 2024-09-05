@@ -7,7 +7,8 @@ interface HexagonsState {
   requiredIndexOnZoom: number;
   lastZoom: number;
   selectedPolygon: Feature | null;
-  selectedPolygonId: number;
+  selectedPolygonId: string;
+  selectedHexagonIndex: string;
 
   setH3Index: (h3Index: number) => void;
   setIsAutoH3Index: (isAutoH3Index: boolean) => void;
@@ -17,18 +18,23 @@ interface HexagonsState {
   updateState: (partialState: Partial<HexagonsState>) => void;
   setLastZoom: (lastZoom: number) => void;
   setSelectedPolygon: (selectedPolygon: Feature | null) => void;
+  setSelectedHexagonIndex: (index: string) => void;
   setSelectedPolygonId: (selectedPolygonId: number) => void;
 }
 
 export const useHexagonsStore = create<HexagonsState>((set) => ({
   polygons: [],
-  h3Index: 0,
+  h3Index: 2,
   isAutoH3Index: true,
   requiredIndexOnZoom: 1,
   lastZoom: 0,
   selectedPolygon: null,
-  selectedPolygonId: -1,
+  selectedPolygonId: "-1",
+  selectedHexagon: null,
+  selectedHexagonIndex: "",
 
+  setSelectedHexagonIndex: (selectedHexagonIndex) =>
+    set({ selectedHexagonIndex }),
   setSelectedPolygon: (selectedPolygon) => set({ selectedPolygon }),
   setH3Index: (h3Index) => set({ h3Index }),
   setIsAutoH3Index: (isAutoH3Index) => set({ isAutoH3Index }),

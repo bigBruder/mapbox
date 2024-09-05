@@ -6,18 +6,21 @@ import {
 } from "@/utils/polygonsUtils";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 import { CameraBound } from "@/types";
+import { useMapStore } from "@/store/MapStore";
 
 export const useH3Hexagons = (realtimeCamera: CameraBound | null) => {
-  const { setPolygons, setRequiredIndexOnZoom, setLastZoom } = useHexagonsStore(
-    (state) => ({
-      setPolygons: state.setPolygons,
-      setRequiredIndexOnZoom: state.setRequiredIndexOnZoom,
-      setLastZoom: state.setLastZoom,
-    })
-  );
+  const { setPolygons, polygons } = useHexagonsStore((state) => ({
+    setPolygons: state.setPolygons,
+    setLastZoom: state.setLastZoom,
+    polygons: state.polygons,
+  }));
 
-  const generateH3Grid = useCallback(() => {
-    if (!realtimeCamera || realtimeCamera.properties.zoom <= 5) {
+  const { h3Index } = useHexagonsStore((state) => ({
+    h3Index: state.h3Index,
+  }));
+
+  const generateH3Grid = () => {
+    if (!realtimeCamera || h3Index <= 2) {
       setPolygons([]);
       return;
     }
@@ -36,13 +39,10 @@ export const useH3Hexagons = (realtimeCamera: CameraBound | null) => {
       reverseCoordinates(se),
       buffer
     );
-    const requiredResolution = getH3ResolutionByZoom(
-      realtimeCamera.properties.zoom
-    );
 
-    setRequiredIndexOnZoom(requiredResolution);
+    // setRequiredIndexOnZoom(requiredResolution);
 
-    const hexagons = polygonToCells(polygonWithBuffer, requiredResolution);
+    const hexagons = polygonToCells(polygonWithBuffer, h3Index);
 
     const polygonData = hexagons.map((hex) => {
       const boundary = cellToBoundary(hex, true);
@@ -59,14 +59,22 @@ export const useH3Hexagons = (realtimeCamera: CameraBound | null) => {
     });
 
     setPolygons(polygonData);
-    setLastZoom(realtimeCamera.properties.zoom);
-  }, [realtimeCamera, setPolygons, setRequiredIndexOnZoom, setLastZoom]);
+    // setLastZoom(realtimeCamera.properties.zoom);
+  };
+
+  // useEffect(() => {
+  //   console.log("wipe");
+  //   wipeTopics();
+  // }, [h3Index]);
+
+  // console.log("realtimeCamera", realtimeCamera?.properties?.zoom);
 
   useEffect(() => {
+    // console.log("generateH3Grid");
     generateH3Grid();
   }, [
     realtimeCamera?.properties?.zoom,
-    realtimeCamera?.properties?.bounds?.sw,
-    realtimeCamera?.properties?.bounds?.ne,
+    realtimeCamera?.properties?.bounds?.sw[0],
+    realtimeCamera?.properties?.bounds?.ne[0],
   ]);
 };

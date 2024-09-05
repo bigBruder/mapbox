@@ -1,14 +1,18 @@
 import BackIcon from "@/assets/icons/back";
 import { SafeAreaView, TouchableOpacity, View } from "react-native";
 
-import styles from "./styles";
 // import PulseIcon from "@/assets/icons/pulse";
-import { MoreIcon } from "@/assets/icons";
+import { MoreIcon, ShareIcon } from "@/assets/icons";
 import HeatmapIcon from "@/assets/icons/heatmap";
 import { colors } from "@/constants/colors";
-import ShareIcon from "@/assets/icons/share";
 
-export const PulseInfoHeader = ({ navigation }) => {
+import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "@/types/Navigation";
+
+export const PulseInfoHeader = () => {
+  const navigation = useNavigation<NavigationProp>();
+
   return (
     <View style={styles.headerContainer}>
       <SafeAreaView style={styles.headerContentContainer}>

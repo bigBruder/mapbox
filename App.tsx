@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SecureStore from "expo-secure-store";
@@ -8,7 +8,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import Mapbox from "@rnmapbox/maps";
 
-import { getAccessToken } from "@/api/client";
 import { getDeviceUniqueId } from "@/providers/DeviceUniqueId";
 import { useUserStore } from "@/store/userStore";
 
@@ -24,6 +23,8 @@ import { MyProfile } from "@/components/myProfile/MyProfile";
 import { MyProfileHeader } from "@/components/myProfile/MyProfileHeader";
 import { LoginHeader } from "@/components/login/LoginHeader";
 import * as Notifications from "expo-notifications";
+import { useConfigStore } from "@/store/ServerConfigStore";
+import { cleanUpExpiredNotifications } from "@/services/scheduleNotification";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
@@ -66,9 +67,7 @@ const appNavigator = () => {
         name="Pulse"
         component={PulseInfo}
         options={{
-          header: ({ navigation }) => (
-            <PulseInfoHeader navigation={navigation} />
-          ),
+          header: () => <PulseInfoHeader />,
         }}
       />
       <Stack.Screen
@@ -104,6 +103,7 @@ const appNavigator = () => {
 
 export default function App() {
   const { user } = useUserStore((state) => state);
+  const { updateConfig } = useConfigStore((state) => state);
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -113,23 +113,25 @@ export default function App() {
       }
     };
 
-    requestPermissions();
+    requestPermissions(); //
+    updateConfig(); // fetch server config(vote interval, etc)
+    // cleanUpExpiredNotifications(); // clean up expired notifications
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const access_token = await SecureStore.getItemAsync(
-          "mapbox_secure_access_token"
-        );
-        getDeviceUniqueId().then(async () => {
-          getAccessToken();
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const access_token = await SecureStore.getItemAsync(
+  //         "mapbox_secure_access_token"
+  //       );
+  //       getDeviceUniqueId().then(async () => {
+  //         getAccessToken();
+  //       });
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   })();
+  // }, []);
 
   const [loaded, error] = useFonts({
     "SF-Text": require("./assets/fonts/SF-Pro-Text-Regular.ttf"),

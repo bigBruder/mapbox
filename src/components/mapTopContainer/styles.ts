@@ -2,7 +2,7 @@ import { NativeModules, StyleSheet } from "react-native";
 import { colors } from "../../constants/colors";
 const { StatusBarManager } = NativeModules;
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   topContainer: {
     position: "absolute",
     width: "100%",
@@ -14,8 +14,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     gap: 10,
-
-    backgroundColor: "transparent",
+  },
+  topContainerShadow: {
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -24,7 +24,6 @@ export const styles = StyleSheet.create({
   },
   upperContainer: {
     width: "100%",
-    overflow: "hidden",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",

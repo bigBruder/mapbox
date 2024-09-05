@@ -1,14 +1,13 @@
-import React, { FC, useRef, useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { Text, View } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
-import { PorstDetailsValue } from "@/types/responses/PostDetailsResponse";
-
-import { colors } from "@/constants/colors";
-
-import { PulseCard } from "../pulseCard/PulseCard";
 import { ScrollView } from "react-native-gesture-handler";
 import { VibesItem } from "@/types/responses/SearchResponse";
+
+import { CellInfoList } from "../cellInfoList";
+import { useHexagonsStore } from "@/store/hexagonsStore";
+import { getCellInfo } from "@/api/client";
 
 import styles from "./styles";
 
@@ -24,11 +23,25 @@ export const CellInfo: FC<Props> = ({
   const snapPoints = ["45%", "93%"];
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const [vibeDetails, setVibeDetails] = useState<PorstDetailsValue | null>(
-    null
+  const { selectedPolygonId, setSelectedPolygonId } = useHexagonsStore(
+    (state) => ({
+      selectedPolygonId: state.selectedPolygonId,
+      setSelectedPolygonId: state.setSelectedPolygonId,
+    })
   );
-  const [isLoading, setIsLoading] = useState(false);
-  const [isIconLoading, setisIconLoading] = useState(true);
+
+  const [cellInfo, setCellInfo] = useState<any>(null);
+
+  useEffect(() => {
+    if (!selectedPolygonId) return;
+
+    const fetchCellInfo = async () => {
+      const response = await getCellInfo(selectedPolygonId.toString());
+      setCellInfo(response);
+    };
+
+    fetchCellInfo();
+  }, [selectedPolygonId]);
 
   return (
     <BottomSheet
@@ -61,21 +74,7 @@ export const CellInfo: FC<Props> = ({
           style={{ padding: 20 }}
           showsVerticalScrollIndicator={false}
         >
-          <View
-            style={{
-              gap: 15,
-              marginBottom: 150,
-            }}
-          >
-            <PulseCard />
-            <PulseCard />
-            <PulseCard />
-            <PulseCard />
-            <PulseCard />
-            <PulseCard />
-            <PulseCard />
-            <PulseCard />
-          </View>
+          <CellInfoList topics={cellInfo} />
         </ScrollView>
       </BottomSheetView>
     </BottomSheet>

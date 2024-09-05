@@ -1,8 +1,7 @@
 import { FC } from "react";
 import { View, Text } from "react-native";
-
-import { PorstDetailsValue } from "@/types/responses/PostDetailsResponse";
 import { BottomSheetFooter } from "@gorhom/bottom-sheet";
+import { PorstDetailsValue } from "@/types/responses/PostDetailsResponse";
 import { LikeIcon, MoreIcon, ShareIcon } from "@/assets/icons";
 
 import styles from "./styles";

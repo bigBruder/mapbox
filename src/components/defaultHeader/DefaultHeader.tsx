@@ -1,8 +1,9 @@
-import BackIcon from "@/assets/icons/back";
 import { View, Text, SafeAreaView, TouchableOpacity } from "react-native";
 
-import styles from "./styles";
 import { Navigation } from "@/types/Navigation";
+import BackIcon from "@/assets/icons/back";
+
+import styles from "./styles";
 
 interface DefaultHeaderProps extends Navigation {
   title: string;

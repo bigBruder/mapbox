@@ -3,8 +3,12 @@ import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLocationByIp } from "@/utils/getLocationByIP";
 import { ToastType, useToastStore } from "@/store/ToastStore";
+import { useUserStore } from "@/store/userStore";
 
 const useRealTimeLocation = () => {
+  const { setUserLocation } = useUserStore((state) => ({
+    setUserLocation: state.setUserLocation,
+  }));
   const setToast = useToastStore((state) => state.setMessage);
   const [location, setLocation] = useState<{
     latitude: number;
@@ -24,7 +28,7 @@ const useRealTimeLocation = () => {
 
         if (status === "granted") {
           const initialLocation = await Location.getCurrentPositionAsync({});
-          setLocation({
+          setUserLocation({
             latitude: initialLocation.coords.latitude,
             longitude: initialLocation.coords.longitude,
             source: "gps",
@@ -44,7 +48,7 @@ const useRealTimeLocation = () => {
               };
               const jsonNewLocationParsed = JSON.stringify(newLocationParsed);
               AsyncStorage.setItem("lastKnownLocation", jsonNewLocationParsed);
-              setLocation(newLocationParsed);
+              setUserLocation(newLocationParsed);
             }
           );
         } else {
@@ -55,7 +59,7 @@ const useRealTimeLocation = () => {
               "lastKnownLocation",
               jsonLastKnowLocation
             );
-            setLocation(ipLocation);
+            setUserLocation(ipLocation);
           } else {
             throw new Error();
           }
@@ -66,7 +70,7 @@ const useRealTimeLocation = () => {
         );
         if (jsonLastKnownLocation) {
           const lastKnownLocation = JSON.parse(jsonLastKnownLocation);
-          setLocation(lastKnownLocation);
+          setUserLocation(lastKnownLocation);
         } else {
           setToast({
             message: "Unfornately, we couldn't get your location.",

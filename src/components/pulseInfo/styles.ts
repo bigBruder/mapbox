@@ -88,6 +88,7 @@ export const styles = StyleSheet.create({
   authorContainer: {
     gap: 8,
     flexDirection: "row",
+    alignItems: "center",
   },
 
   authorName: {
@@ -106,6 +107,7 @@ export const styles = StyleSheet.create({
   // footer region
   footerContainer: {
     height: 108,
+    marginTop: "auto",
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
@@ -126,6 +128,15 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: colors.white,
+  },
+  image: {
+    alignSelf: "center",
+  },
+  topIcon: {
+    height: 76,
+    width: 76,
+    overflow: "hidden",
+    borderRadius: 40,
   },
 });
 
