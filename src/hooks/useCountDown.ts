@@ -33,7 +33,7 @@ function useCountdown(targetDate: string | Date): TimeLeft {
         hours: 0,
         minutes: 0,
         seconds: 0,
-        differenceInMilliseconds: 0,
+        differenceInMilliseconds: -1,
       };
     }
 

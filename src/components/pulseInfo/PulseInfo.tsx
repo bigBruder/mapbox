@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { PulseInfoFooter } from "./PulseInfoFooter";
 import { PulseInfoTop } from "./PulseInfoTop";
 import { PulseInfoContent } from "./PulseInfoContent";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/Navigation";
 import styles from "./styles";
 import { useUserStore } from "@/store/userStore";
 import { useVotingStore } from "@/store/votingStore";
-import { fetchUserVotes, fetchVoteByTopicId, publishVote } from "@/api/client";
+import { fetchVoteByTopicId, publishVote } from "@/api/client";
 import useCountdown from "@/hooks/useCountDown";
 import { useConfigStore } from "@/store/ServerConfigStore";
 import {
   cancelNotification,
   scheduleNotification,
 } from "@/services/scheduleNotification";
-import * as Notifications from "expo-notifications";
-import { useNotificationObserver } from "@/hooks/useNotifications";
 
 const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 
@@ -52,7 +50,10 @@ export const PulseInfo = () => {
     selectedTopicDetails: state.selectedTopicDetails,
     fetchTopicById: state.fetchTopicById,
   }));
-  const [isVotingProcess, setIsVotingProcess] = useState(false);
+  const { isVotingProcess, setIsVotingProcess } = useVotingStore((state) => ({
+    isVotingProcess: state.isVotingProcess,
+    setIsVotingProcess: state.setIsVotingProcess,
+  }));
 
   useEffect(() => {
     if (!topicId) {
@@ -77,21 +78,28 @@ export const PulseInfo = () => {
   }, [route.params?.state.itemId]);
 
   const handleVote = async () => {
-    const vote = await publishVote(
-      userId,
-      topicId.toString(),
-      {
-        latitude: userLocation?.latitude,
-        longitude: userLocation?.longitude,
-      },
-      "mock location"
-    );
+    try {
+      setIsVotingProcess(true);
+      const vote = await publishVote(
+        userId,
+        topicId.toString(),
+        {
+          latitude: userLocation?.latitude,
+          longitude: userLocation?.longitude,
+        },
+        "mock location"
+      );
 
-    if (vote) {
-      setVote(vote);
+      if (vote) {
+        setVote(vote);
+      }
+      await cancelNotification(topicId.toString());
+      scheduleNotification({ seconds: SECONDS_IN_DAY }, topicId + "");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsVotingProcess(false);
     }
-    await cancelNotification(topicId.toString());
-    scheduleNotification({ seconds: SECONDS_IN_DAY }, topicId + "");
   };
 
   const voteTargetTime =
@@ -115,38 +123,54 @@ export const PulseInfo = () => {
         new Date().getTime()) ||
     (!vote && !loading);
 
+  console.log(
+    timeleft?.differenceInMilliseconds <= 0,
+    timeleft.hours === 0,
+    timeleft.minutes === 0,
+    timeleft.seconds === 0,
+    !loading,
+    new Date(vote?.updatedAt || new Date()) ||
+      new Date(vote?.timestamp || new Date()) <= new Date(),
+    timeleft?.differenceInMilliseconds === 0 &&
+      timeleft.hours === 0 &&
+      timeleft.minutes === 0 &&
+      timeleft.seconds === 0 &&
+      !loading &&
+      (new Date(vote?.updatedAt || new Date()) ||
+        new Date(vote?.timestamp || new Date()) <= new Date())
+      ? "Pulse"
+      : "not pulse"
+  );
+
   return (
     <View style={styles.pulseInfoContainer}>
-      <PulseInfoTop topic={selectedTopicDetails} loading={loading} />
+      <PulseInfoTop
+        topic={selectedTopicDetails}
+        loading={loading}
+        isShouldPlayAnimation={timeleft.differenceInMilliseconds > 0}
+      />
       <PulseInfoContent topic={selectedTopicDetails} loading={loading} />
-      {loading ? (
-        <PulseInfoFooter
-          handleVote={handleVote}
-          title={"Pulse"}
-          disabled={true}
-        />
-      ) : (
-        <PulseInfoFooter
-          handleVote={handleVote}
-          title={
-            loading
-              ? "Loading..."
-              : timeleft?.differenceInMilliseconds <= 0 &&
-                timeleft.hours === 0 &&
-                timeleft.minutes === 0 &&
-                timeleft.seconds === 0
-              ? "Pulse"
-              : `You can renew pulse in ${
-                  timeleft.hours ? timeleft.hours + "h " : ""
-                } ${timeleft.minutes ? timeleft.minutes + "m " : ""}${
-                  timeleft.seconds ? timeleft.seconds + "s" : ""
-                }`
-          }
-          disabled={
-            timeleft?.differenceInMilliseconds > 0 || !isVotingAvailable
-          }
-        />
-      )}
+
+      <PulseInfoFooter
+        handleVote={handleVote}
+        title={
+          timeleft?.differenceInMilliseconds <= 0 &&
+          timeleft.hours === 0 &&
+          timeleft.minutes === 0 &&
+          timeleft.seconds === 0 &&
+          !loading &&
+          (new Date(vote?.updatedAt || new Date()) ||
+            new Date(vote?.timestamp || new Date()) <= new Date())
+            ? "Pulse"
+            : `You can renew pulse in ${
+                timeleft.hours ? timeleft.hours + "h " : ""
+              } ${timeleft.minutes ? timeleft.minutes + "m " : ""}${
+                timeleft.seconds ? timeleft.seconds + "s" : ""
+              }`
+        }
+        disabled={timeleft?.differenceInMilliseconds > 0 || !isVotingAvailable}
+        loading={loading || isVotingProcess || (!vote && !loading)}
+      />
     </View>
   );
 };

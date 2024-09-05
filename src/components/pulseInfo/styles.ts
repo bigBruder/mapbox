@@ -133,10 +133,16 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
   },
   topIcon: {
-    height: 76,
-    width: 76,
+    height: 70,
+    width: 70,
     overflow: "hidden",
     borderRadius: 40,
+  },
+  centeringIcon: {
+    position: "absolute",
+    top: "56%",
+    left: "52%",
+    transform: [{ translateX: -37 }, { translateY: -45 }],
   },
 });
 

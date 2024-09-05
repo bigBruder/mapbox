@@ -8,6 +8,7 @@ interface VotingState {
   loading: boolean;
   selectedTopicDetails: Topic | null;
   lastVoteTime: string | null;
+  isVotingProcess: boolean;
 
   fetchVotes: (userId: string) => void;
   setLoading: (loading: boolean) => void;
@@ -20,13 +21,25 @@ interface VotingState {
     locationName: string
   ) => Promise<Vote | null>;
   setLastVoteTime: (time: string) => void;
+  setIsVotingProcess: (isVotingProcess: boolean) => void;
+  toggleVotingProcess: () => void;
 }
 
 export const useVotingStore = create<VotingState>()((set) => ({
   votes: [],
   selectedTopicDetails: null,
-  loading: true,
+  loading: false,
   lastVoteTime: null,
+  isVotingProcess: false,
+
+  toggleVotingProcess: () => {
+    set((state) => ({
+      isVotingProcess: !state.isVotingProcess,
+    }));
+  },
+  setIsVotingProcess: (isVotingProcess) => {
+    set({ isVotingProcess: isVotingProcess });
+  },
   setLastVoteTime: (time) => {
     set({ lastVoteTime: time });
   },

@@ -5,19 +5,22 @@ import { colors } from "@/constants/colors";
 import PeopleIcon from "@/assets/icons/people";
 import TimerIcon from "@/assets/icons/timer";
 import { Topic } from "@/types/responses/cellInfoResponse";
-import ContentLoader, {
-  Circle,
-  Facebook,
-  Rect,
-} from "react-content-loader/native";
+import ContentLoader, { Circle, Rect } from "react-content-loader/native";
 import { useConfigStore } from "@/store/ServerConfigStore";
+import AnimatedBorderImage from "../animatedIcon/AnimatedBorder";
+import { useVotingStore } from "@/store/votingStore";
 
 interface Props {
   topic: Topic | null;
   loading: boolean;
+  isShouldPlayAnimation: boolean;
 }
 
-export const PulseInfoTop: React.FC<Props> = ({ topic, loading }) => {
+export const PulseInfoTop: React.FC<Props> = ({
+  topic,
+  loading,
+  isShouldPlayAnimation,
+}) => {
   if (!topic) return null;
   if (loading) return <LoadingComponentTop />;
 
@@ -25,21 +28,28 @@ export const PulseInfoTop: React.FC<Props> = ({ topic, loading }) => {
     blobUrlPrefix: state.blobUrlPrefix,
   }));
 
+  const { isVotingProcess } = useVotingStore((state) => ({
+    isVotingProcess: state.isVotingProcess,
+  }));
+
   return (
     <View style={styles.topContainer}>
       <View style={styles.imageContainer}>
-        <ImageBackground
-          source={require("@/assets/icons/polygon.png")}
+        <View
           style={{
-            padding: 20,
             alignItems: "center",
+            position: "relative",
           }}
         >
+          <AnimatedBorderImage
+            pathToImage={linkPrefix + topic.icon}
+            isShouldPlayAnimation={isShouldPlayAnimation}
+          />
           <Image
             source={{ uri: linkPrefix + topic.icon }}
-            style={styles.topIcon}
+            style={[styles.topIcon, styles.centeringIcon]}
           />
-        </ImageBackground>
+        </View>
       </View>
       <View style={styles.metricsContainer}>
         <PulseMetric

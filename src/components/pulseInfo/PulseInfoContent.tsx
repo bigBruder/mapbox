@@ -39,13 +39,6 @@ export const PulseInfoContent: React.FC<Props> = ({ topic, loading }) => {
         >
           <Text>Set Reminder in 30 seconds</Text>
         </TouchableHighlight>
-        <TouchableHighlight
-          onPress={() =>
-            scheduleNotification({ seconds: 86400 }, topic.id + "")
-          }
-        >
-          <Text>Set Reminder in 1 day</Text>
-        </TouchableHighlight>
         <Text style={styles.contentText}>{topic.description}</Text>
         <Image
           source={require("@/assets/icons/mockImage.png")}
