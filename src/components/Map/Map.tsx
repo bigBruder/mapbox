@@ -227,7 +227,7 @@ export const Map = () => {
               {!isFirstFlyHappened && userLocation && (
                 <Mapbox.Camera
                   zoomLevel={4}
-                  maxZoomLevel={9}
+                  maxZoomLevel={20}
                   centerCoordinate={[
                     userLocation?.longitude,
                     userLocation?.latitude,

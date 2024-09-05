@@ -3,21 +3,21 @@ export const getH3ResolutionByZoom = (zoom: number) => {
     case zoom >= 0 && zoom <= 2:
       return 1;
     case zoom >= 3 && zoom <= 4:
-      return 1;
-    case zoom >= 5 && zoom < 6:
       return 2;
-    case zoom >= 6 && zoom <= 7:
+    case zoom >= 5 && zoom < 6:
       return 3;
-    case zoom >= 7 && zoom <= 8:
+    case zoom >= 6 && zoom <= 7:
       return 4;
-    case zoom >= 9 && zoom <= 10:
+    case zoom >= 7 && zoom <= 8:
       return 5;
-    case zoom >= 11 && zoom <= 12:
+    case zoom >= 9 && zoom <= 10:
       return 6;
-    case zoom >= 13 && zoom <= 14:
+    case zoom >= 11 && zoom <= 12:
       return 7;
-    case zoom >= 15 && zoom <= 16:
+    case zoom >= 13 && zoom <= 14:
       return 8;
+    case zoom >= 15 && zoom <= 16:
+      return 9;
     case zoom >= 17 && zoom <= 18:
       return 9;
     default:
