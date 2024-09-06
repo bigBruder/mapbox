@@ -6,6 +6,7 @@ import { useHexagonsStore } from "@/store/hexagonsStore";
 
 import { useConfigStore } from "@/store/ServerConfigStore";
 import { useCameraStore } from "@/store/CameraStore";
+import { getH3ResolutionByZoom } from "@/utils/polygonsUtils";
 
 interface Props {
   topics: TopicsResponse;
@@ -33,6 +34,10 @@ export const MarkerList: FC<Props> = ({
   }));
   const { realtimeCamera } = useCameraStore((state) => ({
     realtimeCamera: state.realtimeCamera,
+  }));
+
+  const { lastZoom } = useHexagonsStore((state) => ({
+    lastZoom: state.lastZoom,
   }));
 
   const getImagesForMarkers = () => {
@@ -70,6 +75,7 @@ export const MarkerList: FC<Props> = ({
           circleSize: 30,
           linkPrefix: linkPrefix,
           icon: "customIcon",
+          zoomLevel: zoomLevel,
         },
         id: index,
       };
@@ -97,10 +103,29 @@ export const MarkerList: FC<Props> = ({
         style={{
           circleRadius: ["get", "circleSize"],
           circleColor: "#FFFFFF",
-          circleOpacity: 0.8,
+          // circleOpacity: 0.8,
           circleStrokeWidth: 2,
           circleStrokeColor: "#FFFFFF",
           circlePitchAlignment: "map",
+          circleOpacityTransition: { duration: 0, delay: 0 },
+          circleOpacity: [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            lastZoom - 2,
+            0,
+            lastZoom,
+            0.8,
+          ],
+          circleStrokeOpacity: [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            lastZoom - 2,
+            0,
+            lastZoom,
+            1,
+          ],
         }}
         filter={["==", ["get", "resolution"], h3Index]}
       />
@@ -113,6 +138,15 @@ export const MarkerList: FC<Props> = ({
           iconAllowOverlap: true,
           iconAnchor: "center",
           iconPitchAlignment: "map",
+          iconOpacity: [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            lastZoom - 2,
+            0,
+            lastZoom,
+            1,
+          ],
         }}
         filter={["==", ["get", "resolution"], h3Index]}
       />
@@ -124,9 +158,18 @@ export const MarkerList: FC<Props> = ({
           circleColor: "rgba(255, 255, 255, 0)",
           circleOpacity: 0.0,
           circleStrokeWidth: 2,
-          circleStrokeOpacity: 1,
+          // circleStrokeOpacity: 1,
           circleStrokeColor: "#FFFFFF",
           circlePitchAlignment: "map",
+          circleStrokeOpacity: [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            lastZoom - 0.5,
+            0,
+            lastZoom,
+            1,
+          ],
         }}
         filter={["==", ["get", "resolution"], h3Index]}
       />

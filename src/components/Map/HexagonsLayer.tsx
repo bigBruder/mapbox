@@ -164,12 +164,30 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           style={{
             lineColor: "white",
             lineWidth: 2,
+            lineOpacity: [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              lastZoom - 2,
+              0,
+              lastZoom,
+              1,
+            ],
           }}
         />
         <Mapbox.FillLayer
           id={`polygon-line-4`}
           style={{
             fillColor: "transparent",
+            fillOpacity: [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              lastZoom - 2,
+              0,
+              lastZoom,
+              1,
+            ],
           }}
           layerIndex={86}
         />

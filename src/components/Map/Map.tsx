@@ -65,6 +65,11 @@ export const Map = () => {
     setH3Index: state.setH3Index,
   }));
 
+  const { lastZoom, setLastZoom } = useHexagonsStore((state) => ({
+    lastZoom: state.lastZoom,
+    setLastZoom: state.setLastZoom,
+  }));
+
   const { setRealTimeZoomDebug } = useCameraStore((state) => ({
     setRealTimeZoomDebug: state.setRealTimeZoomDebug,
   }));
@@ -163,6 +168,8 @@ export const Map = () => {
     const { center, zoom } = e.properties;
     const requiredH3Index = getH3ResolutionByZoom(Math.round(zoom));
 
+    setLastZoom(Math.round(zoom));
+
     if (requiredH3Index !== h3Index) {
       setH3Index(requiredH3Index);
     }
@@ -218,7 +225,7 @@ export const Map = () => {
     const screenDistance = Math.abs(
       (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
         Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
-        3.5
+        4
     );
     cameraRef.current?.setCamera({
       animationDuration: 500,

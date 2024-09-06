@@ -1,5 +1,5 @@
 export const getH3ResolutionByZoom = (zoom: number) => {
-  console.log("zoom", zoom);
+  // console.log("zoom", zoom);
   switch (true) {
     case zoom >= 0 && zoom <= 3:
       return 1;
