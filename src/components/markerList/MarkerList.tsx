@@ -101,7 +101,7 @@ export const MarkerList: FC<Props> = ({
         id="markerCircleLayer"
         layerIndex={80}
         style={{
-          circleRadius: ["get", "circleSize"],
+          circleRadius: ["interpolate", ["linear"], ["zoom"], 0, 5, 2, 30],
           circleColor: "#FFFFFF",
           // circleOpacity: 0.8,
           circleStrokeWidth: 2,
@@ -134,7 +134,17 @@ export const MarkerList: FC<Props> = ({
         layerIndex={81}
         style={{
           iconImage: ["get", "iconId"],
-          iconSize: ["get", "iconSize"],
+          iconSize: [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            0,
+            0.01,
+            2,
+            0.15,
+            3,
+            0.16,
+          ],
           iconAllowOverlap: true,
           iconAnchor: "center",
           iconPitchAlignment: "map",
@@ -154,7 +164,7 @@ export const MarkerList: FC<Props> = ({
         id="markerCircleLayer-border"
         layerIndex={82}
         style={{
-          circleRadius: ["get", "circleSize"],
+          circleRadius: ["interpolate", ["linear"], ["zoom"], 0, 5, 2, 30],
           circleColor: "rgba(255, 255, 255, 0)",
           circleOpacity: 0.0,
           circleStrokeWidth: 2,
