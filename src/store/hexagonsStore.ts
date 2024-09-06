@@ -19,7 +19,8 @@ interface HexagonsState {
   setLastZoom: (lastZoom: number) => void;
   setSelectedPolygon: (selectedPolygon: Feature | null) => void;
   setSelectedHexagonIndex: (index: string) => void;
-  setSelectedPolygonId: (selectedPolygonId: number) => void;
+  setSelectedPolygonId: (selectedPolygonId: string) => void;
+  wipeTopics: () => void;
 }
 
 export const useHexagonsStore = create<HexagonsState>((set) => ({
@@ -46,4 +47,5 @@ export const useHexagonsStore = create<HexagonsState>((set) => ({
     set((state) => ({ ...state, ...partialState })),
   setLastZoom: (lastZoom) => set({ lastZoom }),
   setSelectedPolygonId: (selectedPolygonId) => set({ selectedPolygonId }),
+  wipeTopics: () => set({ polygons: [] }),
 }));

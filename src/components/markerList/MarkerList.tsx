@@ -1,48 +1,61 @@
 import { FC, useEffect, useState } from "react";
-import { Image, TouchableOpacity, StyleSheet } from "react-native";
-import { MarkerView } from "@rnmapbox/maps";
+import { CircleLayer, Images, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import h3 from "h3-js";
-import { TopicData, TopicsResponse } from "@/types/responses/MapTopicsResponse";
+import { TopicsResponse } from "@/types/responses/MapTopicsResponse";
 import { useHexagonsStore } from "@/store/hexagonsStore";
 
-import styles from "./styles";
 import { useConfigStore } from "@/store/ServerConfigStore";
+import { useCameraStore } from "@/store/CameraStore";
 
 interface Props {
   topics: TopicsResponse;
   zoomLevel: number;
+  handleTopicPress: (e: any) => void;
 }
 
-export const MarkerList: FC<Props> = ({ topics, zoomLevel }) => {
-  if (!topics) return;
-
-  const [transformedTopics, setTransformedTopics] = useState<any>([]);
+export const MarkerList: FC<Props> = ({
+  topics,
+  zoomLevel,
+  handleTopicPress,
+}) => {
+  const [geoJSONData, setGeoJSONData] = useState<any>(null);
   const { setSelectedPolygon, setSelectedPolygonId } = useHexagonsStore(
     (state) => ({
       setSelectedPolygon: state.setSelectedPolygon,
       setSelectedPolygonId: state.setSelectedPolygonId,
     })
   );
+  const { h3Index } = useHexagonsStore((state) => ({
+    h3Index: state.h3Index,
+  }));
   const { blobUrlPrefix: linkPrefix } = useConfigStore((state) => ({
     blobUrlPrefix: state.blobUrlPrefix,
   }));
+  const { realtimeCamera } = useCameraStore((state) => ({
+    realtimeCamera: state.realtimeCamera,
+  }));
 
-  const interpolatePinSize = (currentZoom: number) => {
-    const minZoom = 0;
-    const maxZoom = 2;
-    const minSize = 0;
-    const maxSize = 10;
+  const getImagesForMarkers = () => {
+    if (!topics) return {};
+    const images = {};
 
-    return (
-      minSize +
-      ((maxSize - minSize) / (maxZoom - minZoom)) * (currentZoom - minZoom)
-    );
+    Object.keys(topics).forEach((key) => {
+      const imageLink = linkPrefix + topics[key].icon;
+      images[imageLink] = {
+        uri: imageLink,
+      };
+    });
+
+    return images;
   };
+
   useEffect(() => {
+    if (!topics) return;
     const indexes = Object.keys(topics);
-    const transformed = indexes.map((index) => {
+    const features = indexes.map((index) => {
       const topic = topics[index];
       const center = h3.cellToLatLng(index).reverse();
+
       return {
         type: "Feature",
         geometry: {
@@ -51,66 +64,74 @@ export const MarkerList: FC<Props> = ({ topics, zoomLevel }) => {
         },
         properties: {
           h3Index: index,
-          iconId: topics[index].icon,
-          iconSize: 100,
-          iconOffset: 0,
-          allowOverlap: true,
-          // backgroundPattern: "background",
-          allowIconOverlap: true,
+          resolution: h3Index,
+          iconId: linkPrefix + topic.icon,
+          iconSize: 0.16,
+          circleSize: 30,
+          linkPrefix: linkPrefix,
+          icon: "customIcon",
         },
         id: index,
       };
     });
-    if (transformed.length) {
-      setTransformedTopics(transformed);
-    }
-  }, [topics]);
 
-  if (!transformedTopics || !transformedTopics.length) return null;
+    const geoJSON = {
+      type: "FeatureCollection",
+      features: features,
+    };
 
-  return transformedTopics.map((topic: TopicData) => (
-    <MarkerView
-      coordinate={topic.geometry.coordinates}
-      pointerEvents="none"
-      allowOverlap
-      key={topic.id}
+    setGeoJSONData(geoJSON);
+  }, [topics, zoomLevel]);
+
+  if (!geoJSONData) return null;
+
+  return (
+    <ShapeSource
+      id="markerSource"
+      shape={geoJSONData}
+      onPress={handleTopicPress}
     >
-      <TouchableOpacity
-        style={styles.markerContainer}
-        onPress={() => {
-          // console.log("topic id ===>", topic.id);
-          let geometry = {
-            type: "Polygon",
-            coordinates: [h3.cellToBoundary(topic.id, true)],
-          };
-
-          const polygon = {
-            type: "Feature",
-            geometry,
-            properties: {
-              h3Index: topic.id,
-            },
-          };
-
-          // console.log("hexagon ===>", polygon);
-          setSelectedPolygon(polygon);
-          setSelectedPolygonId(topic.id);
+      <CircleLayer
+        id="markerCircleLayer"
+        layerIndex={80}
+        style={{
+          circleRadius: ["get", "circleSize"],
+          circleColor: "#FFFFFF",
+          circleOpacity: 0.8,
+          circleStrokeWidth: 2,
+          circleStrokeColor: "#FFFFFF",
+          circlePitchAlignment: "map",
         }}
-      >
-        <Image
-          source={{
-            uri: linkPrefix + topic.properties.iconId,
-          }}
-          style={[
-            styles.markerImage,
-            {
-              width: 30 + interpolatePinSize(zoomLevel),
-              height: 30 + interpolatePinSize(zoomLevel),
-              borderRadius: 30 + interpolatePinSize(zoomLevel) / 2,
-            },
-          ]}
-        />
-      </TouchableOpacity>
-    </MarkerView>
-  ));
+        filter={["==", ["get", "resolution"], h3Index]}
+      />
+      <SymbolLayer
+        id="iconSymbolLayer"
+        layerIndex={81}
+        style={{
+          iconImage: ["get", "iconId"],
+          iconSize: ["get", "iconSize"],
+          iconAllowOverlap: true,
+          iconAnchor: "center",
+          iconPitchAlignment: "map",
+        }}
+        filter={["==", ["get", "resolution"], h3Index]}
+      />
+      <CircleLayer
+        id="markerCircleLayer-border"
+        layerIndex={82}
+        style={{
+          circleRadius: ["get", "circleSize"],
+          circleColor: "rgba(255, 255, 255, 0)",
+          circleOpacity: 0.0,
+          circleStrokeWidth: 2,
+          circleStrokeOpacity: 1,
+          circleStrokeColor: "#FFFFFF",
+          circlePitchAlignment: "map",
+        }}
+        filter={["==", ["get", "resolution"], h3Index]}
+      />
+
+      <Images images={getImagesForMarkers()} />
+    </ShapeSource>
+  );
 };

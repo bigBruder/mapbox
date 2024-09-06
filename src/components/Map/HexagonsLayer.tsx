@@ -89,7 +89,7 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
           <Mapbox.LineLayer
             id={`polygon-outer-line-selected`}
             sourceID="source-id"
-            layerIndex={85}
+            layerIndex={79}
             style={{
               lineColor: "white",
               lineWidth: 2,
@@ -102,7 +102,7 @@ export const HexagonsLayer: React.FC<HexagonsLayerProps> = ({
               fillColor: "white",
               fillOpacity: 0.7,
             }}
-            layerIndex={85}
+            layerIndex={79}
           />
         </Mapbox.ShapeSource>
       )}

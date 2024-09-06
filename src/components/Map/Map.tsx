@@ -1,9 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import Mapbox from "@rnmapbox/maps";
+import Mapbox, { Images } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
+import h3 from "h3-js";
 
 import MapContext from "@/providers/mapContext/MapContext";
 import useRealTimeLocation from "@/hooks/useRealTimeLocation";
@@ -14,7 +15,6 @@ import { MapBottomContainer } from "@/components/mapBottomContainer/MapBottomCon
 import { MarkerList } from "@/components/markerList/MarkerList";
 import { Toaster } from "@/components/toaster/Toaster";
 import { MAP_PROPS } from "@/constants/map";
-import { CameraBound } from "@/types";
 import { colors } from "@/constants/colors";
 
 import ToastManager from "toastify-react-native";
@@ -35,22 +35,23 @@ import { getH3ResolutionByZoom } from "@/utils/polygonsUtils";
 import { getCellsVibes } from "@/api/client";
 import { HeatmapLayer } from "./HeatmapLayer";
 import { useUserStore } from "@/store/userStore";
-import { useNavigation } from "@react-navigation/native";
-import * as Notifications from "expo-notifications";
 
 export const Map = () => {
-  const [realtimeCamera, setRealtimeCamera] = useState<CameraBound | null>(
-    null
-  );
+  const { realtimeCamera, setRealtimeCamera } = useCameraStore((state) => ({
+    realtimeCamera: state.realtimeCamera,
+    setRealtimeCamera: state.setRealtimeCamera,
+  }));
   const camera = useMapStore((state) => state.camera);
   const { realTimeZoom, setRealTimeZoom } = useCameraStore((state) => ({
     realTimeZoom: state.realTimeZoom,
     setRealTimeZoom: state.setRealTimeZoom,
   }));
-  const { selectedPolygon, setSelectedPolygon } = useHexagonsStore((state) => ({
-    setSelectedPolygon: state.setSelectedPolygon,
-    selectedPolygon: state.selectedPolygon,
-  }));
+  const { selectedPolygon, setSelectedPolygon, setSelectedPolygonId } =
+    useHexagonsStore((state) => ({
+      setSelectedPolygon: state.setSelectedPolygon,
+      selectedPolygon: state.selectedPolygon,
+      setSelectedPolygonId: state.setSelectedPolygonId,
+    }));
   const { selectedProjection } = useMapStore((state) => ({
     selectedProjection: state.selectedProjection,
   }));
@@ -160,7 +161,7 @@ export const Map = () => {
 
   const handleMapIdle = (e: Mapbox.MapState) => {
     const { center, zoom } = e.properties;
-    const requiredH3Index = getH3ResolutionByZoom(Math.floor(zoom));
+    const requiredH3Index = getH3ResolutionByZoom(Math.round(zoom));
 
     if (requiredH3Index !== h3Index) {
       setH3Index(requiredH3Index);
@@ -193,6 +194,39 @@ export const Map = () => {
     fetchMapTopics();
   };
 
+  const handleTopicPress = (event) => {
+    const hexagonIndex = event.features[0].id;
+
+    let geometry = {
+      type: "Polygon",
+      coordinates: [h3.cellToBoundary(hexagonIndex, true)],
+    };
+
+    const polygon = {
+      type: "Feature",
+      geometry,
+      properties: {
+        h3Index: hexagonIndex,
+      },
+    };
+
+    setSelectedPolygon(polygon);
+    setSelectedPolygonId(hexagonIndex);
+
+    const cellCenter = h3.cellToLatLng(hexagonIndex);
+
+    const screenDistance = Math.abs(
+      (Math.abs(realtimeCamera?.properties.bounds.ne[0]) -
+        Math.abs(realtimeCamera?.properties.bounds.sw[0])) /
+        3.5
+    );
+    cameraRef.current?.setCamera({
+      animationDuration: 500,
+      animationMode: "flyTo",
+      centerCoordinate: [cellCenter[1], cellCenter[0] - screenDistance],
+    });
+  };
+
   return (
     <View style={styles.page}>
       <GestureHandlerRootView style={styles.container}>
@@ -218,7 +252,11 @@ export const Map = () => {
             >
               {/* <Images images={getMapImages(topics)} /> */}
 
-              <MarkerList topics={topics} zoomLevel={realTimeZoom} />
+              <MarkerList
+                topics={topics}
+                zoomLevel={realTimeZoom}
+                handleTopicPress={handleTopicPress}
+              />
 
               {userLocation?.source === "gps" && showUserPosition && (
                 <Mapbox.UserLocation visible animated />
@@ -235,7 +273,13 @@ export const Map = () => {
                   animationDuration={0}
                 />
               )}
-              <HeatmapLayer realtimeZoom={1} />
+
+              <Images
+                images={{
+                  mock: require("@/assets/frame.png"),
+                }}
+              />
+              {/* <HeatmapLayer realtimeZoom={1} /> */}
               <HexagonsLayer
                 cameraRef={cameraRef}
                 realTimeCamera={realtimeCamera}

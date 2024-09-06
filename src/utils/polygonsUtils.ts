@@ -1,14 +1,15 @@
 export const getH3ResolutionByZoom = (zoom: number) => {
+  console.log("zoom", zoom);
   switch (true) {
-    case zoom >= 0 && zoom <= 2:
+    case zoom >= 0 && zoom <= 3:
       return 1;
-    case zoom >= 3 && zoom <= 4:
+    case zoom > 3 && zoom <= 5:
       return 2;
-    case zoom >= 5 && zoom < 6:
+    case zoom > 5 && zoom <= 7:
       return 3;
-    case zoom >= 6 && zoom <= 7:
+    case zoom > 7 && zoom <= 8:
       return 4;
-    case zoom >= 7 && zoom <= 8:
+    case zoom >= 7 && zoom <= 9:
       return 5;
     case zoom >= 9 && zoom <= 10:
       return 6;

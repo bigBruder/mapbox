@@ -1,5 +1,5 @@
 export interface TopicData {
-  iconId: string;
+  icon: string;
   topicId: number;
   users: number;
   votes: number;

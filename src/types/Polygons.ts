@@ -10,7 +10,7 @@ interface Properties {
 }
 
 interface Feature {
-  type: "Feature";
+  type: string;
   geometry: Geometry;
   properties: Properties;
 }

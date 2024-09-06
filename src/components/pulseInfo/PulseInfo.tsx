@@ -123,24 +123,24 @@ export const PulseInfo = () => {
         new Date().getTime()) ||
     (!vote && !loading);
 
-  console.log(
-    timeleft?.differenceInMilliseconds <= 0,
-    timeleft.hours === 0,
-    timeleft.minutes === 0,
-    timeleft.seconds === 0,
-    !loading,
-    new Date(vote?.updatedAt || new Date()) ||
-      new Date(vote?.timestamp || new Date()) <= new Date(),
-    timeleft?.differenceInMilliseconds === 0 &&
-      timeleft.hours === 0 &&
-      timeleft.minutes === 0 &&
-      timeleft.seconds === 0 &&
-      !loading &&
-      (new Date(vote?.updatedAt || new Date()) ||
-        new Date(vote?.timestamp || new Date()) <= new Date())
-      ? "Pulse"
-      : "not pulse"
-  );
+  // console.log(
+  //   timeleft?.differenceInMilliseconds <= 0,
+  //   timeleft.hours === 0,
+  //   timeleft.minutes === 0,
+  //   timeleft.seconds === 0,
+  //   !loading,
+  //   new Date(vote?.updatedAt || new Date()) ||
+  //     new Date(vote?.timestamp || new Date()) <= new Date(),
+  //   timeleft?.differenceInMilliseconds === 0 &&
+  //     timeleft.hours === 0 &&
+  //     timeleft.minutes === 0 &&
+  //     timeleft.seconds === 0 &&
+  //     !loading &&
+  //     (new Date(vote?.updatedAt || new Date()) ||
+  //       new Date(vote?.timestamp || new Date()) <= new Date())
+  //     ? "Pulse"
+  //     : "not pulse"
+  // );
 
   return (
     <View style={styles.pulseInfoContainer}>
