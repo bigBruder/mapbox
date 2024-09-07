@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import Mapbox, { Images } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
@@ -77,6 +77,8 @@ export const Map = () => {
   const { heatMap } = useMapStore((state) => ({
     heatMap: state.heatMap,
   }));
+
+  const [hexagonsLoading, setHexagonsLoading] = useState(false);
 
   useH3Hexagons(realtimeCamera);
   useNotificationObserver();
@@ -164,7 +166,8 @@ export const Map = () => {
     setTopics(null);
   }, [h3Index]);
 
-  const handleMapIdle = (e: Mapbox.MapState) => {
+  const handleMapIdle = async (e: Mapbox.MapState) => {
+    setHexagonsLoading(true);
     const { center, zoom } = e.properties;
     const requiredH3Index = getH3ResolutionByZoom(Math.round(zoom));
 
@@ -198,7 +201,8 @@ export const Map = () => {
       }
     };
 
-    fetchMapTopics();
+    await fetchMapTopics();
+    setHexagonsLoading(false);
   };
 
   const handleTopicPress = (event) => {
@@ -236,6 +240,11 @@ export const Map = () => {
 
   return (
     <View style={styles.page}>
+      {hexagonsLoading && (
+        <View pointerEvents="none" style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" color={colors.pulsePrimary} />
+        </View>
+      )}
       <GestureHandlerRootView style={styles.container}>
         <View style={styles.container}>
           <View style={styles.container}>

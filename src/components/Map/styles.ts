@@ -1,4 +1,4 @@
-import { NativeModules, StyleSheet } from "react-native";
+import { ActivityIndicator, NativeModules, StyleSheet } from "react-native";
 import { colors } from "@/constants/colors";
 const { StatusBarManager } = NativeModules;
 
@@ -11,6 +11,17 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     position: "relative",
+  },
+  activityIndicatorContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.5,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
   },
   map: {
     flex: 1,
