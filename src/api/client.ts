@@ -3,14 +3,17 @@ import * as SecureStore from "expo-secure-store";
 import { MAP_FEATURES_TYPES } from "@/constants/map";
 import { TopicsResponse } from "@/types/responses/MapTopicsResponse";
 import { CellInfoResponse } from "@/types/responses/cellInfoResponse";
-import { HexagonMap } from "@/types/responses/heatmapResponse";
 import { transformHeatmapResponseToHeatmapData } from "@/utils/transformDataToHeatData";
 import { QueryParams, TransformedHeatmapData } from "@/types";
 import { Vote } from "@/components/pulseInfo/PulseInfo";
+import {
+  AuthData,
+  CreateUserResponse,
+  User,
+} from "@/types/responses/userResponse";
 
 const BASE_URL = "http://pulse-dev-api.eastus.azurecontainer.io:8080";
 
-// const BASE_URL_CONNECT = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
 const SEARCH_BASE_URL = process.env.EXPO_PUBLIC_SEARCH_BASE_URL || "";
 
 const breakpoints = {
@@ -24,142 +27,6 @@ const getAccessTokenFromStore = async () => {
   if (!access_token) throw new Error("Access token not found");
   return access_token;
 };
-
-// const fetchWithAuth = async (url: string, params: any = null) => {
-//   let access_token = await getAccessTokenFromStore();
-//   let headers = {
-//     Authorization: `Bearer ${access_token}`,
-//   };
-
-//   try {
-//     const { data } = await axios.get(url, {
-//       params,
-//       headers,
-//     });
-//     return data;
-//   } catch (error) {
-//     // @ts-ignore
-//     if (error.response && error.response.status === 401) {
-//       access_token = await getAccessToken();
-//       if (access_token) {
-//         headers.Authorization = `Bearer ${access_token}`;
-//         const { data } = await axios.get(url, {
-//           params,
-//           headers,
-//         });
-//         return data;
-//       } else {
-//         throw new Error("Unable to refresh access token");
-//       }
-//     } else {
-//       throw error;
-//     }
-//   }
-// };
-
-// export const getAccessToken = async () => {
-//   try {
-//     const device_id = await SecureStore.getItemAsync("mapbox_secure_deviceid");
-//     if (!device_id) throw new Error("Device ID not found");
-
-//     const params = new URLSearchParams();
-//     params.append("device_id", device_id);
-//     params.append("grant_type", "device_id");
-
-//     const { data } = await axios.post(
-//       `${BASE_URL_CONNECT}/connect/token`,
-//       params,
-//       {
-//         headers: {
-//           "Content-Type": "application/x-www-form-urlencoded",
-//           Authorization: `Basic ${process.env.EXPO_PUBLIC_API_ACCESS_TOKEN}`,
-//         },
-//       }
-//     );
-
-//     await SecureStore.setItemAsync(
-//       "mapbox_secure_access_token",
-//       data.access_token
-//     );
-//     return data.access_token;
-//   } catch (error) {
-//     console.error("Error fetching access token:", error);
-//     return null;
-//   }
-// };
-
-// export const searchPosts = async (queryParams: QueryParams) => {
-//   try {
-//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
-//   } catch (error) {
-//     console.error("Error fetching posts:", error);
-//     return null;
-//   }
-// };
-
-// export const getVibeDetails = async (id: string) => {
-//   try {
-//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/${id}`);
-//   } catch (error) {
-//     console.error("Error fetching vibe details:", error);
-//     return null;
-//   }
-// };
-
-// export const getPinsForBound = async (queryParams: Partial<QueryParams>) => {
-//   try {
-//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, queryParams);
-//   } catch (error) {
-//     console.error("Error fetching pins for bound:", error);
-//     return null;
-//   }
-// };
-
-// export const getWebPageMeta = async (url: string) => {
-//   try {
-//     const response = await axios.get(url);
-//     const html = response.data;
-//     const $ = cheerio.load(html);
-//     const meta = {};
-//     $("meta").each((i, elem) => {
-//       const name = $(elem).attr("name") || $(elem).attr("property");
-//       const content = $(elem).attr("content");
-//       if (name) {
-//         meta[name] = content;
-//       }
-//     });
-//     if (meta && meta["og:title"].includes("Log in or sign")) return null;
-//     return meta;
-//   } catch (error) {
-//     console.error("Error fetching metadata:", error.message);
-//   }
-// };
-
-// export const getHeatmap = async (
-//   queryParams: Pick<
-//     QueryParams,
-//     | "NE.Latitude"
-//     | "NE.Longitude"
-//     | "SW.Latitude"
-//     | "SW.Longitude"
-//     | "Heatmap.Resolution"
-//   >
-// ) => {
-//   const baseParams = {
-//     "Heatmap.Enable": true,
-//     PageSize: 0,
-//   };
-//   const pageSize = 0;
-//   try {
-//     return await fetchWithAuth(`${SEARCH_BASE_URL}/vibes/search`, {
-//       ...baseParams,
-//       ...queryParams,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching heatmap:", error);
-//     return null;
-//   }
-// };
 
 export const getCellsVibes = async (
   queryParams: Partial<QueryParams>
@@ -300,6 +167,63 @@ export const fetchSettings = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching settings:", error);
+    return null;
+  }
+};
+
+export const registerUserWithEmailAndPassword = async (
+  email: string,
+  password: string,
+  userName: string
+): Promise<CreateUserResponse | null> => {
+  try {
+    const response = await axios.post(
+      BASE_URL + "/identity/create:withEmailAndPassword",
+      {
+        Email: email,
+        Password: password,
+        Name: userName,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return null;
+  }
+};
+
+export const loginUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+): Promise<AuthData | null> => {
+  try {
+    const response = await axios.post(
+      BASE_URL + "/identity/login:withEmailAndPassword",
+      {
+        email: email,
+        password: password,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    return null;
+  }
+};
+
+export const verifyUserWithToken = async (
+  token: string
+): Promise<User | null> => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await axios.get(BASE_URL + "/identity", {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying user:", error);
     return null;
   }
 };

@@ -25,6 +25,8 @@ import { LoginHeader } from "@/components/login/LoginHeader";
 import * as Notifications from "expo-notifications";
 import { useConfigStore } from "@/store/ServerConfigStore";
 import { cleanUpExpiredNotifications } from "@/services/scheduleNotification";
+import { getAuthData } from "@/services";
+import { verifyUserWithToken } from "@/api/client";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_API_KEY || null);
 
@@ -102,7 +104,10 @@ const appNavigator = () => {
 };
 
 export default function App() {
-  const { user } = useUserStore((state) => state);
+  const { user, setUser } = useUserStore((state) => ({
+    user: state.user,
+    setUser: state.setUser,
+  }));
   const { updateConfig } = useConfigStore((state) => state);
 
   useEffect(() => {
@@ -118,20 +123,33 @@ export default function App() {
     // cleanUpExpiredNotifications(); // clean up expired notifications
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const access_token = await SecureStore.getItemAsync(
-  //         "mapbox_secure_access_token"
-  //       );
-  //       getDeviceUniqueId().then(async () => {
-  //         getAccessToken();
-  //       });
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   })();
-  // }, []);
+  useEffect(() => {
+    const getUser = async () => {
+      console.log("App starting");
+      try {
+        const authData = await getAuthData();
+        console.log("authData in appstarting", authData);
+        if (authData) {
+          console.log("authData in appstarting", authData);
+          const token = authData.idToken;
+          console.log("token in appstarting", token);
+          const user = await verifyUserWithToken(token);
+          console.log("user in appstarting", user);
+          if (user) {
+            console.log("user in appstarting", user);
+            setUser(user);
+          } else {
+            console.log("deleting in appstarting", user);
+            await SecureStore.deleteItemAsync("authData");
+          }
+        }
+      } catch (error) {
+        console.error("Error getting user in app starting", error);
+      }
+    };
+
+    getUser();
+  }, []);
 
   const [loaded, error] = useFonts({
     "SF-Text": require("./assets/fonts/SF-Pro-Text-Regular.ttf"),

@@ -32,6 +32,9 @@ export type Vote = {
 };
 
 export const PulseInfo = () => {
+  const { user } = useUserStore((state) => ({
+    user: state.user,
+  }));
   const route =
     useRoute<RouteProp<Pick<RootStackParamList, "Pulse">, "Pulse">>();
   const topicId = route.params?.state.itemId;
@@ -81,7 +84,7 @@ export const PulseInfo = () => {
     try {
       setIsVotingProcess(true);
       const vote = await publishVote(
-        userId,
+        user?.id,
         topicId.toString(),
         {
           latitude: userLocation?.latitude,

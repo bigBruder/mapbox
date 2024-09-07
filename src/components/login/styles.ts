@@ -16,6 +16,28 @@ const styles = StyleSheet.create({
     height: 40,
     alignSelf: "center",
   },
+  signUpContainer: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    gap: 5,
+    flexDirection: "row",
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  actionText: {
+    color: colors.pulsePrimary,
+    fontWeight: "600",
+    lineHeight: 19.09,
+    textAlign: "center",
+  },
+  errorText: {
+    color: "red",
+    fontWeight: "400",
+    opacity: 0.7,
+  },
   title: {
     marginBottom: 32,
     color: colors.pulseBlack,

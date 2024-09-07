@@ -25,7 +25,7 @@ interface Props {
   camera: CameraBound | null;
 }
 export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
-  const { toggleUser } = useUserStore((state) => state);
+  const { logout } = useUserStore((state) => state);
   const [regionName, setRegionName] = useState<String>("");
   const camera = useMapStore((state) => state.camera);
   const { selectedProjection, toggleSelectedProjection } = useMapStore(
@@ -102,7 +102,7 @@ export const MapBottomContainer: FC<Props> = ({ handleCenterCamera }) => {
       <DebugFeatures
         h3Index={h3Index}
         realtimeZoomDebug={realtimeZoomDebug}
-        toggleUser={toggleUser}
+        toggleUser={logout}
         selectedProjection={selectedProjection}
         toggleSelectedProjection={toggleSelectedProjection}
       />

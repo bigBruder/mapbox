@@ -1,27 +1,34 @@
+import { User } from "@/types/responses/userResponse";
 import { create } from "zustand";
-//for debugging
+
 interface UserState {
-  user: boolean;
+  user: User | null;
   userLocation: {
     latitude: number;
     longitude: number;
     source: string;
   } | null;
-  toggleUser: () => void;
+  setUser: (user: User | null) => void;
   setUserLocation: (location: {
     latitude: number;
     longitude: number;
     source: string;
   }) => void;
+  logout: () => void;
 }
 
 export const useUserStore = create<UserState>()((set) => ({
-  user: true,
+  user: null,
   userLocation: null,
-  toggleUser: () =>
-    set((state) => ({
-      user: !state.user,
+  logout: () =>
+    set(() => ({
+      user: null,
     })),
+  setUser: (user) =>
+    set(() => ({
+      user,
+    })),
+
   setUserLocation: (location) =>
     set(() => ({
       userLocation: location,
